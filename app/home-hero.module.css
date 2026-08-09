@@ -1,0 +1,156 @@
+@media (max-width: 639px) {
+  .section {
+    height: calc(var(--mobile-visual-height, 100svh) - 70px) !important;
+    min-height: calc(var(--mobile-visual-height, 100svh) - 70px) !important;
+  }
+
+  .frame,
+  .content {
+    width: calc(100% - 40px);
+  }
+
+  .content {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 0;
+    padding-top: var(--mobile-hero-top, 64px);
+    padding-bottom: calc(
+      var(--mobile-hero-bottom, 20px) + env(safe-area-inset-bottom, 0px)
+    );
+  }
+
+  .leadGroup {
+    gap: var(--mobile-hero-action-gap, 32px);
+  }
+
+  .copyGroup {
+    gap: 18px;
+  }
+
+  .eyebrow {
+    width: max-content;
+    max-width: none;
+    font-size: clamp(18px, 5.8vw, 25px);
+    white-space: nowrap;
+  }
+
+  .title {
+    font-size: clamp(68px, 20.5vw, 88px);
+  }
+
+  .description {
+    font-size: clamp(16px, 4.2vw, 18px);
+  }
+
+  .actions {
+    gap: 12px;
+  }
+
+  .button {
+    height: 52px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .portrait {
+    top: -40px;
+    opacity: 1;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 58%,
+      rgba(0, 0, 0, 0.84) 70%,
+      rgba(0, 0, 0, 0.3) 88%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 58%,
+      rgba(0, 0, 0, 0.84) 70%,
+      rgba(0, 0, 0, 0.3) 88%,
+      transparent 100%
+    );
+  }
+
+  .portraitImage {
+    object-position: 50% 12%;
+  }
+
+  .mobileAtmosphere {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    z-index: 0;
+    display: block;
+    overflow: visible;
+  }
+
+  .mobileGradientLayer {
+    position: absolute;
+    display: block;
+    transform: translateX(-50%);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+  }
+
+  .mobileGradientSecondary {
+    bottom: -206.07vw;
+    left: calc(50% + 30.6vw);
+    z-index: 0;
+    width: 709.105vw;
+    height: 368.567vw;
+    background-image: url("/images/figma-mobile-gradient-secondary.svg");
+  }
+
+  .mobileGradientMask {
+    bottom: -510.609vw;
+    left: calc(50% - 0.214vw);
+    z-index: 1;
+    width: 744.688vw;
+    height: 616.428vw;
+    background-image: url("/images/figma-mobile-gradient-mask.svg");
+  }
+
+  .mobileGradientHero {
+    bottom: -165.837vw;
+    left: calc(50% + 14.538vw);
+    z-index: 2;
+    width: 662.1vw;
+    height: 325.991vw;
+    background-image: url("/images/figma-mobile-gradient-hero.svg");
+  }
+}
+
+@media (max-width: 359px) {
+  .frame,
+  .content {
+    width: calc(100% - 32px);
+  }
+
+  .content {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .copyGroup {
+    gap: 16px;
+  }
+
+  .button {
+    height: 48px;
+  }
+
+
+}
+
+@media (min-width: 640px) {
+  .mobileAtmosphere {
+    display: none;
+  }
+}

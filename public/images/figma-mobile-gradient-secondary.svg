@@ -1,0 +1,22 @@
+<svg preserveAspectRatio="none" overflow="visible" width="3049.15" height="1584.84" viewBox="0 0 3049.15 1584.84" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <g filter="url(#secondary-fill-blur)">
+      <path d="M771.48 485.304C584.755 346.531 373.086 440.802 244.48 470.473L423.606 1349.31H1472.49L2416.61 1380.84L2681.7 688.11C2687.4 680.764 2642.35 625.508 2416.61 463.251C2134.42 260.429 1711.13 453.539 1578.45 529.671C1341.98 695.048 1004.89 658.768 771.48 485.304Z" fill="#FF4500"/>
+    </g>
+    <g filter="url(#secondary-stroke-blur)">
+      <path d="M2729.2 625.182C2734.9 617.837 2689.85 562.58 2464.11 400.323C2181.93 197.501 1711.12 431.104 1578.44 507.236C1349.03 638.881 1027.39 629.494 793.98 456.03C607.254 317.258 420.586 377.874 291.98 407.544" stroke="#FF1E00" stroke-width="71"/>
+    </g>
+  </g>
+  <defs>
+    <filter id="secondary-fill-blur" x="40.4803" y="169.353" width="2845.68" height="1415.49" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="102" result="foregroundBlur"/>
+    </filter>
+    <filter id="secondary-stroke-blur" x="0" y="0" width="3049.15" height="930.946" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="142" result="foregroundBlur"/>
+    </filter>
+  </defs>
+</svg>

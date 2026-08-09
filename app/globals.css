@@ -1,0 +1,204 @@
+@import "tailwindcss" source(none);
+@source "./**/*.ts";
+@source "./**/*.tsx";
+@source "../components/**/*.ts";
+@source "../components/**/*.tsx";
+
+@theme {
+  --color-background: #000000;
+  --color-foreground: #ffffff;
+  --color-primary: #ff1e00;
+  --color-muted: #a0a0a0;
+  --color-muted-dark: #888888;
+  --color-hairline: rgba(255, 255, 255, 0.2);
+
+  --font-sans: var(--font-switzer), sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-overline: var(--font-sans);
+  --font-playfair: var(--font-playfair), Georgia, serif;
+  --font-display: var(--font-display), Impact, sans-serif;
+}
+
+/*
+ * The mobile navigation is controlled by a native details/summary disclosure.
+ * This path works before React hydrates and even if the client bundle fails.
+ */
+[data-mobile-menu-overlay] {
+  display: none;
+}
+
+@media (max-width: 1199.98px) {
+  html:has([data-mobile-menu-disclosure][open]),
+  body:has([data-mobile-menu-disclosure][open]) {
+    overflow: hidden;
+  }
+
+  html:has([data-mobile-menu-disclosure][open]) [data-mobile-menu-overlay] {
+    display: block;
+  }
+
+  [data-mobile-menu-disclosure][open] > [data-mobile-menu-overlay] {
+    display: block;
+  }
+}
+
+/*
+ * Five-panel opening curtain recovered from the approved reference:
+ * center, adjacent, then outer columns retract upward in a 100ms cascade.
+ */
+.page-load-curtain {
+  position: fixed;
+  inset: 0;
+  /* Above navbar (1100) and mobile menu (1099) — nothing sits over the curtain. */
+  z-index: 10000;
+  display: flex;
+  height: 100svh;
+  overflow: hidden;
+  pointer-events: auto;
+  animation: page-load-curtain-cleanup 120ms linear 2200ms forwards;
+}
+
+.page-load-curtain__column {
+  position: relative;
+  flex: 1 1 20%;
+  height: 100%;
+}
+
+.page-load-curtain__panel {
+  position: absolute;
+  top: 0;
+  left: -0.5%;
+  display: block;
+  width: 101%;
+  height: 100%;
+  background: #f5f5f5;
+  transform: translateZ(0);
+  will-change: height;
+  animation: page-load-curtain-retract 1800ms cubic-bezier(0.88, 0, 0, 1)
+    forwards;
+}
+
+.page-load-curtain__panel--center {
+  animation-delay: 200ms;
+}
+
+.page-load-curtain__panel--inner {
+  animation-delay: 300ms;
+}
+
+.page-load-curtain__panel--outer {
+  animation-delay: 400ms;
+}
+
+@keyframes page-load-curtain-retract {
+  from {
+    height: 100%;
+  }
+
+  to {
+    height: 1px;
+  }
+}
+
+@keyframes page-load-curtain-cleanup {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/*
+ * Hydration-safe, section-aware progressive reveal.
+ * Individual translate/scale properties deliberately compose with the
+ * transform-driven galleries, marquees, and hover interactions.
+ */
+.reveal-motion-ready [data-reveal] {
+  --reveal-delay: 0ms;
+  opacity: 0;
+  filter: blur(8px);
+  translate: 0 30px;
+  transition:
+    opacity 760ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay),
+    filter 900ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay),
+    translate 900ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay),
+    scale 900ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay);
+  will-change: opacity, filter, translate;
+}
+
+.reveal-motion-ready [data-reveal="fade"] {
+  filter: blur(5px);
+  translate: 0 0;
+}
+
+.reveal-motion-ready [data-reveal="left"] {
+  translate: -34px 0;
+}
+
+.reveal-motion-ready [data-reveal="right"] {
+  translate: 34px 0;
+}
+
+.reveal-motion-ready [data-reveal="soft"] {
+  filter: blur(10px);
+  scale: 0.985;
+  translate: 0 16px;
+}
+
+.reveal-motion-ready [data-reveal][data-revealed="true"] {
+  opacity: 1;
+  filter: blur(0);
+  scale: 1;
+  translate: 0 0;
+}
+
+/*
+ * On mobile, filter: blur(0) and will-change create GPU compositing layers
+ * that break touch hit-testing inside position:fixed containers. After the
+ * reveal completes, strip these properties so the browser tears down the
+ * compositing layer and touch events route correctly.
+ */
+@media (max-width: 1199.98px) {
+  .reveal-motion-ready [data-reveal][data-revealed="true"] {
+    filter: none;
+    will-change: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-load-curtain {
+    display: none;
+    animation: none;
+  }
+
+  .reveal-motion-ready [data-reveal] {
+    opacity: 1;
+    filter: none;
+    clip-path: none;
+    scale: 1;
+    translate: 0 0;
+    transition: none;
+  }
+}
+
+@keyframes envelope-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-envelope-bounce {
+  animation: envelope-bounce 2s ease-in-out infinite;
+}
+
+@media (max-width: 639px) {
+  .blog-hero-heading-mobile {
+    font-size: clamp(56px, calc(var(--mobile-visual-height, 100svh) * 0.11), 80px) !important;
+  }
+}

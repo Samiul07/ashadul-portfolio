@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" width="2847.03" height="1401.76" viewBox="0 0 2847.03 1401.76" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g filter="url(#hero-blur)">
+    <path d="M681 317.879C470.992 160.85 332.57 227.41 204 257.253L552 1197.76C552 1197.76 489.5 840.574 764 672.208C1038.5 503.842 1318.5 702.647 1318.5 702.647C1318.5 702.647 1734.24 676.842 1928.5 672.208C2122.76 667.574 2351.5 413.952 2351.5 413.952L2640.54 476.16C2646.24 468.771 2665.68 334.327 2369 247.965C2072.32 161.602 2076 202.306 1635.1 371.571C1194.21 540.836 891.008 474.908 681 317.879Z" fill="#CF1A02"/>
+  </g>
+  <defs>
+    <filter id="hero-blur" x="0" y="0" width="2847.03" height="1401.76" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="102" result="foregroundBlur"/>
+    </filter>
+  </defs>
+</svg>

@@ -1,0 +1,168 @@
+.missingZero {
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(255, 255, 255, 0.78);
+}
+
+@media (max-width: 639px) {
+  .mobileFrame {
+    height: calc(var(--mobile-visual-height, 100svh) - 70px) !important;
+    min-height: calc(var(--mobile-visual-height, 100svh) - 70px) !important;
+    max-height: calc(var(--mobile-visual-height, 100svh) - 70px) !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .mobileHeader {
+    flex: 0 0 clamp(50px, calc(var(--mobile-visual-height, 100svh) * 0.075), 62px);
+    height: auto !important;
+    padding-inline: 16px !important;
+  }
+
+  .mobileGrid {
+    flex: 1 1 auto;
+    min-height: 0 !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column;
+  }
+
+  .mobileArt {
+    order: 1 !important;
+    flex: 0 0 clamp(180px, calc(var(--mobile-visual-height, 100svh) * 0.3), 250px);
+    min-height: 0 !important;
+    padding: 10px 14px !important;
+  }
+
+  .mobileCopy {
+    order: 2 !important;
+    flex: 1 1 auto;
+    min-height: 0;
+    justify-content: center;
+    padding: clamp(12px, calc(var(--mobile-visual-height, 100svh) * 0.022), 20px) 20px !important;
+    border-top: 0 !important;
+  }
+
+  .mobileKicker {
+    margin-bottom: clamp(7px, calc(var(--mobile-visual-height, 100svh) * 0.012), 10px) !important;
+    font-size: 10px;
+  }
+
+  .mobileTitle {
+    font-size: clamp(44px, calc(var(--mobile-visual-height, 100svh) * 0.075), 64px) !important;
+    line-height: 0.84 !important;
+  }
+
+  .mobileBody {
+    margin-top: clamp(9px, calc(var(--mobile-visual-height, 100svh) * 0.017), 14px) !important;
+    font-size: clamp(13px, calc(var(--mobile-visual-height, 100svh) * 0.018), 15px) !important;
+    line-height: 1.4 !important;
+  }
+
+  .mobileActions {
+    margin-top: clamp(12px, calc(var(--mobile-visual-height, 100svh) * 0.022), 18px) !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .mobileButton {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 52px !important;
+    padding-inline: 24px !important;
+    gap: 8px !important;
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    line-height: 22px !important;
+    letter-spacing: -0.32px !important;
+    white-space: nowrap;
+  }
+
+  .mobileOutlinedButton {
+    padding: 1px !important;
+  }
+
+  .mobileButton svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .mobileButton > span {
+    gap: 8px !important;
+    padding-inline: 24px !important;
+  }
+}
+
+@media (max-width: 639px) and (max-height: 650px) {
+  .mobileHeader {
+    flex-basis: 46px;
+  }
+
+  .mobileArt {
+    flex-basis: 128px;
+    padding-block: 4px !important;
+  }
+
+  .mobileDigit {
+    font-size: clamp(116px, 36vw, 150px) !important;
+  }
+
+  .mobileCopy {
+    padding-block: 8px !important;
+  }
+
+  .mobileKicker {
+    margin-bottom: 6px !important;
+    font-size: 9px;
+  }
+
+  .mobileTitle {
+    font-size: 38px !important;
+  }
+
+  .mobileBody {
+    margin-top: 7px !important;
+    font-size: 12px !important;
+    line-height: 1.3 !important;
+  }
+
+  .mobileActions {
+    margin-top: 8px !important;
+  }
+
+}
+
+@media (max-width: 639px) and (max-height: 520px) {
+  .mobileArt {
+    flex-basis: 108px;
+  }
+
+  .mobileKicker {
+    display: none;
+  }
+
+  .mobileTitle {
+    font-size: 34px !important;
+  }
+
+  .mobileBody {
+    font-size: 11px !important;
+  }
+
+}
+
+@media (max-width: 359px) {
+  .mobileCopy {
+    padding-inline: 16px !important;
+  }
+
+  .mobileButton {
+    height: 48px !important;
+  }
+
+  .mobileOutlinedButton {
+    padding: 1px !important;
+  }
+
+}
