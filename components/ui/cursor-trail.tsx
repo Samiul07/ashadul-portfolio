@@ -1,6 +1,5 @@
 "use client";
 
-import { gsap } from "gsap";
 import { useEffect, useRef, useState } from "react";
 
 const trailLayers = [
@@ -40,13 +39,15 @@ export default function CursorTrail() {
     let followerFrame = 0;
     let trailFrame = 0;
     let hasStarted = false;
+    let disposed = false;
+    let gsapApi: typeof import("gsap")["gsap"] | null = null;
 
     const updateFollower = () => {
       const current = currentPoint.current;
       const target = targetPoint.current;
 
       if (current && target) {
-        gsap.to(current, {
+        gsapApi?.to(current, {
           duration: smoothingDuration / 1000,
           ease: "power2.out",
           x: target.x,
@@ -100,14 +101,19 @@ export default function CursorTrail() {
       targetPoint.current = { x: event.clientX, y: event.clientY };
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
+    void import("gsap").then(({ gsap }) => {
+      if (disposed) return;
+      gsapApi = gsap;
+      window.addEventListener("mousemove", handleMouseMove);
+    });
 
     return () => {
+      disposed = true;
       window.removeEventListener("mousemove", handleMouseMove);
       cancelAnimationFrame(followerFrame);
       cancelAnimationFrame(trailFrame);
       if (currentPoint.current) {
-        gsap.killTweensOf(currentPoint.current);
+        gsapApi?.killTweensOf(currentPoint.current);
       }
       paths.forEach((path) => {
         if (path) path.points = [];

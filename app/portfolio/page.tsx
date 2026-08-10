@@ -3,7 +3,7 @@ import PortfolioHeroSection from "@/components/portfolio/portfolio-hero-section"
 import PortfolioProjectsSection from "@/components/portfolio/portfolio-projects-section";
 import ContactFooterSection from "@/components/sections/contact-footer-section";
 import LogoListSection from "@/components/sections/logo-list-section";
-import HeroGradient from "@/components/background/hero-gradient";
+import HeroGradient from "@/components/background/desktop-hero-gradient";
 import MobileVisualViewport from "@/components/hero/mobile-visual-viewport";
 import styles from "@/app/portfolio/portfolio-hero.module.css";
 

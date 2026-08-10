@@ -148,8 +148,8 @@ function ProjectCard({
               alt=""
               className={`${project.imageClassName} object-fill max-[640px]:inset-0 max-[640px]:h-full max-[640px]:w-full max-[640px]:object-cover`}
               height={1067}
-              loading={project.index === "01" ? "eager" : "lazy"}
-              sizes="(max-width: 1199px) 100vw, 716px"
+              loading="lazy"
+              sizes="(max-width: 639px) calc(100vw - 40px), (max-width: 1199px) 100vw, 716px"
               src={project.desktopImage}
               width={1600}
             />

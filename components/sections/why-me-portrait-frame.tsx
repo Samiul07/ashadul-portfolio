@@ -47,7 +47,7 @@ export default function WhyMePortraitFrame({
           alt="Ashadul Islam"
           className={`absolute left-1/2 h-auto max-w-none -translate-x-1/2 select-none [filter:grayscale(1)_contrast(1.06)_brightness(.92)] ${portraitPosition}`}
           height={1537}
-          priority
+          loading="lazy"
           sizes={sizes}
           src="/images/why-me-blue-portrait.png"
           width={1023}
@@ -85,7 +85,7 @@ export default function WhyMePortraitFrame({
             alt=""
             className={`absolute left-1/2 h-auto max-w-none -translate-x-1/2 select-none [filter:saturate(.94)_contrast(1.03)] ${portraitPosition}`}
             height={1537}
-            priority
+            loading="lazy"
             sizes={sizes}
             src="/images/why-me-blue-portrait.png"
             width={1023}

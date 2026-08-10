@@ -140,27 +140,13 @@ export default function WorkProcessFolderRefinedSection() {
       <style>{`
         @media (max-width: 639px) {
           @keyframes mobile-process-stage-cycle {
-            0% {
-              opacity: 0;
-              visibility: visible;
-            }
-            1.875%, 25% {
-              opacity: 1;
-              visibility: visible;
-            }
-            26.875% {
-              opacity: 0;
-              visibility: visible;
-            }
-            26.9%, 100% {
-              opacity: 0;
-              visibility: hidden;
-            }
+            0%, 1.875%, 25% { opacity: 1; }
+            26.875%, 100% { opacity: 0; }
           }
 
           @keyframes mobile-process-tab-cycle {
-            0%, 24.99% { color: #ff1e00; }
-            25%, 100% { color: rgba(255, 255, 255, 0.22); }
+            0%, 24.99% { opacity: 1; }
+            25%, 100% { opacity: 0.35; }
           }
 
           @keyframes mobile-process-progress-cycle {
@@ -174,7 +160,6 @@ export default function WorkProcessFolderRefinedSection() {
             animation: mobile-process-stage-cycle 16s linear infinite;
             animation-delay: var(--stage-delay);
             opacity: 0;
-            visibility: hidden;
           }
 
           [data-mobile-process-tab] {
@@ -227,7 +212,6 @@ export default function WorkProcessFolderRefinedSection() {
           [data-mobile-process]:has(input:checked) [data-mobile-process-stage],
           [data-mobile-process]:has(input:checked) [data-mobile-process-output] {
             opacity: 0;
-            visibility: hidden;
           }
 
           [data-mobile-process]:has(input:checked) [data-mobile-process-tab] {

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import heroStyles from "@/app/portfolio/portfolio-hero.module.css";
-import HeroGradient from "@/components/background/hero-gradient";
+import HeroGradient from "@/components/background/desktop-hero-gradient";
 import BlogArticleSection from "@/components/blog/blog-article-section";
 import CalloutNotesSection from "@/components/sections/callout-notes-section";
 import ContactFooterSection from "@/components/sections/contact-footer-section";

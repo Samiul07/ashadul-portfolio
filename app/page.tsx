@@ -1,8 +1,8 @@
 import Image from "next/image";
-import FeedbackWidget from "@/components/hero/feedback-widget";
+import FeedbackWidget from "@/components/hero/desktop-feedback-widget";
 import AvailabilityBadge from "@/components/hero/availability-badge";
 import MobileVisualViewport from "@/components/hero/mobile-visual-viewport";
-import HeroGradient from "@/components/background/hero-gradient";
+import HeroGradient from "@/components/background/desktop-hero-gradient";
 import CalloutNotesSection from "@/components/sections/callout-notes-section";
 import ContactFooterSection from "@/components/sections/contact-footer-section";
 import LogoListSection from "@/components/sections/logo-list-section";
@@ -213,8 +213,9 @@ function HeroSection() {
           alt=""
           className={`absolute right-0 bottom-0 h-[939px] w-[697px] max-[640px]:h-[621px] max-[640px]:w-[460px] select-none object-cover ${heroStyles.portraitImage}`}
           height={939}
+          fetchPriority="high"
           priority
-          sizes="(max-width: 639px) 460px, 697px"
+          sizes="(max-width: 639px) calc(100vw - 40px), 697px"
           src="/images/magnific-portrait.png"
           width={697}
         />

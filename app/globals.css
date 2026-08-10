@@ -168,6 +168,13 @@
   }
 }
 
+@media (max-width: 767px) {
+  .page-load-curtain {
+    display: none;
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .page-load-curtain {
     display: none;

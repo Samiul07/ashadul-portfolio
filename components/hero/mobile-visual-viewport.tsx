@@ -33,26 +33,30 @@ export default function MobileVisualViewport() {
       const compact = currentHeight < 680;
       const roomy = currentHeight >= 760;
 
+      // Read all geometry before writing CSS variables. Writing first would
+      // invalidate layout and make the following offsetHeight reads force a
+      // synchronous reflow on mobile.
+      const content = document.querySelector<HTMLElement>("[data-mobile-hero-content]");
+      const lead = document.querySelector<HTMLElement>("[data-mobile-hero-lead]");
+      const availability = document.querySelector<HTMLElement>("[data-mobile-hero-availability]");
+      let top: number | null = null;
+
+      if (content && lead && currentWidth < 640) {
+        const availableHeight = currentHeight - 70;
+        const leadHeight = lead.offsetHeight;
+        const availabilityHeight = availability ? availability.offsetHeight : 24;
+        const bottomOffset = currentWidth < 360 ? 32 : 40;
+        const remaining = availableHeight - leadHeight - availabilityHeight - bottomOffset;
+        top = Math.max(32, Math.min(120, remaining / 2));
+      }
+
       // Keep the initially visible mobile viewport locked. Expanding and
       // collapsing browser chrome must not move the Hero's bottom boundary.
       root.style.setProperty(viewportProperty, `${currentHeight}px`);
       root.style.setProperty(gapProperty, `${roomy ? "40px" : compact ? "28px" : "32px"}`);
       root.style.setProperty(actionGapProperty, `${roomy ? "36px" : "32px"}`);
       root.style.setProperty(bottomProperty, `${currentWidth < 360 ? "32px" : "40px"}`);
-
-      // Calculate dynamic top padding to center the content group mathematically on mobile
-      const content = document.querySelector<HTMLElement>("[data-mobile-hero-content]");
-      const lead = document.querySelector<HTMLElement>("[data-mobile-hero-lead]");
-      const availability = document.querySelector<HTMLElement>("[data-mobile-hero-availability]");
-
-      if (content && lead && currentWidth < 640) {
-        const availableHeight = currentHeight - 70; // matches mobile section height lock (100svh - 70px)
-        const leadHeight = lead.offsetHeight;
-        const availabilityHeight = availability ? availability.offsetHeight : 24;
-        const bottomOffset = currentWidth < 360 ? 32 : 40;
-
-        const remaining = availableHeight - leadHeight - availabilityHeight - bottomOffset;
-        const top = Math.max(32, Math.min(120, remaining / 2));
+      if (top !== null) {
         root.style.setProperty(topProperty, `${Math.round(top)}px`);
       } else {
         root.style.removeProperty(topProperty);

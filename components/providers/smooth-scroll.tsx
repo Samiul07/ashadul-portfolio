@@ -1,7 +1,7 @@
 "use client";
 
-import Lenis from "lenis";
 import { useEffect, type ReactNode } from "react";
+import type Lenis from "lenis";
 
 export default function SmoothScroll({ children }: { children: ReactNode }) {
   useEffect(() => {
@@ -12,22 +12,28 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
 
     if (reducedMotion || isMobile) return;
 
-    const lenis = new Lenis({
-      anchors: { offset: -86 },
-      autoRaf: true,
-      duration: 1.05,
-      smoothWheel: true,
-      stopInertiaOnNavigate: true,
-      syncTouch: false,
-      wheelMultiplier: 0.82,
+    let disposed = false;
+    let lenis: Lenis | undefined;
+    const portfolioWindow = window as Window & { __portfolioLenis?: Lenis };
+
+    void import("lenis").then(({ default: Lenis }) => {
+      if (disposed) return;
+      lenis = new Lenis({
+        anchors: { offset: -86 },
+        autoRaf: true,
+        duration: 1.05,
+        smoothWheel: true,
+        stopInertiaOnNavigate: true,
+        syncTouch: false,
+        wheelMultiplier: 0.82,
+      });
+      portfolioWindow.__portfolioLenis = lenis;
     });
 
-    const portfolioWindow = window as Window & { __portfolioLenis?: Lenis };
-    portfolioWindow.__portfolioLenis = lenis;
-
     return () => {
+      disposed = true;
       delete portfolioWindow.__portfolioLenis;
-      lenis.destroy();
+      lenis?.destroy();
     };
   }, []);
 
