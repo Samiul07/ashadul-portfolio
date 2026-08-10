@@ -7,5 +7,9 @@ export const dynamic = 'force-static'
 export { metadata, viewport } from 'next-sanity/studio'
 
 export default function StudioPage() {
-  return <NextStudio config={config} />
+  return (
+    <div className="h-full min-h-0 w-full">
+      <NextStudio config={config} />
+    </div>
+  )
 }

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, type RefObject } from "react";
 import Image from "next/image";
 import SectionCrosshairs from "@/components/ui/section-crosshairs";
-import styles from "@/app/portfolio/portfolio-hero.module.css";
+import styles from "@/app/(site)/portfolio/portfolio-hero.module.css";
 
 const frameWidth =
   "w-[1400px] max-[1439px]:w-[calc(100%_-_48px)] max-[640px]:w-[calc(100%_-_40px)]";

@@ -4,11 +4,6 @@ import {
   Playfair_Display,
 } from "next/font/google";
 import localFont from "next/font/local";
-import Navbar from "@/components/layout/navbar";
-import RevealMotion from "@/components/providers/reveal-motion";
-import SmoothScroll from "@/components/providers/smooth-scroll";
-import CursorTrail from "@/components/ui/cursor-trail";
-import PageLoadCurtain from "@/components/ui/page-load-curtain";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -55,16 +50,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={`${playfair.variable} ${bigShoulders.variable} ${switzer.variable} overflow-x-clip bg-background [font-synthesis-weight:none] [scrollbar-width:none]`}>
       <body suppressHydrationWarning className="m-0 overflow-x-clip bg-background font-sans text-foreground antialiased">
-      <Navbar />
-      <SmoothScroll>
-        <div className="relative">
-          <main>{children}</main>
-        </div>
-      </SmoothScroll>
-      <RevealMotion />
-      <CursorTrail />
-      <PageLoadCurtain />
-    </body>
+        {children}
+      </body>
     </html>
   );
 }
