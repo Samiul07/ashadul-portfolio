@@ -291,7 +291,8 @@ export default function Navbar() {
                 alt="Ashadul"
                 className="block h-10 w-[131px] object-contain object-left max-[1200px]:h-9 max-[1200px]:w-[118px] max-[359px]:w-[104px]"
                 height={40}
-                priority
+                loading="eager"
+                quality={60}
                 src="/images/logo.png"
                 width={131}
               />

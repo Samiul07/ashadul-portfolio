@@ -20,6 +20,11 @@ const playfair = Playfair_Display({
 });
 
 const bigShoulders = Big_Shoulders({
+  // The opening curtain covers the short font-loading window. Keeping the
+  // display face blocked during that window prevents the oversized hero copy
+  // from painting in a metrically different fallback and shifting afterward.
+  display: "block",
+  fallback: ["Impact"],
   variable: "--font-display",
   subsets: ["latin"],
   weight: ["500", "600", "700", "800", "900"],

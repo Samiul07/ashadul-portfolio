@@ -30,6 +30,8 @@ type ProjectMeta = {
 type Project = {
   description: string;
   desktopImage: string;
+  desktopImageHeight: number;
+  desktopImageWidth: number;
   imageClassName: string;
   index: string;
   meta: ProjectMeta[];
@@ -42,6 +44,8 @@ const projects: Project[] = [
     description:
       "A comprehensive UX overhaul of an enterprise localization platform, streamlining the translation pipeline to improve client onboarding and task completion rates.",
     desktopImage: "/images/work-day-translations-desktop.webp",
+    desktopImageHeight: 1067,
+    desktopImageWidth: 1600,
     imageClassName:
       "absolute top-[-2.86%] left-[-0.27%] h-[105.73%] w-[100.55%] max-w-none",
     index: "01",
@@ -58,6 +62,8 @@ const projects: Project[] = [
     description:
       "An end-to-end healthcare platform connecting patients' wearable fitness data with a diagnostic web dashboard, enabling doctors to monitor remote health metrics.",
     desktopImage: "/images/work-metabolix-desktop.webp",
+    desktopImageHeight: 1100,
+    desktopImageWidth: 1600,
     imageClassName:
       "absolute top-[-3.79%] left-[-9.36%] h-[128.72%] w-[118.72%] max-w-none",
     index: "02",
@@ -74,6 +80,8 @@ const projects: Project[] = [
     description:
       "An AI-powered journaling application designed for the global market, utilizing calming interfaces and habit-loop mechanics to support daily mental well-being.",
     desktopImage: "/images/work-betr-desktop.webp",
+    desktopImageHeight: 1014,
+    desktopImageWidth: 1600,
     imageClassName: "absolute inset-0 h-full w-full max-w-none",
     index: "03",
     meta: [
@@ -89,6 +97,8 @@ const projects: Project[] = [
     description:
       "A consumer-facing solar energy marketplace. Designed a high-converting e-commerce interface that simplifies the purchasing process for sustainable home power solutions.",
     desktopImage: "/images/work-solence-desktop.webp",
+    desktopImageHeight: 999,
+    desktopImageWidth: 1600,
     imageClassName:
       "absolute top-[-1.1%] left-[-3.45%] h-[105.29%] w-[106.9%] max-w-none",
     index: "04",
@@ -147,11 +157,11 @@ function ProjectCard({
             <Image
               alt=""
               className={`${project.imageClassName} object-fill max-[640px]:inset-0 max-[640px]:h-full max-[640px]:w-full max-[640px]:object-cover`}
-              height={1067}
+              height={project.desktopImageHeight}
               loading="lazy"
               sizes="(max-width: 639px) calc(100vw - 40px), (max-width: 1199px) 100vw, 716px"
               src={project.desktopImage}
-              width={1600}
+              width={project.desktopImageWidth}
             />
           </picture>
           <Image

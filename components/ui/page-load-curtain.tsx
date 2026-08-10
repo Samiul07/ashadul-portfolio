@@ -26,7 +26,7 @@ export default function PageLoadCurtain() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsComplete(true);
-    }, 2500);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [lastPathname]);

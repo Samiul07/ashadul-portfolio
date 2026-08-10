@@ -55,7 +55,7 @@
   height: 100svh;
   overflow: hidden;
   pointer-events: auto;
-  animation: page-load-curtain-cleanup 120ms linear 2200ms forwards;
+  animation: page-load-curtain-cleanup 80ms linear 880ms forwards;
 }
 
 .page-load-curtain__column {
@@ -72,31 +72,32 @@
   width: 101%;
   height: 100%;
   background: #f5f5f5;
-  transform: translateZ(0);
-  will-change: height;
-  animation: page-load-curtain-retract 1800ms cubic-bezier(0.88, 0, 0, 1)
+  transform: translateZ(0) scaleY(1);
+  transform-origin: top center;
+  will-change: transform;
+  animation: page-load-curtain-retract 680ms cubic-bezier(0.76, 0, 0.24, 1)
     forwards;
 }
 
 .page-load-curtain__panel--center {
-  animation-delay: 200ms;
+  animation-delay: 80ms;
 }
 
 .page-load-curtain__panel--inner {
-  animation-delay: 300ms;
+  animation-delay: 130ms;
 }
 
 .page-load-curtain__panel--outer {
-  animation-delay: 400ms;
+  animation-delay: 180ms;
 }
 
 @keyframes page-load-curtain-retract {
   from {
-    height: 100%;
+    transform: translateZ(0) scaleY(1);
   }
 
   to {
-    height: 1px;
+    transform: translateZ(0) scaleY(0);
   }
 }
 

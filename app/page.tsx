@@ -215,6 +215,7 @@ function HeroSection() {
           height={939}
           fetchPriority="high"
           priority
+          quality={60}
           sizes="(max-width: 639px) calc(100vw - 40px), 697px"
           src="/images/magnific-portrait.png"
           width={697}
