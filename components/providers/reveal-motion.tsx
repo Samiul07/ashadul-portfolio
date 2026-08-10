@@ -113,9 +113,7 @@ export default function RevealMotion() {
     const heroCopyGroup = heroHeading?.parentElement?.parentElement;
     const heroContent = heroCopyGroup?.parentElement;
     const heroFrame = heroContent?.parentElement;
-    const heroPortrait = document.querySelector(
-      '#home img[src*="magnific-portrait"]',
-    )?.parentElement;
+    const heroPortrait = document.querySelector("#home [data-hero-portrait]");
 
     register(document.querySelector('nav[aria-label="Primary navigation"]'), {
       delay: 20,
