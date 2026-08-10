@@ -15,7 +15,7 @@ export default function HeroGradient() {
         3. This allows the GPU to render and cache the vector texture once and perform the animated transforms at a buttery smooth 60fps/120fps with zero layout/repaint lag during scroll.
       */}
       <div
-        className="pointer-events-none absolute top-[20px] left-1/2 z-[105] h-[1438px] w-[1600px] -translate-x-1/2 overflow-visible select-none opacity-100 min-[768px]:z-[252] min-[641px]:max-[1200px]:top-[clamp(20px,calc(100svh-890px),230px)] max-[640px]:hidden"
+        className="pointer-events-none absolute top-[clamp(20px,calc(100svh-760px),160px)] left-1/2 z-[105] h-[1438px] w-[1600px] -translate-x-1/2 overflow-visible select-none opacity-100 min-[768px]:z-[252] min-[641px]:max-[1200px]:top-[clamp(20px,calc(100svh-890px),230px)] max-[640px]:hidden"
         style={{
           transform: "translate3d(0, 0, 0)",
           willChange: "transform",
