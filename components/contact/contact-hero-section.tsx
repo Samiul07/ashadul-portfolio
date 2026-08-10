@@ -182,11 +182,11 @@ export default function ContactHeroSection() {
           </span>
           <div className="min-w-0 flex-1">
             <p className="m-0 font-sans text-sm font-semibold tracking-[-0.15px] text-white">
-              {toastStatus === "success" ? "Message sent." : "Message not sent."}
+              {toastStatus === "success" ? "Message sent!" : "Message not sent."}
             </p>
             <p className="m-0 mt-1 font-sans text-sm leading-[1.35] text-white/54">
               {toastStatus === "success"
-                ? "I’ll be in touch soon."
+                ? "I'll get back to you within 24 hours."
                 : "Please try again in a moment."}
             </p>
           </div>
