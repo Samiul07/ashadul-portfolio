@@ -171,7 +171,8 @@ export default function ProjectGallerySection() {
                 alt={card.title}
                 className="object-cover"
                 fill
-                loading={card.id <= 3 ? "eager" : "lazy"}
+                loading="lazy"
+                quality={60}
                 sizes="(max-width: 639px) 42vw, 30vw"
                 src={card.image.replace(".png", "-mobile.webp")}
               />

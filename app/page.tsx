@@ -1,4 +1,3 @@
-import Image from "next/image";
 import FeedbackWidget from "@/components/hero/desktop-feedback-widget";
 import AvailabilityBadge from "@/components/hero/availability-badge";
 import MobileVisualViewport from "@/components/hero/mobile-visual-viewport";
@@ -204,22 +203,22 @@ function HeroSection() {
       <div
         aria-hidden="true"
         className={`pointer-events-none absolute right-[max(calc((100vw-1400px)/2),24px)] bottom-[48px] z-[130] h-[939px] w-[697px] overflow-hidden min-[768px]:z-[253] min-[641px]:max-[1200px]:right-[-140px] max-[1200px]:opacity-55 max-[640px]:right-[-220px] max-[640px]:bottom-auto max-[640px]:left-auto max-[640px]:z-[130] max-[640px]:h-[621px] max-[640px]:w-[460px] ${heroStyles.portrait}`}
-        style={{
-          transform: "translate3d(0, 0, 0)",
-          willChange: "transform",
-        }}
       >
-        <Image
-          alt=""
-          className={`absolute right-0 bottom-0 h-[939px] w-[697px] max-[640px]:h-[621px] max-[640px]:w-[460px] select-none object-cover ${heroStyles.portraitImage}`}
-          height={939}
-          fetchPriority="high"
-          priority
-          quality={60}
-          sizes="(max-width: 639px) calc(100vw - 40px), 697px"
-          src="/images/magnific-portrait.png"
-          width={697}
-        />
+        <picture>
+          <source
+            media="(max-width: 639px)"
+            srcSet="/images/magnific-portrait-hero-mobile.avif"
+          />
+          <img
+            alt=""
+            className={`absolute right-0 bottom-0 h-[939px] w-[697px] max-[640px]:h-[621px] max-[640px]:w-[460px] select-none object-cover ${heroStyles.portraitImage}`}
+            decoding="sync"
+            fetchPriority="high"
+            height={939}
+            src="/images/magnific-portrait-hero.avif"
+            width={697}
+          />
+        </picture>
       </div>
       <div aria-hidden="true" className={heroStyles.mobileAtmosphere}>
         <span
@@ -388,6 +387,22 @@ function StatsSection() {
 export default function Home() {
   return (
     <>
+      <link
+        as="image"
+        fetchPriority="high"
+        href="/images/magnific-portrait-hero-mobile.avif"
+        media="(max-width: 639px)"
+        rel="preload"
+        type="image/avif"
+      />
+      <link
+        as="image"
+        fetchPriority="high"
+        href="/images/magnific-portrait-hero.avif"
+        media="(min-width: 640px)"
+        rel="preload"
+        type="image/avif"
+      />
       <HeroSection />
       <StatsSection />
       <LogoListSection />

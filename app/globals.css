@@ -20,6 +20,39 @@
 }
 
 /*
+ * Lenis never runs below 768px. Keeping its tiny compatibility rules here
+ * removes a separate render-blocking stylesheet from the mobile critical path.
+ */
+@media (min-width: 768px) {
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  .lenis:not(.lenis-autoToggle).lenis-stopped {
+    overflow: clip;
+  }
+
+  .lenis [data-lenis-prevent],
+  .lenis [data-lenis-prevent-wheel],
+  .lenis [data-lenis-prevent-touch],
+  .lenis [data-lenis-prevent-vertical],
+  .lenis [data-lenis-prevent-horizontal] {
+    overscroll-behavior: contain;
+  }
+
+  .lenis.lenis-smooth iframe {
+    pointer-events: none;
+  }
+
+  .lenis.lenis-autoToggle {
+    transition-property: overflow;
+    transition-duration: 1ms;
+    transition-behavior: allow-discrete;
+  }
+}
+
+/*
  * The mobile navigation is controlled by a native details/summary disclosure.
  * This path works before React hydrates and even if the client bundle fails.
  */

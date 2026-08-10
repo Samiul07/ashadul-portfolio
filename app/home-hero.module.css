@@ -16,7 +16,11 @@
     flex-direction: column;
     justify-content: flex-start;
     gap: 0;
-    padding-top: var(--mobile-hero-top, 64px);
+    /* Match the first JS measurement so hydration does not move the lead copy. */
+    padding-top: var(
+      --mobile-hero-top,
+      clamp(32px, calc((100svh - 572px) / 2), 120px)
+    );
     padding-bottom: calc(
       var(--mobile-hero-bottom, 20px) + env(safe-area-inset-bottom, 0px)
     );
@@ -58,22 +62,6 @@
   .portrait {
     top: -40px;
     opacity: 1;
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      #000 0%,
-      #000 58%,
-      rgba(0, 0, 0, 0.84) 70%,
-      rgba(0, 0, 0, 0.3) 88%,
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      #000 0%,
-      #000 58%,
-      rgba(0, 0, 0, 0.84) 70%,
-      rgba(0, 0, 0, 0.3) 88%,
-      transparent 100%
-    );
   }
 
   .portraitImage {

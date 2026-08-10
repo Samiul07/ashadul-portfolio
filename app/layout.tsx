@@ -9,25 +9,22 @@ import RevealMotion from "@/components/providers/reveal-motion";
 import SmoothScroll from "@/components/providers/smooth-scroll";
 import CursorTrail from "@/components/ui/cursor-trail";
 import PageLoadCurtain from "@/components/ui/page-load-curtain";
-import "lenis/dist/lenis.css";
 import "./globals.css";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
-  style: ["normal", "italic"],
-  weight: ["400", "500", "600", "700"],
+  style: "italic",
+  weight: "400",
 });
 
 const bigShoulders = Big_Shoulders({
-  // The opening curtain covers the short font-loading window. Keeping the
-  // display face blocked during that window prevents the oversized hero copy
-  // from painting in a metrically different fallback and shifting afterward.
-  display: "block",
+  // Impact is a close metric fallback for the display face, so text can paint
+  // immediately on slow mobile connections without a hidden-font delay.
+  display: "swap",
   fallback: ["Impact"],
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800", "900"],
 });
 
 const switzer = localFont({

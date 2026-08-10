@@ -115,8 +115,8 @@ function LogoCell({ logo }: { logo: BrandLogo }) {
         alt=""
         className="block max-w-none select-none"
         height={logoSourceHeight}
-        // Eager: lazy images inside a translating marquee stay unloaded on mobile.
-        loading="eager"
+        fetchPriority="low"
+        loading="lazy"
         decoding="async"
         src={logo.src}
         style={{ height: `${logoDisplayHeight}px`, width: `${scaledWidth}px` }}

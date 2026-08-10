@@ -24,8 +24,6 @@ export default function MobileVisualViewport() {
     let lastWidth = readViewportWidth();
     let lockedHeight = readStableViewportHeight();
     let orientationTimer = 0;
-    let disposed = false;
-
     const updateLayout = () => {
       const currentWidth = readViewportWidth();
       const currentHeight = lockedHeight;
@@ -87,14 +85,7 @@ export default function MobileVisualViewport() {
 
     window.addEventListener("resize", handleResize);
     window.addEventListener("orientationchange", handleOrientationChange);
-    document.fonts.ready
-      .then(() => {
-        if (!disposed) updateLayout();
-      })
-      .catch(() => undefined);
-
     return () => {
-      disposed = true;
       window.clearTimeout(orientationTimer);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("orientationchange", handleOrientationChange);

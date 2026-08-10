@@ -140,8 +140,8 @@ export default function WorkProcessFolderRefinedSection() {
       <style>{`
         @media (max-width: 639px) {
           @keyframes mobile-process-stage-cycle {
-            0%, 1.875%, 25% { opacity: 1; }
-            26.875%, 100% { opacity: 0; }
+            0%, 24.99% { opacity: 1; }
+            25%, 100% { opacity: 0; }
           }
 
           @keyframes mobile-process-tab-cycle {
@@ -157,7 +157,7 @@ export default function WorkProcessFolderRefinedSection() {
 
           [data-mobile-process-stage],
           [data-mobile-process-output] {
-            animation: mobile-process-stage-cycle 16s linear infinite;
+            animation: mobile-process-stage-cycle 16s steps(1, end) infinite;
             animation-delay: var(--stage-delay);
             opacity: 0;
           }
@@ -539,7 +539,7 @@ export default function WorkProcessFolderRefinedSection() {
           </div>
 
           <button
-            aria-label="Press and hold to pause automatic stage rotation"
+            aria-label="Hold anywhere to pause automatic stage rotation"
             className="mt-[42px] flex w-full cursor-pointer items-center justify-center border-0 bg-transparent p-0 text-center font-overline text-[11px] leading-none tracking-[0.12em] text-white/48 uppercase transition-colors duration-150 focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-primary"
             data-mobile-process-hint
             type="button"
