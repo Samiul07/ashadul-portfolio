@@ -81,14 +81,14 @@ const socials: Array<{
 }> = [
   {
     height: 20,
-    href: "https://x.com",
+    href: "https://x.com/Ashadulislamsam",
     icon: "/images/social-x.svg",
     label: "X",
     width: 20,
   },
   {
     height: 22,
-    href: "https://linkedin.com",
+    href: "https://www.linkedin.com/in/ashadul07/",
     icon: "/images/social-linkedin.svg",
     label: "LinkedIn",
     width: 22,
@@ -96,14 +96,14 @@ const socials: Array<{
   {
     className: "[transform:scaleY(-1)]",
     height: 15.5,
-    href: "https://behance.net",
+    href: "https://www.behance.net/asadul",
     icon: "/images/figma-social-behance.svg",
     label: "Behance",
     width: 21.5,
   },
   {
     height: 22,
-    href: "https://dribbble.com",
+    href: "https://dribbble.com/vislume",
     icon: "/images/social-dribbble.svg",
     label: "Dribbble",
     width: 22,
@@ -111,7 +111,7 @@ const socials: Array<{
   {
     className: "[transform:scaleY(-1)]",
     height: 20.5,
-    href: "https://instagram.com",
+    href: "https://www.instagram.com/super_samiul/",
     icon: "/images/figma-social-instagram.svg",
     label: "Instagram",
     width: 20.5,

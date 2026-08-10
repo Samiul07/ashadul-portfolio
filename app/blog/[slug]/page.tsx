@@ -120,8 +120,8 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
       url: `${siteUrl}/#about`,
       sameAs: [
         "https://github.com/ashadul",
-        "https://linkedin.com/in/ashadul",
-        "https://twitter.com/ashadul_ux",
+        "https://www.linkedin.com/in/ashadul07/",
+        "https://x.com/Ashadulislamsam",
       ],
     },
     publisher: {

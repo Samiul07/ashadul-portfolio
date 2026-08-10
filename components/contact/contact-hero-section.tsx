@@ -18,10 +18,10 @@ const whatsappHref =
   "https://wa.me/8801750593324?text=Hi%20Ashadul%2C%20I%20just%20viewed%20your%20portfolio%20and%20I%27d%20love%20to%20discuss%20a%20potential%20project";
 
 const socialLinks = [
-  { href: "https://linkedin.com", label: "LinkedIn" },
-  { href: "https://dribbble.com", label: "Dribbble" },
-  { href: "https://behance.net", label: "Behance" },
-  { href: "https://instagram.com", label: "Instagram" },
+  { href: "https://www.linkedin.com/in/ashadul07/", label: "LinkedIn" },
+  { href: "https://dribbble.com/vislume", label: "Dribbble" },
+  { href: "https://www.behance.net/asadul", label: "Behance" },
+  { href: "https://www.instagram.com/super_samiul/", label: "Instagram" },
 ];
 
 function ArrowUpRight({ className = "h-6 w-6" }: { className?: string }) {
@@ -253,7 +253,7 @@ export default function ContactHeroSection() {
                     <a
                       className="font-sans text-xs font-medium tracking-[-0.1px] text-white/62 no-underline transition-colors hover:text-white focus-visible:text-white focus-visible:outline-none max-[640px]:text-[13px]"
                       href={social.href}
-                      rel="noreferrer"
+                      rel="noopener noreferrer"
                       target="_blank"
                     >
                       {social.label}
