@@ -8,8 +8,6 @@ import SectionCrosshairs from "@/components/ui/section-crosshairs";
 const frameWidth =
   "w-[1400px] max-[1439px]:w-[calc(100%_-_48px)] max-[640px]:w-[calc(100%_-_40px)]";
 const frameMargin = "ml-[calc((100vw-1400px)/2)] max-[1439px]:mx-auto";
-const buttonShape =
-  "[clip-path:polygon(0_0,calc(100%_-_10px)_0,100%_10px,100%_100%,10px_100%,0_calc(100%_-_10px))]";
 const sidebarClip =
   "[clip-path:polygon(0_0,calc(100%_-_14px)_0,100%_14px,100%_100%,14px_100%,0_calc(100%_-_14px))]";
 
@@ -201,9 +199,9 @@ function countForCategory(categoryId: CategoryId): number {
   return projects.filter((p) => p.categories.includes(categoryId)).length;
 }
 
-function ArrowUpRight() {
+function ArrowUpRight({ className = "h-4 w-4" }: { className?: string }) {
   return (
-    <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
+    <svg aria-hidden="true" className={className} fill="none" viewBox="0 0 24 24">
       <path
         d="M7 17L17 7M17 7H8M17 7V16"
         stroke="currentColor"
@@ -230,18 +228,16 @@ function ChevronDown({ className = "h-4 w-4" }: { className?: string }) {
 }
 
 function ProjectCard({ project }: { project: Project }) {
-  const reduceMotion = useReducedMotion();
-
   return (
     <a
-      className="group flex min-w-0 flex-col border border-white/18 bg-transparent p-2 text-white no-underline outline-none transition-colors duration-300 hover:border-white/38 focus-visible:border-white focus-visible:ring-2 focus-visible:ring-white max-[640px]:p-0 max-[640px]:border-white/14"
+      className="group flex min-w-0 flex-col border border-white/18 bg-transparent p-2 text-white no-underline outline-none transition-colors duration-500 hover:border-white/38 focus-visible:border-white focus-visible:ring-2 focus-visible:ring-white max-[640px]:border-white/14 max-[640px]:p-0"
       href="#contact"
     >
       {/* Image Thumbnail with Hover Button Overlay — locked 4/3 aspect ratio */}
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-900">
         <Image
           alt={project.title}
-          className={`transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.035] motion-reduce:transition-none ${
+          className={`transition-[transform,filter] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.035] group-hover:brightness-[0.52] group-hover:saturate-[0.72] group-focus-visible:scale-[1.035] group-focus-visible:brightness-[0.52] group-focus-visible:saturate-[0.72] motion-reduce:transition-none ${
             project.imageClassName ?? "object-cover"
           }`}
           fill
@@ -250,20 +246,30 @@ function ProjectCard({ project }: { project: Project }) {
           src={project.image}
         />
 
-        {/* Hover Button Overlay */}
-        <div
-          className={`absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[2px] opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${
-            reduceMotion ? "" : "motion-safe:transition-opacity"
-          }`}
-        >
+        {/* A single typographic action keeps the artwork and hierarchy uncluttered. */}
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden opacity-0 transition-opacity duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none">
           <span
-            className={`inline-flex h-[44px] items-center justify-center gap-2 bg-white px-5 font-sans text-sm font-medium tracking-[-0.2px] text-black shadow-lg transition-transform duration-300 scale-95 group-hover:scale-100 ${buttonShape}`}
-          >
-            View Project
-            <span className="inline-flex h-4 w-4 items-center justify-center">
-              <ArrowUpRight />
+            aria-hidden="true"
+            className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.3)_100%)]"
+          />
+
+          <span className="relative flex translate-y-4 items-start gap-3 opacity-0 blur-[4px] transition-[translate,opacity,filter] duration-600 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:opacity-100 group-hover:blur-none group-focus-visible:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:blur-none motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:blur-none motion-reduce:transition-none">
+            <span className="relative pb-4 font-display text-[clamp(72px,7vw,98px)] leading-[0.78] font-black tracking-[-0.045em] text-white uppercase">
+              View
+              <span
+                aria-hidden="true"
+                className="absolute inset-x-0 bottom-0 h-[3px] origin-left scale-x-0 bg-primary transition-transform delay-100 duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 group-focus-visible:scale-x-100 motion-reduce:scale-x-100 motion-reduce:transition-none"
+              />
+            </span>
+            <span className="mt-[-2px] inline-flex h-10 w-10 items-center justify-center text-primary transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1 group-hover:-translate-y-1 group-focus-visible:translate-x-1 group-focus-visible:-translate-y-1 motion-reduce:transition-none">
+              <ArrowUpRight className="h-10 w-10" />
             </span>
           </span>
+
+          <span
+            aria-hidden="true"
+            className="absolute right-0 bottom-0 left-0 h-[3px] origin-left scale-x-0 bg-primary transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 group-focus-visible:scale-x-100 motion-reduce:scale-x-100 motion-reduce:transition-none"
+          />
         </div>
       </div>
 
@@ -370,7 +376,7 @@ export default function PortfolioProjectsSection() {
                     <span className="font-sans text-sm tracking-[-0.2px] whitespace-nowrap max-[1024px]:text-[14px]">
                       {isActive && (
                         <span className="hidden text-primary font-bold mr-1.5 max-[1024px]:inline">
-                          //{" "}
+                          {"// "}
                         </span>
                       )}
                       {category.label}
@@ -378,7 +384,7 @@ export default function PortfolioProjectsSection() {
 
                     {/* Count badge */}
                     <span
-                      className={`font-display text-xs font-bold tracking-tight transition-all duration-200 ${
+                      className={`font-display text-lg font-bold leading-none tracking-tight transition-all duration-200 ${
                         isActive
                           ? "text-primary max-[1024px]:text-primary opacity-100"
                           : isAll

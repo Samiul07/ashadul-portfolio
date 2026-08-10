@@ -18,9 +18,9 @@ function isRendered(element: HTMLElement) {
   const style = window.getComputedStyle(element);
 
   return (
-    element.getClientRects().length > 0 &&
     style.display !== "none" &&
-    style.visibility !== "hidden"
+    style.visibility !== "hidden" &&
+    element.isConnected
   );
 }
 
@@ -262,15 +262,18 @@ export default function RevealMotion() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting || entry.boundingClientRect.bottom < 0) {
+          if (entry.isIntersecting) {
             entry.target.setAttribute(revealedAttribute, "true");
             observer.unobserve(entry.target);
           }
         });
       },
       {
-        rootMargin: "0px 0px -12% 0px",
-        threshold: 0.08,
+        // Preload reveal: expand the observation area so elements reveal
+        // slightly before entering the viewport, regardless of device or
+        // browser viewport size. Fast scrolls no longer outrun the reveal.
+        rootMargin: "0px 0px 20% 0px",
+        threshold: 0.01,
       },
     );
 

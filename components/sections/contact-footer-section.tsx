@@ -276,7 +276,7 @@ export default function ContactFooterSection({
   const reduceMotion = useReducedMotion();
 
   return (
-    <div className="relative z-[5] bg-black">
+    <div className="relative z-[1] bg-black">
       {/* Render top crosshairs outside the overflow-clip section to prevent clipping of the top leg */}
       <div
         aria-hidden="true"
@@ -287,7 +287,7 @@ export default function ContactFooterSection({
       </div>
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-[-400px] bottom-0 z-0 overflow-hidden"
+        className="pointer-events-none absolute inset-x-0 top-[-400px] bottom-0 -z-10 overflow-hidden"
         style={{
           maskImage: "linear-gradient(to bottom, transparent 0%, black 280px, black 100%)",
           WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 280px, black 100%)",

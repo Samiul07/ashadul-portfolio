@@ -50,7 +50,7 @@ export default function PortfolioPage() {
           <PortfolioHeroSection />
         </div>
 
-        <div className="relative z-[1]">
+        <div className="relative z-[10]">
           <LogoListSection transparent />
           <PortfolioProjectsSection />
         </div>

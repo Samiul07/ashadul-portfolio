@@ -671,7 +671,7 @@ export default function BlogArticleSection({
         <div
           className={`relative border-x border-white/12 px-8 pt-[140px] pb-[100px] max-[640px]:px-5 max-[640px]:pt-20 max-[640px]:pb-6 ${frameWidth} ${frameMargin}`}
         >
-          <SectionCrosshairs hideBottom />
+          <SectionCrosshairs hideBottom topAsT />
 
           <div className="flex w-full flex-col items-center gap-8 max-[640px]:gap-5">
             <div className="flex w-full flex-col items-center gap-6 max-[640px]:gap-3.5">

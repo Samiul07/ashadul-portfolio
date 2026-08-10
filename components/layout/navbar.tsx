@@ -256,7 +256,9 @@ export default function Navbar() {
         data-mobile-header-background
       />
       <header
-        className="fixed inset-x-0 top-0 z-[1100] h-[86px] w-full pointer-events-auto max-[1200px]:h-[70px]"
+        className={`fixed inset-x-0 top-0 h-[86px] w-full pointer-events-auto max-[1200px]:h-[70px] ${
+          isScrolled || isMobileMenuOpen ? "z-[1100]" : "z-[200]"
+        }`}
         data-scroll-state={isScrolled ? "scrolled" : "top"}
       >
         <div
@@ -429,15 +431,18 @@ export default function Navbar() {
         />
       </header>
 
-      {/* Scroll Progress Bar */}
+      {/* Scroll Progress Bar — rides with the fixed header. top-[84px] + 2px
+          height pins the bar's bottom edge to the header's bottom (86px),
+          overlaying the 1px white divider line. z above the header (1100) so
+          the red line is never hidden behind the header surface. */}
       <div
-        className={`pointer-events-none fixed inset-x-0 top-[85px] h-[3px] min-[641px]:max-[1200px]:top-[69px] max-[640px]:hidden ${isScrolled ? "z-[302]" : "z-[9]"}`}
+        className={`pointer-events-none fixed inset-x-0 top-[84px] h-[2px] min-[641px]:max-[1200px]:top-[68px] max-[640px]:hidden z-[1101]`}
         data-scroll-progress
         style={{ transform: "translate3d(0,0,0)", willChange: "transform" }}
       >
         <motion.div
           aria-hidden="true"
-          className="absolute inset-x-0 top-0 h-[3px] origin-left bg-primary"
+          className="absolute inset-x-0 top-0 h-[2px] origin-left bg-primary"
           style={{ scaleX: progressScale }}
         />
       </div>

@@ -225,7 +225,7 @@ export default function PortfolioHeroSection() {
       <div
         className={`relative z-[1] flex min-h-[550px] items-center border-x border-white/12 px-8 pt-[87px] pb-[75px] max-[1100px]:min-h-0 max-[1100px]:px-6 max-[1100px]:py-14 max-[640px]:items-stretch max-[640px]:px-0 max-[640px]:py-0 ${frameWidth} ${frameMargin} ${styles.dynamicContent || ""}`}
       >
-        <SectionCrosshairs />
+        <SectionCrosshairs topAsT />
 
         <div
           className={`grid w-full grid-cols-[minmax(0,1.22fr)_minmax(470px,0.78fr)] items-end gap-16 max-[1200px]:grid-cols-[minmax(0,1fr)_minmax(430px,0.8fr)] max-[1200px]:gap-10 max-[1100px]:grid-cols-1 max-[1100px]:items-start max-[1100px]:gap-10 max-[640px]:flex max-[640px]:h-full max-[640px]:flex-col max-[640px]:items-stretch ${styles.dynamicMainGrid || ""}`}
@@ -264,11 +264,11 @@ export default function PortfolioHeroSection() {
                       className={`min-w-0 px-5 py-6 ${index > 0 ? "border-l border-white/20" : ""}`}
                       key={item.labelLines.join(" ")}
                     >
-                      <dd className="m-0 flex items-end font-display text-[64px] leading-[0.82] font-black text-white uppercase">
+                      <dd className="m-0 flex items-baseline font-display text-[64px] leading-[0.82] font-black text-white uppercase">
                         <span className="leading-none">{item.value}</span>
                         <span
                           aria-hidden="true"
-                          className={`mb-px ml-1 flex h-5 shrink-0 origin-bottom-left text-primary [&_svg]:block [&_svg]:h-full [&_svg]:w-full ${item.markWidthClass}`}
+                          className={`ml-1 flex h-5 shrink-0 origin-bottom-left text-primary [&_svg]:block [&_svg]:h-full [&_svg]:w-full ${item.markWidthClass}`}
                         >
                           {item.mark === "plus" ? <PlusMark /> : <XMark />}
                         </span>

@@ -37,7 +37,7 @@ export default function NotFound() {
         <div
           className={`relative min-h-[780px] border-x border-white/12 max-[1024px]:min-h-[720px] max-[700px]:min-h-0 ${frameWidth} ${frameMargin} ${styles.mobileFrame}`}
         >
-          <SectionCrosshairs />
+          <SectionCrosshairs topAsT />
 
           <div className={`flex h-[92px] items-center justify-between border-b border-white/12 px-10 max-[1024px]:h-[82px] max-[1024px]:px-7 max-[640px]:h-[74px] max-[640px]:px-5 ${styles.mobileHeader}`}>
             <p className="m-0 font-sans text-sm leading-none font-medium tracking-[0.12em] text-white/58 uppercase max-[640px]:text-[11px]">

@@ -1,6 +1,7 @@
 "use client";
 
 import type { CSSProperties, FormEvent, ReactNode } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import MobileVisualViewport from "@/components/hero/mobile-visual-viewport";
 import SectionCrosshairs from "@/components/ui/section-crosshairs";
@@ -14,7 +15,7 @@ const buttonInnerShape =
   "[clip-path:polygon(0_0,calc(100%_-_11px)_0,100%_11px,100%_100%,11px_100%,0_calc(100%_-_11px))]";
 
 const whatsappHref =
-  "https://wa.me/?text=Hi%20Ashadul%2C%20I%27d%20like%20to%20get%20in%20touch.";
+  "https://wa.me/8801750593324?text=Hi%20Ashadul%2C%20I%20just%20viewed%20your%20portfolio%20and%20I%27d%20love%20to%20discuss%20a%20potential%20project";
 
 const socialLinks = [
   { href: "https://linkedin.com", label: "LinkedIn" },
@@ -42,6 +43,28 @@ function MailIcon() {
     <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 24 24">
       <path d="M3.5 6.5h17v11h-17z" stroke="currentColor" strokeWidth="1.5" />
       <path d="m4.5 7.5 7.5 6 7.5-6" stroke="currentColor" strokeLinejoin="round" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+function SuccessCheckIcon() {
+  return (
+    <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 20 20">
+      <path
+        d="m4.5 10.5 3.25 3.25L15.5 6"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+      />
+    </svg>
+  );
+}
+
+function ErrorIcon() {
+  return (
+    <svg aria-hidden="true" className="h-5 w-5" fill="none" viewBox="0 0 20 20">
+      <path d="M10 5.5v5.25M10 14h.01" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
     </svg>
   );
 }
@@ -88,26 +111,46 @@ function Field({
 }
 
 export default function ContactHeroSection() {
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const [isSending, setIsSending] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastStatus, setToastStatus] = useState<"error" | "success">("success");
 
-    const formData = new FormData(event.currentTarget);
+  useEffect(() => {
+    if (!toastOpen) return;
+    const dismissTimer = window.setTimeout(() => setToastOpen(false), 6000);
+    return () => window.clearTimeout(dismissTimer);
+  }, [toastOpen]);
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (isSending) return;
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
     const name = String(formData.get("name") || "");
     const email = String(formData.get("email") || "");
     const company = String(formData.get("company") || "Not provided");
     const message = String(formData.get("message") || "");
-    const subject = encodeURIComponent(`Message from ${name}`);
-    const body = encodeURIComponent(
-      `Name: ${name}\nEmail: ${email}\nCompany: ${company}\n\nMessage:\n${message}`,
-    );
+    setToastOpen(false);
+    setIsSending(true);
 
-    const mailtoHref = `mailto:ashadulislamsamiul@gmail.com?subject=${subject}&body=${body}`;
-    const mailtoLink = document.createElement("a");
-    mailtoLink.href = mailtoHref;
-    mailtoLink.style.display = "none";
-    document.body.appendChild(mailtoLink);
-    mailtoLink.click();
-    mailtoLink.remove();
+    try {
+      const response = await fetch("/api/contact", {
+        body: JSON.stringify({ company, email, message, name }),
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+      });
+
+      if (!response.ok) throw new Error("Contact request failed");
+
+      form.reset();
+      setToastStatus("success");
+    } catch {
+      setToastStatus("error");
+    } finally {
+      setIsSending(false);
+      setToastOpen(true);
+    }
   };
 
   return (
@@ -118,6 +161,38 @@ export default function ContactHeroSection() {
     >
       <MobileVisualViewport />
       <div
+        aria-hidden={!toastOpen}
+        aria-live="polite"
+        className={`fixed top-[104px] left-1/2 z-[2000] w-[380px] max-w-[calc(100vw_-_40px)] -translate-x-1/2 -translate-y-3 bg-white/22 p-px opacity-0 shadow-[0_18px_60px_rgba(0,0,0,0.5)] transition-[opacity,transform] duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] [clip-path:polygon(0_0,calc(100%_-_12px)_0,100%_12px,100%_100%,12px_100%,0_calc(100%_-_12px))] max-[640px]:top-[82px] ${
+          toastOpen
+            ? "pointer-events-auto translate-y-0 opacity-100"
+            : "pointer-events-none"
+        }`}
+        role="status"
+      >
+        <div className="relative flex min-h-[82px] items-center gap-3.5 overflow-hidden bg-[#0a0a0a] px-5 py-4 [clip-path:polygon(0_0,calc(100%_-_11px)_0,100%_11px,100%_100%,11px_100%,0_calc(100%_-_11px))]">
+          <span
+            className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full ring-1 ${
+              toastStatus === "success"
+                ? "bg-[#32d583]/14 text-[#32d583] ring-[#32d583]/35"
+                : "bg-primary/14 text-primary ring-primary/35"
+            }`}
+          >
+            {toastStatus === "success" ? <SuccessCheckIcon /> : <ErrorIcon />}
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="m-0 font-sans text-sm font-semibold tracking-[-0.15px] text-white">
+              {toastStatus === "success" ? "Message sent." : "Message not sent."}
+            </p>
+            <p className="m-0 mt-1 font-sans text-sm leading-[1.35] text-white/54">
+              {toastStatus === "success"
+                ? "I’ll be in touch soon."
+                : "Please try again in a moment."}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
         className={`relative border-x border-white/12 ${frameWidth} ${frameMargin}`}
         style={
           {
@@ -126,7 +201,7 @@ export default function ContactHeroSection() {
           } as CSSProperties
         }
       >
-        <SectionCrosshairs />
+        <SectionCrosshairs topAsT />
 
         <header className="flex min-h-[270px] flex-col items-center justify-center px-8 py-12 text-center max-[1200px]:min-h-[240px] max-[640px]:h-[var(--contact-mobile-heading-height)] max-[640px]:min-h-0 max-[640px]:px-5 max-[640px]:py-0">
           <p className="m-0 font-sans text-sm leading-none font-medium tracking-[0.12em] text-white/64 uppercase">
@@ -243,17 +318,30 @@ export default function ContactHeroSection() {
                 data-action-rail
               >
                 <button
-                  className={`inline-flex h-[56px] min-w-[188px] cursor-pointer items-center justify-center gap-3 border-0 bg-white px-6 font-sans text-base font-semibold tracking-[-0.32px] text-black transition-colors hover:bg-primary hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary max-[640px]:w-full ${buttonShape}`}
+                  className={`inline-flex h-[56px] min-w-[188px] cursor-pointer items-center justify-center gap-3 border-0 bg-white px-6 font-sans text-base font-semibold tracking-[-0.32px] text-black transition-colors hover:bg-primary hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:bg-primary disabled:text-white max-[640px]:w-full ${buttonShape}`}
+                  disabled={isSending}
                   type="submit"
                 >
-                  Send message
-                  <ArrowUpRight className="h-[22px] w-[22px]" />
+                  {isSending ? (
+                    <>
+                      Sending
+                      <span
+                        aria-hidden="true"
+                        className="h-[18px] w-[18px] animate-spin rounded-full border-2 border-white/35 border-t-white"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      Send message
+                      <ArrowUpRight className="h-[22px] w-[22px]" />
+                    </>
+                  )}
                 </button>
 
                 <a
                   className={`group/whatsapp inline-flex h-[56px] min-w-[148px] bg-white/28 p-px text-white no-underline transition-colors hover:bg-white/70 focus-visible:bg-white focus-visible:outline-none max-[640px]:w-full ${buttonShape}`}
                   href={whatsappHref}
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   target="_blank"
                 >
                   <span className={`flex h-full w-full items-center justify-center gap-2.5 bg-black px-5 font-sans text-sm font-semibold tracking-[-0.2px] transition-colors group-hover/whatsapp:bg-[#080808] ${buttonInnerShape}`}>

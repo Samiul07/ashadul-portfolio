@@ -57,7 +57,7 @@ export default function RootLayout({
       <body suppressHydrationWarning className="m-0 overflow-x-clip bg-background font-sans text-foreground antialiased">
       <Navbar />
       <SmoothScroll>
-        <div className="relative z-10">
+        <div className="relative">
           <main>{children}</main>
         </div>
       </SmoothScroll>

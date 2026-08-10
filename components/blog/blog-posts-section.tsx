@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   MobileFeaturedNote,
   NoteCard,
@@ -11,9 +11,6 @@ import { getAllNotes, noteCardData } from "@/lib/notes";
 const frameWidth =
   "w-[1400px] max-[1439px]:w-[calc(100%_-_48px)] max-[640px]:w-[calc(100%_-_40px)]";
 const frameMargin = "ml-[calc((100vw-1400px)/2)] max-[1439px]:mx-auto";
-
-/** Six notes per page — enough for a full desktop row set without a long scroll. */
-const PAGE_SIZE = 6;
 
 const blogNotes = getAllNotes().map(noteCardData);
 
@@ -35,15 +32,25 @@ function Pagination({
     >
       <button
         aria-label="Previous page"
-        className="cursor-pointer border-0 bg-transparent px-0 py-1 font-sans text-sm tracking-[-0.2px] text-white/50 transition-colors hover:text-white disabled:cursor-default disabled:text-white/20"
+        className="group flex cursor-pointer items-center gap-1.5 border-0 bg-transparent px-3 py-2 font-sans text-[11px] font-semibold tracking-[0.11em] uppercase text-white/50 transition-colors hover:text-white disabled:cursor-default disabled:text-white/20"
         disabled={page === 0}
         onClick={() => onPageChange(page - 1)}
         type="button"
       >
-        Prev
+        <svg
+          aria-hidden="true"
+          className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-x-0.5 group-disabled:transform-none"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          viewBox="0 0 24 24"
+        >
+          <path d="M15 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <span>Prev</span>
       </button>
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         {Array.from({ length: pageCount }, (_, index) => {
           const isActive = index === page;
 
@@ -51,10 +58,10 @@ function Pagination({
             <button
               aria-current={isActive ? "page" : undefined}
               aria-label={`Page ${index + 1}`}
-              className={`relative min-w-10 cursor-pointer border-0 bg-transparent px-2.5 py-2 font-display text-sm font-bold tracking-tight transition-colors ${
+              className={`relative flex h-10 w-10 cursor-pointer items-center justify-center border-0 bg-transparent font-display text-base font-bold tracking-tight transition-colors ${
                 isActive
                   ? "text-primary"
-                  : "text-white/35 hover:text-white/75"
+                  : "text-white/50 hover:text-white"
               }`}
               key={index}
               onClick={() => onPageChange(index)}
@@ -64,7 +71,7 @@ function Pagination({
               {isActive ? (
                 <span
                   aria-hidden="true"
-                  className="absolute right-1.5 bottom-0 left-1.5 h-px bg-primary"
+                  className="absolute bottom-0 left-2 right-2 h-[2.5px] rounded-full bg-primary"
                 />
               ) : null}
             </button>
@@ -74,12 +81,22 @@ function Pagination({
 
       <button
         aria-label="Next page"
-        className="cursor-pointer border-0 bg-transparent px-0 py-1 font-sans text-sm tracking-[-0.2px] text-white/50 transition-colors hover:text-white disabled:cursor-default disabled:text-white/20"
+        className="group flex cursor-pointer items-center gap-1.5 border-0 bg-transparent px-3 py-2 font-sans text-[11px] font-semibold tracking-[0.11em] uppercase text-white/50 transition-colors hover:text-white disabled:cursor-default disabled:text-white/20"
         disabled={page >= pageCount - 1}
         onClick={() => onPageChange(page + 1)}
         type="button"
       >
-        Next
+        <span>Next</span>
+        <svg
+          aria-hidden="true"
+          className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5 group-disabled:transform-none"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          viewBox="0 0 24 24"
+        >
+          <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </button>
     </nav>
   );
@@ -87,13 +104,33 @@ function Pagination({
 
 export default function BlogPostsSection() {
   const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(6);
 
-  const pageCount = Math.ceil(blogNotes.length / PAGE_SIZE);
+  useEffect(() => {
+    const updatePageSize = () => {
+      if (window.innerWidth >= 1200) {
+        setPageSize(12);
+      } else {
+        setPageSize(6);
+      }
+    };
+    updatePageSize();
+    window.addEventListener("resize", updatePageSize);
+    return () => window.removeEventListener("resize", updatePageSize);
+  }, []);
+
+  const pageCount = useMemo(() => {
+    return Math.ceil(blogNotes.length / pageSize);
+  }, [pageSize]);
+
+  const activePage = useMemo(() => {
+    return Math.max(0, Math.min(page, pageCount - 1));
+  }, [page, pageCount]);
 
   const pageNotes = useMemo(() => {
-    const start = page * PAGE_SIZE;
-    return blogNotes.slice(start, start + PAGE_SIZE);
-  }, [page]);
+    const start = activePage * pageSize;
+    return blogNotes.slice(start, start + pageSize);
+  }, [activePage, pageSize]);
 
   const goToPage = (next: number) => {
     const clamped = Math.max(0, Math.min(next, pageCount - 1));
@@ -136,7 +173,7 @@ export default function BlogPostsSection() {
 
         <Pagination
           onPageChange={goToPage}
-          page={page}
+          page={activePage}
           pageCount={pageCount}
         />
       </div>
