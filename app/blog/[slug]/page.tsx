@@ -1,27 +1,41 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import heroStyles from "@/app/portfolio/portfolio-hero.module.css";
 import HeroGradient from "@/components/background/desktop-hero-gradient";
 import BlogArticleSection from "@/components/blog/blog-article-section";
 import CalloutNotesSection from "@/components/sections/callout-notes-section";
 import ContactFooterSection from "@/components/sections/contact-footer-section";
 import { getAllNotes, getRelatedNotes, getNoteBySlug } from "@/lib/notes";
+import { sanityArticleToFieldNote } from "@/sanity/lib/content";
+import {
+  getArticleBySlug,
+  getArticleSlugs,
+  getArticles,
+} from "@/sanity/lib/data";
 
 type BlogArticlePageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return getAllNotes().map((note) => ({ slug: note.slug }));
+export async function generateStaticParams() {
+  const sanitySlugs = await getArticleSlugs();
+  const slugs = new Set([
+    ...getAllNotes().map((note) => note.slug),
+    ...sanitySlugs.map((article) => article.slug),
+  ]);
+
+  return Array.from(slugs, (slug) => ({ slug }));
 }
 
-const siteUrl = "https://ashadul.com";
+const siteUrl = "https://www.ashadul.design";
 
 export async function generateMetadata({
   params,
 }: BlogArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const note = getNoteBySlug(slug);
+  const sanityArticle = await getArticleBySlug(slug);
+  const note = sanityArticle
+    ? sanityArticleToFieldNote(sanityArticle)
+    : getNoteBySlug(slug);
 
   if (!note) {
     return { title: "Note not found | Ashadul Islam" };
@@ -83,12 +97,20 @@ export async function generateMetadata({
 
 export default async function BlogArticlePage({ params }: BlogArticlePageProps) {
   const { slug } = await params;
-  const note = getNoteBySlug(slug);
+  const sanityArticle = await getArticleBySlug(slug);
+  const note = sanityArticle
+    ? sanityArticleToFieldNote(sanityArticle)
+    : getNoteBySlug(slug);
 
   if (!note) notFound();
 
-  const relatedNotes = getRelatedNotes(slug, 4);
-  const moreNotes = relatedNotes.slice(0, 3);
+  const sanityArticles = sanityArticle ? await getArticles() : [];
+  const moreNotes = sanityArticle
+    ? sanityArticles
+        .filter((article) => article.slug !== slug)
+        .slice(0, 3)
+        .map(sanityArticleToFieldNote)
+    : getRelatedNotes(slug, 4).slice(0, 3);
 
   const canonicalUrl = `${siteUrl}/blog/${note.slug}`;
   const imageUrl = note.image.startsWith("http")
@@ -174,7 +196,11 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
       </div>
 
       <div className="relative z-10">
-        <BlogArticleSection moreNotes={moreNotes} note={note} />
+        <BlogArticleSection
+          moreNotes={moreNotes}
+          note={note}
+          portableBody={sanityArticle?.body}
+        />
         <CalloutNotesSection hideTopCrosshairs />
         <ContactFooterSection workHref="/portfolio" />
       </div>

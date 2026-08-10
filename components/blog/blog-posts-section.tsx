@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   MobileFeaturedNote,
+  type Note,
   NoteCard,
 } from "@/components/sections/notes-section";
 import SectionCrosshairs from "@/components/ui/section-crosshairs";
@@ -12,7 +13,7 @@ const frameWidth =
   "w-[1400px] max-[1439px]:w-[calc(100%_-_48px)] max-[640px]:w-[calc(100%_-_40px)]";
 const frameMargin = "ml-[calc((100vw-1400px)/2)] max-[1439px]:mx-auto";
 
-const blogNotes = getAllNotes().map(noteCardData);
+const fallbackBlogNotes = getAllNotes().map(noteCardData);
 
 function Pagination({
   page,
@@ -102,9 +103,10 @@ function Pagination({
   );
 }
 
-export default function BlogPostsSection() {
+export default function BlogPostsSection({ notes }: { notes: Note[] }) {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(6);
+  const blogNotes = notes.length > 0 ? notes : fallbackBlogNotes;
 
   useEffect(() => {
     const updatePageSize = () => {
@@ -121,7 +123,7 @@ export default function BlogPostsSection() {
 
   const pageCount = useMemo(() => {
     return Math.ceil(blogNotes.length / pageSize);
-  }, [pageSize]);
+  }, [blogNotes.length, pageSize]);
 
   const activePage = useMemo(() => {
     return Math.max(0, Math.min(page, pageCount - 1));
@@ -130,7 +132,7 @@ export default function BlogPostsSection() {
   const pageNotes = useMemo(() => {
     const start = activePage * pageSize;
     return blogNotes.slice(start, start + pageSize);
-  }, [activePage, pageSize]);
+  }, [activePage, blogNotes, pageSize]);
 
   const goToPage = (next: number) => {
     const clamped = Math.max(0, Math.min(next, pageCount - 1));

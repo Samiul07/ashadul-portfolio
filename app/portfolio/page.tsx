@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import PortfolioHeroSection from "@/components/portfolio/portfolio-hero-section";
 import PortfolioProjectsSection from "@/components/portfolio/portfolio-projects-section";
+import type { PortfolioProject } from "@/components/portfolio/portfolio-projects-section";
 import ContactFooterSection from "@/components/sections/contact-footer-section";
 import LogoListSection from "@/components/sections/logo-list-section";
 import HeroGradient from "@/components/background/desktop-hero-gradient";
 import MobileVisualViewport from "@/components/hero/mobile-visual-viewport";
 import styles from "@/app/portfolio/portfolio-hero.module.css";
+import { getProjects } from "@/sanity/lib/data";
 
 export const metadata: Metadata = {
   title: "Selected Product Work | Ashadul Islam",
@@ -13,7 +15,25 @@ export const metadata: Metadata = {
     "Selected SaaS, product design, mobile application, design system, and enterprise UX case studies by Ashadul Islam.",
 };
 
-export default function PortfolioPage() {
+function categoryId(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export default async function PortfolioPage() {
+  const sanityProjects = await getProjects();
+  const projects: PortfolioProject[] = sanityProjects.map((project) => ({
+    categories: [categoryId(project.category)],
+    figmaUrl: project.figmaUrl,
+    image: project.thumbnail?.url || "/images/portfolio/project-folio.png",
+    slug: project.slug,
+    title: project.title,
+    type: project.category,
+  }));
+
   return (
     <>
       <div className="relative w-full overflow-x-clip bg-black">
@@ -52,7 +72,7 @@ export default function PortfolioPage() {
 
         <div className="relative z-[10]">
           <LogoListSection transparent />
-          <PortfolioProjectsSection />
+          <PortfolioProjectsSection projects={projects} />
         </div>
       </div>
       <ContactFooterSection workHref="#portfolio-projects" />

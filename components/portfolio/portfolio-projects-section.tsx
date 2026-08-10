@@ -11,23 +11,19 @@ const frameMargin = "ml-[calc((100vw-1400px)/2)] max-[1439px]:mx-auto";
 const sidebarClip =
   "[clip-path:polygon(0_0,calc(100%_-_14px)_0,100%_14px,100%_100%,14px_100%,0_calc(100%_-_14px))]";
 
-type CategoryId =
-  | "all"
-  | "product"
-  | "saas"
-  | "web"
-  | "mobile"
-  | "systems"
-  | "redesign"
-  | "enterprise";
+type CategoryId = string;
 
-type Project = {
+export type PortfolioProject = {
   categories: CategoryId[];
+  figmaUrl?: string | null;
   image: string;
   imageClassName?: string;
+  slug?: string;
   title: string;
   type: string;
 };
+
+type Project = PortfolioProject;
 
 const categories: { id: CategoryId; label: string }[] = [
   { id: "all", label: "All Projects" },
@@ -194,9 +190,12 @@ const projects: Project[] = [
 ];
 
 /** Count how many projects belong to a given category */
-function countForCategory(categoryId: CategoryId): number {
-  if (categoryId === "all") return projects.length;
-  return projects.filter((p) => p.categories.includes(categoryId)).length;
+function countForCategory(
+  projectList: Project[],
+  categoryId: CategoryId,
+): number {
+  if (categoryId === "all") return projectList.length;
+  return projectList.filter((p) => p.categories.includes(categoryId)).length;
 }
 
 function ArrowUpRight({ className = "h-4 w-4" }: { className?: string }) {
@@ -213,25 +212,15 @@ function ArrowUpRight({ className = "h-4 w-4" }: { className?: string }) {
   );
 }
 
-function ChevronDown({ className = "h-4 w-4" }: { className?: string }) {
-  return (
-    <svg aria-hidden="true" className={className} fill="none" viewBox="0 0 24 24">
-      <path
-        d="M6 9l6 6 6-6"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.75"
-      />
-    </svg>
-  );
-}
-
 function ProjectCard({ project }: { project: Project }) {
+  const isExternal = Boolean(project.figmaUrl);
+
   return (
     <a
       className="group flex min-w-0 flex-col border border-white/18 bg-transparent p-2 text-white no-underline outline-none transition-colors duration-500 hover:border-white/38 focus-visible:border-white focus-visible:ring-2 focus-visible:ring-white max-[640px]:border-white/14 max-[640px]:p-0"
-      href="#contact"
+      href={project.figmaUrl || "#contact"}
+      rel={isExternal ? "noreferrer" : undefined}
+      target={isExternal ? "_blank" : undefined}
     >
       {/* Image Thumbnail with Hover Button Overlay — locked 4/3 aspect ratio */}
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-900">
@@ -289,19 +278,39 @@ function ProjectCard({ project }: { project: Project }) {
   );
 }
 
-export default function PortfolioProjectsSection() {
+export default function PortfolioProjectsSection({
+  projects: sanityProjects,
+}: {
+  projects: PortfolioProject[];
+}) {
   const [activeCategory, setActiveCategory] = useState<CategoryId>("all");
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const reduceMotion = useReducedMotion();
+  const projectData = sanityProjects.length > 0 ? sanityProjects : projects;
+
+  const categoryOptions = useMemo(() => {
+    if (sanityProjects.length === 0) return categories;
+
+    const uniqueCategories = new Map<string, string>();
+    projectData.forEach((project) => {
+      project.categories.forEach((categoryId) => {
+        uniqueCategories.set(categoryId, project.type);
+      });
+    });
+
+    return [
+      { id: "all", label: "All Projects" },
+      ...Array.from(uniqueCategories, ([id, label]) => ({ id, label })),
+    ];
+  }, [projectData, sanityProjects.length]);
 
   const visibleProjects = useMemo(
     () =>
       activeCategory === "all"
-        ? projects
-        : projects.filter((project) =>
+        ? projectData
+        : projectData.filter((project) =>
             project.categories.includes(activeCategory),
           ),
-    [activeCategory],
+    [activeCategory, projectData],
   );
 
   return (
@@ -330,9 +339,9 @@ export default function PortfolioProjectsSection() {
 
             {/* Filter items */}
             <div className="flex flex-col max-[1024px]:flex-row max-[1024px]:items-stretch">
-              {categories.map((category) => {
+              {categoryOptions.map((category) => {
                 const isActive = category.id === activeCategory;
-                const count = countForCategory(category.id);
+                const count = countForCategory(projectData, category.id);
                 const isAll = category.id === "all";
 
                 return (

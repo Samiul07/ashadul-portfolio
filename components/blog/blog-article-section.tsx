@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  PortableText,
+  type PortableTextBlock,
+  type PortableTextComponents,
+  toPlainText,
+} from "@portabletext/react";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -120,38 +126,6 @@ function CheckIcon() {
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth="1.75"
-      />
-    </svg>
-  );
-}
-
-function PlusMark({ className = "h-full w-full" }: { className?: string }) {
-  return (
-    <svg
-      aria-hidden="true"
-      className={className}
-      fill="none"
-      viewBox="0 0 39 40"
-    >
-      <path
-        d="M16.7997 22.6286H0V17.1429H16.7997V0H22.2003V17.1429H39V22.6286H22.2003V40H16.7997V22.6286Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-
-function XMark({ className = "h-full w-full" }: { className?: string }) {
-  return (
-    <svg
-      aria-hidden="true"
-      className={className}
-      fill="none"
-      viewBox="0 0 22 40"
-    >
-      <path
-        d="M7.27604 19.5429L0.34375 0H6.98958L11.2292 12.9143H11.3437L15.6979 0H21.6563L14.724 19.5429L22 40H15.3542L10.7708 26.0571H10.6562L5.95833 40H0L7.27604 19.5429Z"
-        fill="currentColor"
       />
     </svg>
   );
@@ -287,6 +261,77 @@ function ArticleBlock({ block }: { block: NoteBlock }) {
     default:
       return null;
   }
+}
+
+const portableTextComponents: PortableTextComponents = {
+  block: {
+    blockquote: ({ children }) => (
+      <blockquote className="my-6 border-l-2 border-primary bg-white/[0.02] py-4 pr-6 pl-6 font-sans text-xl leading-[1.4] font-medium italic tracking-[-0.4px] text-white max-[640px]:text-lg max-[640px]:pl-4 max-[640px]:pr-4">
+        {children}
+      </blockquote>
+    ),
+    h2: ({ children, value }) => (
+      <h2
+        className="scroll-mt-28 m-0 font-display text-[36px] leading-[1.05] font-black tracking-[-1px] text-white uppercase max-[1200px]:text-[32px] max-[640px]:text-[clamp(26px,7vw,34px)] max-[640px]:leading-[1.02] max-[640px]:tracking-[-1px]"
+        id={slugify(toPlainText(value))}
+      >
+        {children}
+      </h2>
+    ),
+    h3: ({ children }) => (
+      <h3 className="m-0 font-display text-[26px] leading-tight font-bold tracking-[-0.5px] text-white uppercase max-[640px]:text-[22px]">
+        {children}
+      </h3>
+    ),
+    normal: ({ children }) => (
+      <p className="m-0 font-sans text-[19px] leading-[1.7] tracking-[-0.25px] text-white/90 max-[640px]:text-base max-[640px]:leading-[1.65]">
+        {children}
+      </p>
+    ),
+  },
+  list: {
+    bullet: ({ children }) => (
+      <ul className="m-0 flex list-none flex-col gap-3 p-0 font-sans text-[19px] leading-[1.6] tracking-[-0.25px] text-white/90 max-[640px]:text-base">
+        {children}
+      </ul>
+    ),
+    number: ({ children }) => (
+      <ol className="m-0 flex list-decimal flex-col gap-3 pl-6 font-sans text-[19px] leading-[1.6] tracking-[-0.25px] text-white/90 max-[640px]:text-base">
+        {children}
+      </ol>
+    ),
+  },
+  listItem: {
+    bullet: ({ children }) => (
+      <li className="relative flex items-start gap-3 pl-1 before:mt-2.5 before:h-1.5 before:w-1.5 before:shrink-0 before:rounded-full before:bg-primary">
+        <span>{children}</span>
+      </li>
+    ),
+  },
+  marks: {
+    link: ({ children, value }) => {
+      const href = typeof value?.href === "string" ? value.href : "#";
+      const external = href.startsWith("http");
+
+      return (
+        <a
+          className="text-primary underline decoration-primary/45 underline-offset-4 transition-colors hover:text-white"
+          href={href}
+          rel={external ? "noreferrer" : undefined}
+          target={external ? "_blank" : undefined}
+        >
+          {children}
+        </a>
+      );
+    },
+  },
+};
+
+function portableHeadings(body: PortableTextBlock[]) {
+  return body
+    .filter((block) => block._type === "block" && block.style === "h2")
+    .map((block) => toPlainText(block))
+    .filter(Boolean);
 }
 
 /** Sticky Left Sidebar — High Contrast Table of Contents & Reading Progress (Desktop ≥1280px) */
@@ -643,13 +688,17 @@ function RightShareSidebar({
 export default function BlogArticleSection({
   note,
   moreNotes,
+  portableBody,
 }: {
   note: FieldNote;
   moreNotes?: FieldNote[];
+  portableBody?: PortableTextBlock[];
 }) {
-  const headings = note.body
-    .filter((b): b is { type: "h2"; text: string } => b.type === "h2")
-    .map((b) => b.text);
+  const headings = portableBody
+    ? portableHeadings(portableBody)
+    : note.body
+        .filter((b): b is { type: "h2"; text: string } => b.type === "h2")
+        .map((b) => b.text);
 
   const [copied, setCopied] = useState(false);
 
@@ -751,24 +800,33 @@ export default function BlogArticleSection({
 
               {/* Main Article Body Blocks */}
               <div className="flex w-full flex-col gap-10 max-[640px]:gap-7">
-                {groupBody(note.body).map((section, index) => (
-                  <section
-                    className="flex w-full flex-col gap-6 max-[640px]:gap-4"
-                    key={`${section.heading}-${index}`}
-                  >
-                    {section.heading ? (
-                      <ArticleBlock block={{ type: "h2", text: section.heading }} />
-                    ) : null}
-                    <div className="flex w-full flex-col gap-5 max-[640px]:gap-4">
-                      {section.blocks.map((block, blockIndex) => (
+                {portableBody ? (
+                  <PortableText
+                    components={portableTextComponents}
+                    value={portableBody}
+                  />
+                ) : (
+                  groupBody(note.body).map((section, index) => (
+                    <section
+                      className="flex w-full flex-col gap-6 max-[640px]:gap-4"
+                      key={`${section.heading}-${index}`}
+                    >
+                      {section.heading ? (
                         <ArticleBlock
-                          block={block}
-                          key={`${block.type}-${blockIndex}`}
+                          block={{ type: "h2", text: section.heading }}
                         />
-                      ))}
-                    </div>
-                  </section>
-                ))}
+                      ) : null}
+                      <div className="flex w-full flex-col gap-5 max-[640px]:gap-4">
+                        {section.blocks.map((block, blockIndex) => (
+                          <ArticleBlock
+                            block={block}
+                            key={`${block.type}-${blockIndex}`}
+                          />
+                        ))}
+                      </div>
+                    </section>
+                  ))
+                )}
               </div>
 
               {/* Mobile & Tablet Inline Actions (<1280px) */}

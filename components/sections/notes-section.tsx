@@ -11,9 +11,11 @@ const buttonBase = `relative isolate inline-flex h-[52px] items-center justify-c
 
 export type Note = {
   category: string;
+  date?: string;
   href: string;
   image: string;
   title: string;
+  views?: string;
 };
 
 export const notes: Note[] = [
@@ -125,12 +127,18 @@ export function NoteCard({
             <div className="flex w-full items-center justify-between font-sans text-base leading-normal font-normal tracking-[-0.32px] text-white/70 max-[640px]:text-[13px]">
               <div className="flex items-center gap-2">
                 <CalendarIcon />
-                <span className="whitespace-nowrap">January 10, 2026</span>
+                <span className="whitespace-nowrap">
+                  {note.date ?? "January 10, 2026"}
+                </span>
               </div>
-              <div className="flex items-center gap-2">
-                <EyeIcon />
-                <span className="whitespace-nowrap">1.2k</span>
-              </div>
+              {note.views !== "" ? (
+                <div className="flex items-center gap-2">
+                  <EyeIcon />
+                  <span className="whitespace-nowrap">
+                    {note.views ?? "1.2k"}
+                  </span>
+                </div>
+              ) : null}
             </div>
 
             <h3
@@ -168,12 +176,14 @@ export function MobileFeaturedNote({ note }: { note: Note }) {
           <div className="flex items-center justify-between font-sans text-[13px] leading-none tracking-[-0.2px] text-white/70">
             <span className="inline-flex items-center gap-2">
               <CalendarIcon />
-              January 10, 2026
+              {note.date ?? "January 10, 2026"}
             </span>
-            <span className="inline-flex items-center gap-2">
-              <EyeIcon />
-              1.2k
-            </span>
+            {note.views !== "" ? (
+              <span className="inline-flex items-center gap-2">
+                <EyeIcon />
+                {note.views ?? "1.2k"}
+              </span>
+            ) : null}
           </div>
           <h3 className="m-0 w-full font-sans text-[clamp(24px,6.8vw,28px)] leading-[1.12] font-semibold tracking-[-0.45px] text-white transition-colors duration-300 group-hover:text-primary group-focus-visible:text-primary">
             {note.title}
@@ -225,12 +235,14 @@ export function MobileCompactNote({ note }: { note: Note }) {
           <div className="flex items-center justify-between font-sans text-[11px] leading-none tracking-[-0.1px] text-white/70">
             <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
               <CalendarIcon />
-              Jan 10, 2026
+              {note.date ?? "Jan 10, 2026"}
             </span>
-            <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
-              <EyeIcon />
-              1.2k
-            </span>
+            {note.views !== "" ? (
+              <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+                <EyeIcon />
+                {note.views ?? "1.2k"}
+              </span>
+            ) : null}
           </div>
 
           <h3 className="mt-4 mb-0 line-clamp-3 font-sans text-[21px] leading-[1.1] font-semibold tracking-[-0.35px] text-white transition-colors duration-300 group-focus-visible:text-primary max-[359px]:text-[18px]">
