@@ -131,12 +131,13 @@ export default function ContactHeroSection() {
     const email = String(formData.get("email") || "");
     const company = String(formData.get("company") || "Not provided");
     const message = String(formData.get("message") || "");
+    const botField = String(formData.get("bot_field") || "");
     setToastOpen(false);
     setIsSending(true);
 
     try {
       const response = await fetch("/api/contact", {
-        body: JSON.stringify({ company, email, message, name }),
+        body: JSON.stringify({ bot_field: botField, company, email, message, name }),
         headers: { "Content-Type": "application/json" },
         method: "POST",
       });
@@ -311,6 +312,22 @@ export default function ContactHeroSection() {
                     required
                   />
                 </Field>
+              </div>
+
+              <div
+                aria-hidden="true"
+                className="absolute top-[-9999px] left-[-9999px] h-0 w-0 overflow-hidden"
+              >
+                <label htmlFor="bot_field">
+                  Leave this field empty
+                  <input
+                    autoComplete="off"
+                    id="bot_field"
+                    name="bot_field"
+                    tabIndex={-1}
+                    type="text"
+                  />
+                </label>
               </div>
 
               <div

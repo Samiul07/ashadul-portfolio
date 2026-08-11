@@ -3,7 +3,42 @@ import { Resend } from "resend";
 const defaultRecipient = "ashadulislamsamiul@gmail.com";
 const defaultFromEmail = "form@ashadul.design";
 
+const ALLOWED_ORIGINS = new Set([
+  "https://ashadul.design",
+  "https://www.ashadul.design",
+]);
+
+// In-memory IP rate limiter: max 3 submissions per IP per rolling hour.
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
+const RATE_LIMIT_MAX = 3;
+const rateLimitStore = new Map<string, number[]>();
+
+function getClientIp(request: Request): string {
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) {
+    return forwarded.split(",")[0]!.trim();
+  }
+  return request.headers.get("x-real-ip") ?? "unknown";
+}
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const timestamps = (rateLimitStore.get(ip) ?? []).filter(
+    (timestamp) => now - timestamp < RATE_LIMIT_WINDOW_MS,
+  );
+
+  if (timestamps.length >= RATE_LIMIT_MAX) {
+    rateLimitStore.set(ip, timestamps);
+    return true;
+  }
+
+  timestamps.push(now);
+  rateLimitStore.set(ip, timestamps);
+  return false;
+}
+
 type ContactPayload = {
+  bot_field?: string;
   company?: string;
   email?: string;
   message?: string;
@@ -15,12 +50,36 @@ function isEmail(value: string) {
 }
 
 export async function POST(request: Request) {
+  const origin = request.headers.get("origin");
+  const isAllowedOrigin =
+    !origin ||
+    origin.startsWith("http://localhost:") ||
+    origin.startsWith("http://127.0.0.1:") ||
+    ALLOWED_ORIGINS.has(origin);
+
+  if (!isAllowedOrigin) {
+    return Response.json({ error: "Forbidden." }, { status: 403 });
+  }
+
+  const clientIp = getClientIp(request);
+  if (isRateLimited(clientIp)) {
+    return Response.json(
+      { error: "Too many requests. Please try again later." },
+      { status: 429 },
+    );
+  }
+
   let payload: ContactPayload;
 
   try {
     payload = (await request.json()) as ContactPayload;
   } catch {
     return Response.json({ error: "Invalid request." }, { status: 400 });
+  }
+
+  // Honeypot: bots that fill the hidden field are silently dropped.
+  if (payload.bot_field?.trim()) {
+    return Response.json({ ok: true });
   }
 
   const name = payload.name?.trim() ?? "";
