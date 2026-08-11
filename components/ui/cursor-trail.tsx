@@ -19,8 +19,6 @@ type TrailPath = SVGPathElement & {
   points?: Point[];
 };
 
-const smoothingDuration = 300;
-
 export default function CursorTrail() {
   const pathRefs = useRef<Array<TrailPath | null>>([]);
   const currentPoint = useRef<Point | null>(null);
@@ -40,19 +38,14 @@ export default function CursorTrail() {
     let trailFrame = 0;
     let hasStarted = false;
     let disposed = false;
-    let gsapApi: typeof import("gsap")["gsap"] | null = null;
 
     const updateFollower = () => {
       const current = currentPoint.current;
       const target = targetPoint.current;
 
       if (current && target) {
-        gsapApi?.to(current, {
-          duration: smoothingDuration / 1000,
-          ease: "power2.out",
-          x: target.x,
-          y: target.y,
-        });
+        current.x += (target.x - current.x) / 10;
+        current.y += (target.y - current.y) / 10;
       }
 
       followerFrame = requestAnimationFrame(updateFollower);
@@ -101,20 +94,13 @@ export default function CursorTrail() {
       targetPoint.current = { x: event.clientX, y: event.clientY };
     };
 
-    void import("gsap").then(({ gsap }) => {
-      if (disposed) return;
-      gsapApi = gsap;
-      window.addEventListener("mousemove", handleMouseMove);
-    });
+    window.addEventListener("mousemove", handleMouseMove);
 
     return () => {
       disposed = true;
       window.removeEventListener("mousemove", handleMouseMove);
       cancelAnimationFrame(followerFrame);
       cancelAnimationFrame(trailFrame);
-      if (currentPoint.current) {
-        gsapApi?.killTweensOf(currentPoint.current);
-      }
       paths.forEach((path) => {
         if (path) path.points = [];
       });
