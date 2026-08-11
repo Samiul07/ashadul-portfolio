@@ -13,6 +13,7 @@ import ServicesSection from "@/components/sections/services-section";
 import WhyMeCardsSection from "@/components/sections/why-me-cards-section";
 import WorkProcessFolderRefinedSection from "@/components/sections/work-process-folder-refined-section";
 import heroStyles from "./home-hero.module.css";
+import { getTestimonials } from "@/sanity/lib/data";
 
 const frameWidth =
   "w-[1400px] max-[1439px]:w-[calc(100%_-_48px)] max-[640px]:w-[calc(100%_-_40px)]";
@@ -391,7 +392,8 @@ function StatsSection() {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+  const testimonials = await getTestimonials();
   return (
     <>
       <link
@@ -415,7 +417,7 @@ export default function Home() {
       <LogoListSection />
       <SelectedWork />
       <ProjectGallerySection />
-      <CalloutNotesSection />
+      <CalloutNotesSection testimonials={testimonials} />
       <WhyMeCardsSection />
       <ServicesSection />
       <WorkProcessFolderRefinedSection />

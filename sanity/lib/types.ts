@@ -20,3 +20,10 @@ export type SanityArticle = {
   thumbnail: SanityThumbnail;
   title: string;
 };
+
+export type SanityTestimonial = {
+  avatar: SanityThumbnail;
+  name: string;
+  quote: string;
+  role: string;
+};

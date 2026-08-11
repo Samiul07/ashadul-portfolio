@@ -4,8 +4,9 @@ import {
   articleSlugsQuery,
   articlesQuery,
   projectsQuery,
+  testimonialsQuery,
 } from "./queries";
-import type { SanityArticle, SanityProject } from "./types";
+import type { SanityArticle, SanityProject, SanityTestimonial } from "./types";
 
 const queryOptions = { next: { revalidate: 60 } } as const;
 
@@ -31,4 +32,8 @@ export function getArticleSlugs() {
     {},
     queryOptions,
   );
+}
+
+export function getTestimonials() {
+  return sanityClient.fetch<SanityTestimonial[]>(testimonialsQuery, {}, queryOptions);
 }

@@ -10,6 +10,7 @@ import {
   getArticleBySlug,
   getArticleSlugs,
   getArticles,
+  getTestimonials,
 } from "@/sanity/lib/data";
 
 type BlogArticlePageProps = {
@@ -105,6 +106,7 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
   if (!note) notFound();
 
   const sanityArticles = sanityArticle ? await getArticles() : [];
+  const testimonials = await getTestimonials();
   const moreNotes = sanityArticle
     ? sanityArticles
         .filter((article) => article.slug !== slug)
@@ -201,7 +203,7 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
           note={note}
           portableBody={sanityArticle?.body}
         />
-        <CalloutNotesSection hideTopCrosshairs />
+        <CalloutNotesSection hideTopCrosshairs testimonials={testimonials} />
         <ContactFooterSection workHref="/portfolio" />
       </div>
     </div>

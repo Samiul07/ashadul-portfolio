@@ -1,18 +1,9 @@
 import Image from "next/image";
-import { testimonials, type Testimonial } from "@/lib/testimonials";
+import type { SanityTestimonial } from "@/sanity/lib/types";
 
 const frameWidth =
   "w-[1400px] max-[1439px]:w-[calc(100%_-_48px)] max-[640px]:w-[calc(100%_-_40px)]";
 const frameMargin = "ml-[calc((100vw-1400px)/2)] max-[1439px]:mx-auto";
-
-// Keep the desktop marquee rows disjoint so identical reviewers can never
-// cross or align vertically. Five cards plus their gaps span 2,255px, safely
-// beyond the 1,400px visible frame before the sequence repeats.
-const firstRow = testimonials.filter((_, index) => index % 2 === 0);
-const secondRow = testimonials.filter((_, index) => index % 2 === 1);
-const marqueeRow = [...firstRow, ...firstRow];
-const reverseMarqueeRow = [...secondRow, ...secondRow];
-const mobileMarqueeRow = [...testimonials, ...testimonials];
 
 function QuoteMark({
   className,
@@ -60,7 +51,7 @@ function TestimonialCard({
   testimonial,
 }: {
   ariaHidden?: boolean;
-  testimonial: Testimonial;
+  testimonial: SanityTestimonial;
 }) {
   return (
     <article
@@ -71,7 +62,7 @@ function TestimonialCard({
         className="m-0 min-h-0 w-full break-words text-center font-sans text-[20px] leading-[1.2] font-medium tracking-[-0.5px] text-white min-[641px]:max-[1200px]:mx-auto min-[641px]:max-[1200px]:w-[calc(100%_-_48px)] min-[641px]:max-[1200px]:text-[17px] min-[641px]:max-[1200px]:leading-[1.28] max-[640px]:text-[17px] max-[640px]:leading-[1.35] max-[359px]:text-base"
         data-collab-quote-text
       >
-        {testimonial.text}
+        {testimonial.quote}
       </p>
 
       <div className="mt-auto flex w-full shrink-0 flex-col items-center gap-2">
@@ -81,7 +72,7 @@ function TestimonialCard({
             className="h-full w-full rounded-full object-cover border border-white/20"
             height={48}
             loading="lazy"
-            src={testimonial.avatar}
+            src={testimonial.avatar?.url ?? "/images/testimonial-shohanur-rahman.png"}
             width={48}
           />
         </div>
@@ -103,9 +94,16 @@ function TestimonialCard({
 
 export default function CalloutNotesSection({
   hideTopCrosshairs = false,
+  testimonials = [],
 }: {
   hideTopCrosshairs?: boolean;
+  testimonials?: SanityTestimonial[];
 }) {
+  const firstRow = testimonials.filter((_, index) => index % 2 === 0);
+  const secondRow = testimonials.filter((_, index) => index % 2 === 1);
+  const marqueeRow = [...firstRow, ...firstRow];
+  const reverseMarqueeRow = [...secondRow, ...secondRow];
+  const mobileMarqueeRow = [...testimonials, ...testimonials];
   return (
     <section
       id="collab-notes"

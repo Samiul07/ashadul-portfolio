@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { testimonials } from "@/lib/testimonials";
+import { featuredTestimonials as testimonials } from "@/lib/hero-feedback";
 
 const featuredClientNames = [
   "Shohanur Rahman",

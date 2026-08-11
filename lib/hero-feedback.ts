@@ -1,11 +1,6 @@
-export type Testimonial = {
-  avatar: string;
-  name: string;
-  role: string;
-  text: string;
-};
-
-export const testimonials: Testimonial[] = [
+// Data source for the hero feedback widget. Kept separate from the Sanity-
+// powered main testimonials section (CalloutNotesSection).
+export const featuredTestimonials = [
   {
     avatar: "/images/testimonial-shohanur-rahman.png",
     name: "Shohanur Rahman",

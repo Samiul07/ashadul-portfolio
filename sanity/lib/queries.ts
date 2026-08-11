@@ -40,3 +40,12 @@ export const articleSlugsQuery = defineQuery(`
     "slug": slug.current
   }
 `);
+
+export const testimonialsQuery = defineQuery(`
+  *[_type == "testimonial"] | order(_createdAt asc) {
+    name,
+    role,
+    quote,
+    "avatar": avatar ${thumbnailProjection}
+  }
+`);
