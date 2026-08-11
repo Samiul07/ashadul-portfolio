@@ -19,8 +19,12 @@ export const articlesQuery = defineQuery(`
   *[_type == "article"] | order(publishedAt desc) {
     title,
     "slug": slug.current,
+    category,
     publishedAt,
+    excerpt,
     "thumbnail": thumbnail ${thumbnailProjection},
+    heroAlt,
+    takeaways,
     body
   }
 `);
@@ -29,8 +33,12 @@ export const articleBySlugQuery = defineQuery(`
   *[_type == "article" && slug.current == $slug][0] {
     title,
     "slug": slug.current,
+    category,
     publishedAt,
+    excerpt,
     "thumbnail": thumbnail ${thumbnailProjection},
+    heroAlt,
+    takeaways,
     body
   }
 `);
@@ -38,6 +46,16 @@ export const articleBySlugQuery = defineQuery(`
 export const articleSlugsQuery = defineQuery(`
   *[_type == "article" && defined(slug.current)] {
     "slug": slug.current
+  }
+`);
+
+export const recentArticlesQuery = defineQuery(`
+  *[_type == "article"] | order(publishedAt desc) [0...$limit] {
+    title,
+    "slug": slug.current,
+    category,
+    publishedAt,
+    "thumbnail": thumbnail ${thumbnailProjection}
   }
 `);
 

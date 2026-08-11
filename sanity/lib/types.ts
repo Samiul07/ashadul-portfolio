@@ -15,8 +15,12 @@ export type SanityProject = {
 
 export type SanityArticle = {
   body: PortableTextBlock[];
+  category: string | null;
+  excerpt: string | null;
+  heroAlt: string | null;
   publishedAt: string;
   slug: string;
+  takeaways: string[] | null;
   thumbnail: SanityThumbnail;
   title: string;
 };

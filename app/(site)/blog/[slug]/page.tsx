@@ -4,8 +4,6 @@ import HeroGradient from "@/components/background/desktop-hero-gradient";
 import BlogArticleSection from "@/components/blog/blog-article-section";
 import CalloutNotesSection from "@/components/sections/callout-notes-section";
 import ContactFooterSection from "@/components/sections/contact-footer-section";
-import { getAllNotes, getRelatedNotes, getNoteBySlug } from "@/lib/notes";
-import { sanityArticleToFieldNote } from "@/sanity/lib/content";
 import {
   getArticleBySlug,
   getArticleSlugs,
@@ -19,12 +17,8 @@ type BlogArticlePageProps = {
 
 export async function generateStaticParams() {
   const sanitySlugs = await getArticleSlugs();
-  const slugs = new Set([
-    ...getAllNotes().map((note) => note.slug),
-    ...sanitySlugs.map((article) => article.slug),
-  ]);
 
-  return Array.from(slugs, (slug) => ({ slug }));
+  return sanitySlugs.map((article) => ({ slug: article.slug }));
 }
 
 const siteUrl = "https://www.ashadul.design";
@@ -33,53 +27,52 @@ export async function generateMetadata({
   params,
 }: BlogArticlePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const sanityArticle = await getArticleBySlug(slug);
-  const note = sanityArticle
-    ? sanityArticleToFieldNote(sanityArticle)
-    : getNoteBySlug(slug);
+  const article = await getArticleBySlug(slug);
 
-  if (!note) {
+  if (!article) {
     return { title: "Note not found | Ashadul Islam" };
   }
 
-  const canonicalUrl = `${siteUrl}/blog/${note.slug}`;
-  const imageUrl = note.image.startsWith("http")
-    ? note.image
-    : `${siteUrl}${note.image}`;
+  const canonicalUrl = `${siteUrl}/blog/${article.slug}`;
+  const imageUrl = article.thumbnail?.url?.startsWith("http")
+    ? article.thumbnail.url
+    : `${siteUrl}${article.thumbnail?.url ?? ""}`;
+  const excerpt = article.excerpt ?? article.title;
+  const category = article.category ?? "Article";
 
   return {
-    title: `${note.title} | Ashadul Islam — Lead Product Designer`,
-    description: note.excerpt,
-    keywords: note.tags || [note.category, "Product Design", "UX Design", "SaaS Design"],
+    title: `${article.title} | Ashadul Islam — Lead Product Designer`,
+    description: excerpt,
+    keywords: [category, "Product Design", "UX Design", "SaaS Design"],
     authors: [{ name: "Ashadul Islam", url: `${siteUrl}/#about` }],
     publisher: "Ashadul Islam",
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: note.title,
-      description: note.excerpt,
+      title: article.title,
+      description: excerpt,
       url: canonicalUrl,
       siteName: "Ashadul Islam Portfolio",
       locale: "en_US",
       type: "article",
-      publishedTime: note.dateISO,
-      modifiedTime: note.dateModifiedISO || note.dateISO,
+      publishedTime: article.publishedAt,
+      modifiedTime: article.publishedAt,
       authors: ["Ashadul Islam"],
-      tags: note.tags || [note.category],
+      tags: [category],
       images: [
         {
           url: imageUrl,
           width: 1200,
           height: 630,
-          alt: note.title,
+          alt: article.title,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: note.title,
-      description: note.excerpt,
+      title: article.title,
+      description: excerpt,
       creator: "@ashadul_ux",
       images: [imageUrl],
     },
@@ -98,26 +91,22 @@ export async function generateMetadata({
 
 export default async function BlogArticlePage({ params }: BlogArticlePageProps) {
   const { slug } = await params;
-  const sanityArticle = await getArticleBySlug(slug);
-  const note = sanityArticle
-    ? sanityArticleToFieldNote(sanityArticle)
-    : getNoteBySlug(slug);
+  const article = await getArticleBySlug(slug);
 
-  if (!note) notFound();
+  if (!article) notFound();
 
-  const sanityArticles = sanityArticle ? await getArticles() : [];
-  const testimonials = await getTestimonials();
-  const moreNotes = sanityArticle
-    ? sanityArticles
-        .filter((article) => article.slug !== slug)
-        .slice(0, 3)
-        .map(sanityArticleToFieldNote)
-    : getRelatedNotes(slug, 4).slice(0, 3);
+  const [articles, testimonials] = await Promise.all([
+    getArticles(),
+    getTestimonials(),
+  ]);
+  const moreArticles = articles
+    .filter((item) => item.slug !== slug)
+    .slice(0, 3);
 
-  const canonicalUrl = `${siteUrl}/blog/${note.slug}`;
-  const imageUrl = note.image.startsWith("http")
-    ? note.image
-    : `${siteUrl}${note.image}`;
+  const canonicalUrl = `${siteUrl}/blog/${article.slug}`;
+  const imageUrl = article.thumbnail?.url?.startsWith("http")
+    ? article.thumbnail.url
+    : `${siteUrl}${article.thumbnail?.url ?? ""}`;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -127,16 +116,16 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
       "@type": "WebPage",
       "@id": canonicalUrl,
     },
-    headline: note.title,
-    description: note.excerpt,
+    headline: article.title,
+    description: article.excerpt ?? article.title,
     image: [imageUrl],
-    datePublished: note.dateISO,
-    dateModified: note.dateModifiedISO || note.dateISO,
+    datePublished: article.publishedAt,
+    dateModified: article.publishedAt,
     inLanguage: "en-US",
-    wordCount: note.wordCount || 1200,
-    timeRequired: `PT${parseInt(note.readTime) || 7}M`,
-    articleSection: note.category,
-    keywords: note.tags || [note.category, "Product Design", "UX Design"],
+    wordCount: 1200,
+    timeRequired: "PT7M",
+    articleSection: article.category ?? "Article",
+    keywords: [article.category ?? "Article", "Product Design", "UX Design"],
     author: {
       "@type": "Person",
       name: "Ashadul Islam",
@@ -199,9 +188,8 @@ export default async function BlogArticlePage({ params }: BlogArticlePageProps) 
 
       <div className="relative z-10">
         <BlogArticleSection
-          moreNotes={moreNotes}
-          note={note}
-          portableBody={sanityArticle?.body}
+          article={article}
+          moreArticles={moreArticles}
         />
         <CalloutNotesSection hideTopCrosshairs testimonials={testimonials} />
         <ContactFooterSection workHref="/portfolio" />

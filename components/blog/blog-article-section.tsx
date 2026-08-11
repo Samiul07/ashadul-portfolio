@@ -9,11 +9,13 @@ import {
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import type { FieldNote, NoteBlock } from "@/lib/notes";
+import type { SanityArticle } from "@/sanity/lib/types";
 import SectionCrosshairs from "@/components/ui/section-crosshairs";
 import {
   MobileFeaturedNote,
   NoteCard,
+  type Note,
+  sanityArticleToNoteCard,
 } from "@/components/sections/notes-section";
 
 const frameWidth =
@@ -200,67 +202,6 @@ function ChamferedOutlineButton({
       {innerContent}
     </button>
   );
-}
-
-function ArticleBlock({ block }: { block: NoteBlock }) {
-  switch (block.type) {
-    case "p":
-      if (block.emphasis) {
-        return (
-          <blockquote className="my-6 border-l-2 border-primary bg-white/[0.02] py-4 pr-6 pl-6 font-sans text-xl leading-[1.4] font-medium italic tracking-[-0.4px] text-white max-[640px]:text-lg max-[640px]:pl-4 max-[640px]:pr-4">
-            “{block.text}”
-          </blockquote>
-        );
-      }
-      return (
-        <p className="m-0 font-sans text-[19px] leading-[1.7] tracking-[-0.25px] text-white/90 max-[640px]:text-base max-[640px]:leading-[1.65]">
-          {block.text}
-        </p>
-      );
-    case "h2": {
-      const id = slugify(block.text);
-      return (
-        <h2
-          className="scroll-mt-28 m-0 font-display text-[36px] leading-[1.05] font-black tracking-[-1px] text-white uppercase max-[1200px]:text-[32px] max-[640px]:text-[clamp(26px,7vw,34px)] max-[640px]:leading-[1.02] max-[640px]:tracking-[-1px]"
-          id={id}
-        >
-          {block.text}
-        </h2>
-      );
-    }
-    case "image":
-      return (
-        <figure className="my-6 flex w-full flex-col gap-3">
-          <div className="relative aspect-[16/9] w-full overflow-hidden bg-white/5 border border-white/14 max-[640px]:-mx-5 max-[640px]:w-[calc(100%+40px)] max-[640px]:max-w-none max-[640px]:border-x-0">
-            <Image
-              alt={block.alt}
-              className="object-cover"
-              fill
-              sizes="(max-width: 1100px) calc(100vw - 80px), 860px"
-              src={block.src}
-            />
-          </div>
-          {block.alt ? (
-            <figcaption className="text-center font-sans text-xs text-white/60 italic max-[640px]:text-[11px]">
-              {block.alt}
-            </figcaption>
-          ) : null}
-        </figure>
-      );
-    case "ul":
-      return (
-        <ul className="m-0 flex list-none flex-col gap-3 p-0 font-sans text-[19px] leading-[1.6] tracking-[-0.25px] text-white/90 max-[640px]:text-base">
-          {block.items.map((item) => (
-            <li className="relative flex items-start gap-3 pl-1" key={item}>
-              <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
-      );
-    default:
-      return null;
-  }
 }
 
 const portableTextComponents: PortableTextComponents = {
@@ -686,19 +627,13 @@ function RightShareSidebar({
 }
 
 export default function BlogArticleSection({
-  note,
-  moreNotes,
-  portableBody,
+  article,
+  moreArticles,
 }: {
-  note: FieldNote;
-  moreNotes?: FieldNote[];
-  portableBody?: PortableTextBlock[];
+  article: SanityArticle;
+  moreArticles?: SanityArticle[];
 }) {
-  const headings = portableBody
-    ? portableHeadings(portableBody)
-    : note.body
-        .filter((b): b is { type: "h2"; text: string } => b.type === "h2")
-        .map((b) => b.text);
+  const headings = portableHeadings(article.body ?? []);
 
   const [copied, setCopied] = useState(false);
 
@@ -732,7 +667,7 @@ export default function BlogArticleSection({
                 className="m-0 max-w-[1100px] text-center font-display text-[96px] leading-[0.92] font-black tracking-[-3px] text-white uppercase max-[1439px]:text-[clamp(64px,6vw,84px)] max-[1200px]:text-[clamp(48px,5.5vw,72px)] max-[640px]:text-[clamp(36px,10vw,52px)] max-[640px]:leading-[0.95] max-[640px]:tracking-[-1.5px]"
                 id="article-heading"
               >
-                {note.title}
+                {article.title}
                 <span className="text-primary">.</span>
               </h1>
             </div>
@@ -740,12 +675,12 @@ export default function BlogArticleSection({
             {/* Hero Image — Locked 16:9 Aspect Ratio matching blog thumbnails */}
             <div className="relative aspect-[16/9] w-full overflow-hidden bg-white/5 border border-white/14 max-[640px]:-mx-5 max-[640px]:w-[calc(100%+40px)] max-[640px]:max-w-none max-[640px]:border-x-0">
               <Image
-                alt={note.heroAlt}
+                alt={article.heroAlt ?? article.title}
                 className="object-cover"
                 fill
                 priority
                 sizes="(max-width: 1439px) calc(100vw - 48px), 1400px"
-                src={note.image}
+                src={article.thumbnail?.url ?? "/images/note-ai-judgment.png"}
               />
             </div>
           </div>
@@ -767,7 +702,7 @@ export default function BlogArticleSection({
               <MobileReadingBar headings={headings} />
 
               {/* High-Tech Chamfered Key Takeaways Box (Undistorted 1px Red Border) */}
-              {note.takeaways && note.takeaways.length > 0 ? (
+              {article.takeaways && article.takeaways.length > 0 ? (
                 <ChamferedStrokeBox corner={14}>
                   <div className="flex w-full flex-col gap-6 p-8 max-[1200px]:p-6 max-[640px]:p-5">
                     <div className="flex items-center justify-between border-b border-white/14 pb-4">
@@ -785,7 +720,7 @@ export default function BlogArticleSection({
                     </div>
 
                     <ul className="m-0 flex flex-col gap-4 pl-0 list-none font-sans text-[17px] leading-[1.5] text-white/90 max-[640px]:text-sm max-[640px]:leading-relaxed">
-                      {note.takeaways.map((takeaway, idx) => (
+                      {article.takeaways.map((takeaway, idx) => (
                         <li className="relative flex items-start gap-3" key={idx}>
                           <span className="mt-1.5 text-primary font-bold text-sm select-none">
                             ◆
@@ -800,33 +735,10 @@ export default function BlogArticleSection({
 
               {/* Main Article Body Blocks */}
               <div className="flex w-full flex-col gap-10 max-[640px]:gap-7">
-                {portableBody ? (
-                  <PortableText
-                    components={portableTextComponents}
-                    value={portableBody}
-                  />
-                ) : (
-                  groupBody(note.body).map((section, index) => (
-                    <section
-                      className="flex w-full flex-col gap-6 max-[640px]:gap-4"
-                      key={`${section.heading}-${index}`}
-                    >
-                      {section.heading ? (
-                        <ArticleBlock
-                          block={{ type: "h2", text: section.heading }}
-                        />
-                      ) : null}
-                      <div className="flex w-full flex-col gap-5 max-[640px]:gap-4">
-                        {section.blocks.map((block, blockIndex) => (
-                          <ArticleBlock
-                            block={block}
-                            key={`${block.type}-${blockIndex}`}
-                          />
-                        ))}
-                      </div>
-                    </section>
-                  ))
-                )}
+                <PortableText
+                  components={portableTextComponents}
+                  value={article.body ?? []}
+                />
               </div>
 
               {/* Mobile & Tablet Inline Actions (<1280px) */}
@@ -923,36 +835,32 @@ export default function BlogArticleSection({
             </div>
 
             {/* Curated cards — the exact homepage NoteCard, reused directly */}
-            {moreNotes && moreNotes.length > 0 ? (
+            {moreArticles && moreArticles.length > 0 ? (
               <>
                 <div className="grid w-full grid-cols-3 gap-12 min-[640px]:max-[1200px]:grid-cols-2 min-[640px]:max-[1200px]:gap-x-8 min-[640px]:max-[1200px]:gap-y-12 min-[640px]:max-[1200px]:[&>*:first-child]:col-span-2 max-[640px]:hidden">
-                  {moreNotes.map((moreNote) => (
-                    <NoteCard
-                      key={moreNote.slug}
-                      note={{
-                        category: moreNote.category,
-                        href: `/blog/${moreNote.slug}`,
-                        image: moreNote.image,
-                        title: moreNote.title,
-                      }}
-                      tabletFeed={true}
-                    />
-                  ))}
+                  {moreArticles.map((moreArticle) => {
+                    const moreNote: Note = sanityArticleToNoteCard(moreArticle);
+                    return (
+                      <NoteCard
+                        key={moreNote.href}
+                        note={moreNote}
+                        tabletFeed={true}
+                      />
+                    );
+                  })}
                 </div>
 
                 {/* Mobile — homepage mobile feed pattern */}
                 <div className="hidden w-full max-[640px]:block max-[640px]:-mx-5 max-[640px]:w-[calc(100%_+_40px)] [&>article:last-child]:border-b-0">
-                  {moreNotes.map((moreNote) => (
-                    <MobileFeaturedNote
-                      key={moreNote.slug}
-                      note={{
-                        category: moreNote.category,
-                        href: `/blog/${moreNote.slug}`,
-                        image: moreNote.image,
-                        title: moreNote.title,
-                      }}
-                    />
-                  ))}
+                  {moreArticles.map((moreArticle) => {
+                    const moreNote: Note = sanityArticleToNoteCard(moreArticle);
+                    return (
+                      <MobileFeaturedNote
+                        key={moreNote.href}
+                        note={moreNote}
+                      />
+                    );
+                  })}
                 </div>
               </>
             ) : null}
@@ -961,30 +869,4 @@ export default function BlogArticleSection({
       </section>
     </>
   );
-}
-
-/** Group sequential body blocks into Figma-style sections (heading + content). */
-function groupBody(body: NoteBlock[]) {
-  const sections: { heading: string | null; blocks: NoteBlock[] }[] = [];
-  let current: { heading: string | null; blocks: NoteBlock[] } = {
-    heading: null,
-    blocks: [],
-  };
-
-  for (const block of body) {
-    if (block.type === "h2") {
-      if (current.heading || current.blocks.length) {
-        sections.push(current);
-      }
-      current = { heading: block.text, blocks: [] };
-      continue;
-    }
-    current.blocks.push(block);
-  }
-
-  if (current.heading || current.blocks.length) {
-    sections.push(current);
-  }
-
-  return sections;
 }

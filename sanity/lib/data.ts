@@ -4,6 +4,7 @@ import {
   articleSlugsQuery,
   articlesQuery,
   projectsQuery,
+  recentArticlesQuery,
   testimonialsQuery,
 } from "./queries";
 import type { SanityArticle, SanityProject, SanityTestimonial } from "./types";
@@ -16,6 +17,14 @@ export function getProjects() {
 
 export function getArticles() {
   return sanityClient.fetch<SanityArticle[]>(articlesQuery, {}, queryOptions);
+}
+
+export function getRecentArticles(limit: number) {
+  return sanityClient.fetch<SanityArticle[]>(
+    recentArticlesQuery,
+    { limit },
+    queryOptions,
+  );
 }
 
 export function getArticleBySlug(slug: string) {

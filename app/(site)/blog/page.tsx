@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import BlogHeroSection from "@/components/blog/blog-hero-section";
 import BlogPostsSection from "@/components/blog/blog-posts-section";
 import ContactFooterSection from "@/components/sections/contact-footer-section";
-import { sanityArticleToNote } from "@/sanity/lib/content";
+import { sanityArticleToNoteCard } from "@/components/sections/notes-section";
 import { getArticles } from "@/sanity/lib/data";
 
 export const metadata: Metadata = {
@@ -17,7 +17,7 @@ export default async function BlogPage() {
   return (
     <>
       <BlogHeroSection />
-      <BlogPostsSection notes={articles.map(sanityArticleToNote)} />
+      <BlogPostsSection notes={articles.map(sanityArticleToNoteCard)} />
       <ContactFooterSection workHref="/portfolio" />
     </>
   );

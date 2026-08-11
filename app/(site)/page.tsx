@@ -13,7 +13,8 @@ import ServicesSection from "@/components/sections/services-section";
 import WhyMeCardsSection from "@/components/sections/why-me-cards-section";
 import WorkProcessFolderRefinedSection from "@/components/sections/work-process-folder-refined-section";
 import heroStyles from "./home-hero.module.css";
-import { getTestimonials } from "@/sanity/lib/data";
+import { getRecentArticles, getTestimonials } from "@/sanity/lib/data";
+import { sanityArticleToNoteCard } from "@/components/sections/notes-section";
 
 const frameWidth =
   "w-[1400px] max-[1439px]:w-[calc(100%_-_48px)] max-[640px]:w-[calc(100%_-_40px)]";
@@ -393,7 +394,11 @@ function StatsSection() {
 }
 
 export default async function Home() {
-  const testimonials = await getTestimonials();
+  const [testimonials, recentArticles] = await Promise.all([
+    getTestimonials(),
+    getRecentArticles(3),
+  ]);
+  const notes = recentArticles.map(sanityArticleToNoteCard);
   return (
     <>
       <link
@@ -422,7 +427,7 @@ export default async function Home() {
       <ServicesSection />
       <WorkProcessFolderRefinedSection />
       <RecognitionSection />
-      <NotesSection />
+      <NotesSection notes={notes} />
       <ContactFooterSection />
     </>
   );

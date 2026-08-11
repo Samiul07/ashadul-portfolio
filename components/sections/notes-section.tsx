@@ -18,26 +18,30 @@ export type Note = {
   views?: string;
 };
 
-export const notes: Note[] = [
-  {
-    category: "Art Direction",
-    href: "/blog/minimalist-branding-for-modern-tech-startups",
-    image: "/images/blog/article/figma-article-hero-78d327.png",
-    title: "Minimalist Branding for Modern Tech Startups",
-  },
-  {
-    category: "Product Design",
-    href: "/blog/designing-product-flows-that-actually-ship",
-    image: "/images/note-product-flows.png",
-    title: "Designing Product Flows That Actually Ship",
-  },
-  {
-    category: "AI & Craft",
-    href: "/blog/using-ai-without-losing-design-judgment",
-    image: "/images/note-ai-judgment.png",
-    title: "Using AI Without Losing Design Judgment",
-  },
-];
+function formatPublishedDate(value: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(value));
+}
+
+export function sanityArticleToNoteCard(article: {
+  category: string | null;
+  publishedAt: string;
+  slug: string;
+  thumbnail: { alt: string; url: string } | null;
+  title: string;
+}): Note {
+  return {
+    category: article.category ?? "Article",
+    date: formatPublishedDate(article.publishedAt),
+    href: `/blog/${article.slug}`,
+    image: article.thumbnail?.url ?? "/images/note-ai-judgment.png",
+    title: article.title,
+    views: "",
+  };
+}
 
 function ArrowUpRight() {
   return (
@@ -254,7 +258,7 @@ export function MobileCompactNote({ note }: { note: Note }) {
   );
 }
 
-export default function NotesSection() {
+export default function NotesSection({ notes }: { notes: Note[] }) {
   return (
     <section
       id="notes"

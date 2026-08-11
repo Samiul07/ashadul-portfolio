@@ -7,13 +7,10 @@ import {
   NoteCard,
 } from "@/components/sections/notes-section";
 import SectionCrosshairs from "@/components/ui/section-crosshairs";
-import { getAllNotes, noteCardData } from "@/lib/notes";
 
 const frameWidth =
   "w-[1400px] max-[1439px]:w-[calc(100%_-_48px)] max-[640px]:w-[calc(100%_-_40px)]";
 const frameMargin = "ml-[calc((100vw-1400px)/2)] max-[1439px]:mx-auto";
-
-const fallbackBlogNotes = getAllNotes().map(noteCardData);
 
 function Pagination({
   page,
@@ -106,7 +103,7 @@ function Pagination({
 export default function BlogPostsSection({ notes }: { notes: Note[] }) {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(6);
-  const blogNotes = notes.length > 0 ? notes : fallbackBlogNotes;
+  const blogNotes = notes;
 
   useEffect(() => {
     const updatePageSize = () => {
