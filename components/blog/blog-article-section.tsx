@@ -6,7 +6,7 @@ import {
   type PortableTextComponents,
   toPlainText,
 } from "@portabletext/react";
-import { useEffect, useRef, useState } from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { SanityArticle } from "@/sanity/lib/types";
@@ -541,6 +541,91 @@ function MobileReadingBar({ headings }: { headings: string[] }) {
   );
 }
 
+/**
+ * Reusable Newsletter subscription form with state management and Resend API integration.
+ */
+function NewsletterBox() {
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (isSubmitting || !email.trim()) return;
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to subscribe");
+      }
+
+      setIsSubmitted(true);
+      setEmail("");
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-3.5 border border-white/14 bg-white/[0.03] p-4 backdrop-blur-md">
+      <div className="flex flex-col gap-1">
+        <p className="m-0 font-overline text-xs font-bold tracking-wider text-primary uppercase">
+          {"// THE NEWSLETTER"}
+        </p>
+        <h4 className="m-0 font-display text-base font-bold text-white uppercase">
+          PRODUCT NOTES
+        </h4>
+      </div>
+      <p className="m-0 font-sans text-sm leading-relaxed text-white/75">
+        Get my latest SaaS teardowns, interface patterns, and product strategies delivered straight to your inbox.
+      </p>
+
+      {isSubmitted ? (
+        <div className="flex items-center gap-2 py-3 text-emerald-400 font-sans text-sm font-medium">
+          <span>✓ You&apos;re on the list.</span>
+        </div>
+      ) : (
+        <form className="flex flex-col gap-2.5" onSubmit={handleSubmit}>
+          <input
+            suppressHydrationWarning
+            className="w-full border border-white/16 bg-black/60 px-3 py-2.5 font-sans text-sm text-white placeholder-white/50 outline-none focus:border-primary"
+            placeholder="Enter your email..."
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            disabled={isSubmitting}
+          />
+          <button
+            className="inline-flex h-11 w-full items-center justify-center gap-2 bg-primary px-5 font-sans text-sm leading-none font-normal tracking-[-0.2px] text-white transition-colors duration-200 hover:bg-white hover:text-black [clip-path:polygon(0_0,calc(100%_-_12px)_0,100%_12px,100%_100%,12px_100%,0_calc(100%_-_12px))] disabled:opacity-50 disabled:cursor-wait"
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Subscribing..." : "Subscribe"}
+          </button>
+          {error ? (
+            <p className="m-0 font-sans text-xs text-primary/80">{error}</p>
+          ) : null}
+          <p className="m-0 mt-1 font-sans text-[11px] text-white/40 leading-none text-center">
+            No spam. Unsubscribe anytime.
+          </p>
+        </form>
+      )}
+    </div>
+  );
+}
+
 /** 
  * Sleek, Compact Right Sidebar (240px wide) — High Contrast & Readable (Desktop ≥1280px)
  */
@@ -595,33 +680,7 @@ function RightShareSidebar({
       </div>
 
       {/* Substack Box */}
-      <div className="flex flex-col gap-3.5 border border-white/14 bg-white/[0.03] p-4 backdrop-blur-md">
-        <div className="flex flex-col gap-1">
-          <p className="m-0 font-overline text-xs font-bold tracking-wider text-primary uppercase">
-            {"// Substack Insights"}
-          </p>
-          <h4 className="m-0 font-display text-base font-bold text-white uppercase">
-            Product Notes
-          </h4>
-        </div>
-        <p className="m-0 font-sans text-sm leading-relaxed text-white/75">
-          Actionable SaaS UX breakdowns & design system patterns.
-        </p>
-        <form className="flex flex-col gap-2.5" onSubmit={(e) => e.preventDefault()}>
-          <input
-            suppressHydrationWarning
-            className="w-full border border-white/16 bg-black/60 px-3 py-2.5 font-sans text-sm text-white placeholder-white/50 outline-none focus:border-primary"
-            placeholder="Enter your email..."
-            type="email"
-          />
-          <button
-            className="inline-flex h-11 w-full items-center justify-center gap-2 bg-primary px-5 font-sans text-sm leading-none font-normal tracking-[-0.2px] text-white transition-colors duration-200 hover:bg-white hover:text-black [clip-path:polygon(0_0,calc(100%_-_12px)_0,100%_12px,100%_100%,12px_100%,0_calc(100%_-_12px))]"
-            type="submit"
-          >
-            Subscribe
-          </button>
-        </form>
-      </div>
+      <NewsletterBox />
     </aside>
   );
 }
@@ -761,33 +820,7 @@ export default function BlogArticleSection({
                   </div>
 
                   {/* Substack Insights */}
-                  <div className="flex flex-col gap-3.5 border border-white/14 bg-white/[0.03] p-4 backdrop-blur-md">
-                    <div className="flex flex-col gap-1">
-                      <p className="m-0 font-overline text-xs font-bold tracking-wider text-primary uppercase">
-                        {"// Substack Insights"}
-                      </p>
-                      <h4 className="m-0 font-display text-base font-bold text-white uppercase">
-                        Product Notes
-                      </h4>
-                    </div>
-                    <p className="m-0 font-sans text-sm leading-relaxed text-white/75">
-                      Actionable SaaS UX breakdowns & design system patterns.
-                    </p>
-                    <form className="flex flex-col gap-2.5" onSubmit={(e) => e.preventDefault()}>
-                      <input
-                        suppressHydrationWarning
-                        className="w-full border border-white/16 bg-black/60 px-3 py-2.5 font-sans text-sm text-white placeholder-white/50 outline-none focus:border-primary"
-                        placeholder="Enter your email..."
-                        type="email"
-                      />
-                      <button
-                        className="inline-flex h-11 w-full items-center justify-center gap-2 bg-primary px-5 font-sans text-sm leading-none font-normal tracking-[-0.2px] text-white transition-colors duration-200 hover:bg-white hover:text-black [clip-path:polygon(0_0,calc(100%_-_12px)_0,100%_12px,100%_100%,12px_100%,0_calc(100%_-_12px))]"
-                        type="submit"
-                      >
-                        Subscribe
-                      </button>
-                    </form>
-                  </div>
+                  <NewsletterBox />
                 </div>
               </div>
             </main>

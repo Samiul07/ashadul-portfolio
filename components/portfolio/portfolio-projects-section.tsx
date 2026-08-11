@@ -25,170 +25,6 @@ export type PortfolioProject = {
 
 type Project = PortfolioProject;
 
-const categories: { id: CategoryId; label: string }[] = [
-  { id: "all", label: "All Projects" },
-  { id: "product", label: "Product Design" },
-  { id: "saas", label: "SaaS Platforms" },
-  { id: "web", label: "Web Applications" },
-  { id: "mobile", label: "Mobile Apps" },
-  { id: "systems", label: "Design Systems" },
-  { id: "redesign", label: "Redesign Projects" },
-  { id: "enterprise", label: "Enterprise UX" },
-];
-
-const projects: Project[] = [
-  {
-    categories: ["product", "saas", "web", "systems"],
-    image: "/images/portfolio/project-metabolix-webapp.jpg",
-    title: "MetaBolix — AI Health & Metabolic SaaS Platform",
-    type: "SaaS & Web App",
-  },
-  {
-    categories: ["saas", "web", "enterprise"],
-    image: "/images/portfolio/project-orkap.jpg",
-    title: "Orkap — Enterprise Cloud Operations & Infrastructure",
-    type: "Enterprise UX",
-  },
-  {
-    categories: ["product", "saas", "web"],
-    image: "/images/portfolio/project-fedica.jpg",
-    title: "Fedica — Social Analytics & Audience Intelligence",
-    type: "SaaS Platform",
-  },
-  {
-    categories: ["product", "web", "systems"],
-    image: "/images/portfolio/project-reputable.jpg",
-    title: "Reputable — Web3 Reputation & Trust Verification",
-    type: "Web Platform",
-  },
-  {
-    categories: ["product", "mobile", "redesign"],
-    image: "/images/portfolio/project-metabolix-mobile.jpg",
-    title: "MetaBolix Mobile — Daily Health Tracker App",
-    type: "Mobile App",
-  },
-  {
-    categories: ["product", "web", "redesign"],
-    image: "/images/portfolio/project-entermyth.jpg",
-    title: "Entermyth — Gaming Ecosystem & Creator Hub",
-    type: "Product Design",
-  },
-  {
-    categories: ["product", "mobile"],
-    image: "/images/portfolio/project-fiteats.jpg",
-    title: "FitEats — Personalized Nutrition & Meal Planning",
-    type: "Mobile App",
-  },
-  {
-    categories: ["saas", "web", "enterprise"],
-    image: "/images/portfolio/project-finsaro.jpg",
-    title: "Finsaro — Merchant Billing & Financial Dashboard",
-    type: "Dashboard & SaaS",
-  },
-  {
-    categories: ["saas", "web", "systems"],
-    image: "/images/portfolio/project-tradex.jpg",
-    title: "TradeX — Real-Time Financial Trading Terminal",
-    type: "Fintech & SaaS",
-  },
-  {
-    categories: ["product", "mobile", "systems"],
-    image: "/images/portfolio/project-masy.jpg",
-    title: "Masy — Smart Home & IoT Automation Controller",
-    type: "Mobile App",
-  },
-  {
-    categories: ["product", "saas", "web"],
-    image: "/images/portfolio/project-drivephase.jpg",
-    title: "Drivephase — Performance Marketing & Attribution",
-    type: "Product Design",
-  },
-  {
-    categories: ["saas", "web", "enterprise"],
-    image: "/images/portfolio/project-scalepro.jpg",
-    title: "ScalePro — Agency Management & Operations Hub",
-    type: "Enterprise UX",
-  },
-  {
-    categories: ["saas", "web", "systems"],
-    image: "/images/portfolio/project-scalepoynt.jpg",
-    title: "Scalepoynt — B2B Sales & Revenue Intelligence",
-    type: "SaaS Platform",
-  },
-  {
-    categories: ["product", "mobile", "redesign"],
-    image: "/images/portfolio/project-speak.jpg",
-    title: "SPEAK! — AI Language Learning & Voice Tutor App",
-    type: "Mobile App",
-  },
-  {
-    categories: ["systems", "web"],
-    image: "/images/portfolio/project-markone.jpg",
-    title: "MarkOne — Universal Design System Token Library",
-    type: "Design System",
-  },
-  {
-    categories: ["saas", "systems", "enterprise"],
-    image: "/images/portfolio/project-novonimbus.jpg",
-    title: "NovoNimbus — Multi-Cloud Infrastructure Manager",
-    type: "Enterprise UX",
-  },
-  {
-    categories: ["systems", "enterprise"],
-    image: "/images/portfolio/project-nova.jpg",
-    title: "Nova System — Enterprise UI Component Architecture",
-    type: "Design System",
-  },
-  {
-    categories: ["enterprise", "saas", "systems"],
-    image: "/images/portfolio/project-c4.jpg",
-    title: "C4 Security — Cyber Threat Intelligence Command",
-    type: "Enterprise UX",
-  },
-  {
-    categories: ["product", "mobile", "saas"],
-    image: "/images/portfolio/project-trackio.jpg",
-    title: "Trackio — Fleet Logistics & Real-Time GPS Tracking",
-    type: "Mobile App",
-  },
-  {
-    categories: ["saas", "web", "product"],
-    image: "/images/portfolio/project-storygeny.jpg",
-    title: "StoryGeny — AI Content Generation Studio",
-    type: "SaaS Platform",
-  },
-  {
-    categories: ["web", "systems", "enterprise"],
-    image: "/images/portfolio/project-buildnest.jpg",
-    title: "Buildnest — Construction Project Management",
-    type: "Web Application",
-  },
-  {
-    categories: ["redesign", "product", "web"],
-    image: "/images/portfolio/project-sunsetbay.jpg",
-    title: "Sunset Bay — Luxury Resort Digital Experience",
-    type: "Redesign Project",
-  },
-  {
-    categories: ["product", "saas", "web"],
-    image: "/images/portfolio/project-trackreward.jpg",
-    title: "TrackReward — Customer Loyalty & Rewards Platform",
-    type: "SaaS Platform",
-  },
-  {
-    categories: ["product", "mobile", "redesign"],
-    image: "/images/portfolio/project-mobile.png",
-    title: "Dino — Group Payment Sharing App",
-    type: "Mobile App",
-  },
-  {
-    categories: ["product", "saas", "web", "systems", "enterprise"],
-    image: "/images/portfolio/project-folio.png",
-    title: "Folio — Seller Analytics & Merchant Dashboard",
-    type: "Web Platform",
-  },
-];
-
 /** Count how many projects belong to a given category */
 function countForCategory(
   projectList: Project[],
@@ -279,19 +115,16 @@ function ProjectCard({ project }: { project: Project }) {
 }
 
 export default function PortfolioProjectsSection({
-  projects: sanityProjects,
+  projects,
 }: {
   projects: PortfolioProject[];
 }) {
   const [activeCategory, setActiveCategory] = useState<CategoryId>("all");
   const reduceMotion = useReducedMotion();
-  const projectData = sanityProjects.length > 0 ? sanityProjects : projects;
 
   const categoryOptions = useMemo(() => {
-    if (sanityProjects.length === 0) return categories;
-
     const uniqueCategories = new Map<string, string>();
-    projectData.forEach((project) => {
+    projects.forEach((project) => {
       project.categories.forEach((categoryId) => {
         uniqueCategories.set(categoryId, project.type);
       });
@@ -301,16 +134,16 @@ export default function PortfolioProjectsSection({
       { id: "all", label: "All Projects" },
       ...Array.from(uniqueCategories, ([id, label]) => ({ id, label })),
     ];
-  }, [projectData, sanityProjects.length]);
+  }, [projects]);
 
   const visibleProjects = useMemo(
     () =>
       activeCategory === "all"
-        ? projectData
-        : projectData.filter((project) =>
+        ? projects
+        : projects.filter((project) =>
             project.categories.includes(activeCategory),
           ),
-    [activeCategory, projectData],
+    [activeCategory, projects],
   );
 
   return (
@@ -341,7 +174,7 @@ export default function PortfolioProjectsSection({
             <div className="flex flex-col max-[1024px]:flex-row max-[1024px]:items-stretch">
               {categoryOptions.map((category) => {
                 const isActive = category.id === activeCategory;
-                const count = countForCategory(projectData, category.id);
+                const count = countForCategory(projects, category.id);
                 const isAll = category.id === "all";
 
                 return (
