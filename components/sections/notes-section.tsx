@@ -15,7 +15,6 @@ export type Note = {
   href: string;
   image: string;
   title: string;
-  views?: string;
 };
 
 function formatPublishedDate(value: string) {
@@ -39,7 +38,6 @@ export function sanityArticleToNoteCard(article: {
     href: `/blog/${article.slug}`,
     image: article.thumbnail?.url ?? "/images/note-ai-judgment.png",
     title: article.title,
-    views: "",
   };
 }
 
@@ -70,18 +68,7 @@ function CalendarIcon() {
   );
 }
 
-function EyeIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      className="h-[11.625px] w-[15.544px] shrink-0"
-      viewBox="0 0 15.5443 11.625"
-      fill="currentColor"
-    >
-      <path d="M7.77209 0C9.51832 0 11.0952 0.834394 12.3453 1.80566C13.6018 2.78185 14.5866 3.94165 15.1617 4.69238C15.6718 5.35843 15.6718 6.26657 15.1617 6.93262C14.5866 7.68335 13.6018 8.84315 12.3453 9.81934C11.0952 10.7906 9.51832 11.625 7.77209 11.625C6.02608 11.6249 4.44985 10.7905 3.19982 9.81934C1.94335 8.84314 0.957587 7.68336 0.382438 6.93262C-0.127479 6.26665 -0.127479 5.35835 0.382438 4.69238C0.957587 3.94164 1.94335 2.78186 3.19982 1.80566C4.44985 0.834536 6.02608 6.36513e-05 7.77209 0ZM7.77209 1.125C6.38219 1.12506 5.04739 1.79538 3.89025 2.69434C2.73944 3.58845 1.82072 4.66496 1.27599 5.37598C1.07492 5.63843 1.07492 5.98657 1.27599 6.24902C1.82072 6.96004 2.73944 8.03655 3.89025 8.93066C5.04739 9.82962 6.38219 10.4999 7.77209 10.5C9.16218 10.5 10.4976 9.82979 11.6549 8.93066C12.8056 8.03664 13.7234 6.96003 14.2682 6.24902C14.4692 5.98657 14.4692 5.63843 14.2682 5.37598C13.7234 4.66497 12.8056 3.58836 11.6549 2.69434C10.4976 1.79521 9.16218 1.125 7.77209 1.125ZM7.77306 3C9.32615 3.00025 10.5856 4.25935 10.5856 5.8125C10.5856 7.36565 9.32615 8.62475 7.77306 8.625C6.21976 8.625 4.96056 7.3658 4.96056 5.8125C4.96056 4.2592 6.21976 3 7.77306 3ZM7.77306 4.125C6.84108 4.125 6.08556 4.88052 6.08556 5.8125C6.08556 6.74448 6.84108 7.5 7.77306 7.5C8.70483 7.49975 9.46056 6.74432 9.46056 5.8125C9.46056 4.88067 8.70483 4.12525 7.77306 4.125Z" />
-    </svg>
-  );
-}
+
 
 export function NoteCard({
   mobileFeed = false,
@@ -128,21 +115,13 @@ export function NoteCard({
           className={`flex h-[117px] w-full flex-col items-start ${mobileFeed ? "max-[640px]:h-auto max-[640px]:pt-4" : "max-[640px]:h-[98px]"} ${tabletFeed ? "min-[640px]:max-[1200px]:h-auto" : ""}`}
         >
           <div className="flex w-full flex-col items-start gap-4 max-[640px]:gap-3">
-            <div className="flex w-full items-center justify-between font-sans text-base leading-normal font-normal tracking-[-0.32px] text-white/70 max-[640px]:text-[13px]">
+            <div className="flex w-full items-center font-sans text-base leading-normal font-normal tracking-[-0.32px] text-white/70 max-[640px]:text-[13px]">
               <div className="flex items-center gap-2">
                 <CalendarIcon />
                 <span className="whitespace-nowrap">
                   {note.date ?? "January 10, 2026"}
                 </span>
               </div>
-              {note.views !== "" ? (
-                <div className="flex items-center gap-2">
-                  <EyeIcon />
-                  <span className="whitespace-nowrap">
-                    {note.views ?? "1.2k"}
-                  </span>
-                </div>
-              ) : null}
             </div>
 
             <h3
@@ -177,17 +156,11 @@ export function MobileFeaturedNote({ note }: { note: Note }) {
         </div>
 
         <div className="flex flex-col gap-4 px-5 pt-5 pb-8">
-          <div className="flex items-center justify-between font-sans text-[13px] leading-none tracking-[-0.2px] text-white/70">
+          <div className="flex items-center font-sans text-[13px] leading-none tracking-[-0.2px] text-white/70">
             <span className="inline-flex items-center gap-2">
               <CalendarIcon />
               {note.date ?? "January 10, 2026"}
             </span>
-            {note.views !== "" ? (
-              <span className="inline-flex items-center gap-2">
-                <EyeIcon />
-                {note.views ?? "1.2k"}
-              </span>
-            ) : null}
           </div>
           <h3 className="m-0 w-full font-sans text-[clamp(24px,6.8vw,28px)] leading-[1.12] font-semibold tracking-[-0.45px] text-white transition-colors duration-300 group-hover:text-primary group-focus-visible:text-primary">
             {note.title}
@@ -236,17 +209,11 @@ export function MobileCompactNote({ note }: { note: Note }) {
         </div>
 
         <div className="flex min-h-[136px] flex-col p-4 max-[359px]:min-h-[132px]">
-          <div className="flex items-center justify-between font-sans text-[11px] leading-none tracking-[-0.1px] text-white/70">
+          <div className="flex items-center font-sans text-[11px] leading-none tracking-[-0.1px] text-white/70">
             <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
               <CalendarIcon />
               {note.date ?? "Jan 10, 2026"}
             </span>
-            {note.views !== "" ? (
-              <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
-                <EyeIcon />
-                {note.views ?? "1.2k"}
-              </span>
-            ) : null}
           </div>
 
           <h3 className="mt-4 mb-0 line-clamp-3 font-sans text-[21px] leading-[1.1] font-semibold tracking-[-0.35px] text-white transition-colors duration-300 group-focus-visible:text-primary max-[359px]:text-[18px]">
