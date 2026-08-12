@@ -46,8 +46,7 @@ const projects: Project[] = [
     desktopImage: "/images/day-translations.png",
     desktopImageHeight: 649,
     desktopImageWidth: 1024,
-    imageClassName:
-      "absolute top-[-2.86%] left-[-0.27%] h-[105.73%] w-[100.55%] max-w-none",
+    imageClassName: "absolute inset-0 h-full w-full max-w-none",
     index: "01",
     meta: [
       { label: "Industry", value: "B2B SaaS" },
@@ -64,8 +63,7 @@ const projects: Project[] = [
     desktopImage: "/images/metabolix.png",
     desktopImageHeight: 649,
     desktopImageWidth: 1024,
-    imageClassName:
-      "absolute top-[-3.79%] left-[-9.36%] h-[128.72%] w-[118.72%] max-w-none",
+    imageClassName: "absolute inset-0 h-full w-full max-w-none",
     index: "02",
     meta: [
       { label: "Industry", value: "HealthTech" },
@@ -99,8 +97,7 @@ const projects: Project[] = [
     desktopImage: "/images/solence.png",
     desktopImageHeight: 649,
     desktopImageWidth: 1024,
-    imageClassName:
-      "absolute top-[-1.1%] left-[-3.45%] h-[105.29%] w-[106.9%] max-w-none",
+    imageClassName: "absolute inset-0 h-full w-full max-w-none",
     index: "04",
     meta: [
       { label: "Industry", value: "CleanTech" },
