@@ -214,7 +214,7 @@ function HeroSection() {
           priority
           height={939}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 697px"
-          src="/images/why-me-portrait.png"
+          src="/images/hero-portrait-highres.webp"
           width={697}
           quality={100}
           unoptimized={true}
