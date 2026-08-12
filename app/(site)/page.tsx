@@ -147,7 +147,7 @@ const stats = [
     numberClassName: "w-[99px]",
     numberScaleClassName: "scale-x-[0.82]",
     title: "Conversion Lift",
-    value: "2",
+    value: "3",
   },
   {
     details:
@@ -173,7 +173,7 @@ const stats = [
     numberClassName: "w-[195px]",
     numberScaleClassName: "scale-x-[0.9]",
     title: "Faster Handoff",
-    value: "25",
+    value: "35",
   },
 ];
 
@@ -284,8 +284,9 @@ function HeroSection() {
             </a>
             <a
               className={`group ${buttonBase} w-[238px] border-0 bg-transparent text-white hover:text-primary max-[640px]:w-full ${heroStyles.button}`}
-              download
-              href="/resume.pdf"
+              href="/Ashadul_Islam_Resume.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <svg
                 aria-hidden="true"

@@ -431,10 +431,11 @@ export default function ContactFooterSection({
             <div className="flex items-start gap-16 max-[640px]:order-1 max-[640px]:flex-col max-[640px]:gap-8 min-[1201px]:grid min-[1201px]:grid-cols-2 min-[1201px]:gap-x-16">
               <div className="flex flex-col gap-3 min-[1201px]:gap-4">
                 <p className="m-0 font-normal opacity-80">Quick Links</p>
-                <a
+                 <a
                   className={`${footerTextLink} font-semibold min-[1201px]:min-h-6 min-[1201px]:leading-6`}
-                  download
-                  href="/resume.pdf"
+                  href="/Ashadul_Islam_Resume.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   My Resume
                 </a>
