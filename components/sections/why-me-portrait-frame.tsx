@@ -18,8 +18,8 @@ export default function WhyMePortraitFrame({
     ? "top-[-16px] w-[124%] max-[640px]:top-[-10px] max-[640px]:w-[124%]"
     : "top-[-18px] w-[124%]";
   const sizes = compact
-    ? "(max-width: 639px) 357px, 446px"
-    : "466px";
+    ? "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 446px"
+    : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 466px";
 
   return (
     <div
@@ -51,6 +51,7 @@ export default function WhyMePortraitFrame({
           sizes={sizes}
           src="/images/why-me-blue-portrait.png"
           width={1023}
+          quality={90}
         />
 
         <motion.div
@@ -89,6 +90,7 @@ export default function WhyMePortraitFrame({
             sizes={sizes}
             src="/images/why-me-blue-portrait.png"
             width={1023}
+            quality={90}
           />
         </motion.div>
       </div>

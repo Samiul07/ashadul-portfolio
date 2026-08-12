@@ -226,9 +226,10 @@ export default function ContactHeroSection() {
               className="absolute inset-0 h-full w-full select-none object-cover object-center max-[640px]:object-[center_35%]"
               height={1448}
               priority
-              sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 1024px) calc(100vw - 48px), 620px"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 620px"
               src="/images/contact-portrait.png"
               width={1086}
+              quality={90}
             />
 
             <aside

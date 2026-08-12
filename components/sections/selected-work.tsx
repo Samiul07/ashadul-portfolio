@@ -159,9 +159,10 @@ function ProjectCard({
               className={`${project.imageClassName} object-fill max-[640px]:inset-0 max-[640px]:h-full max-[640px]:w-full max-[640px]:object-cover`}
               height={project.desktopImageHeight}
               loading="lazy"
-              sizes="(max-width: 639px) calc(100vw - 40px), (max-width: 1199px) 100vw, 716px"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 716px"
               src={project.desktopImage}
               width={project.desktopImageWidth}
+              quality={90}
             />
           </picture>
           <Image
@@ -169,8 +170,9 @@ function ProjectCard({
             className="hidden object-cover min-[768px]:max-[1200px]:block"
             fill
             loading={project.index === "01" ? "eager" : "lazy"}
-            sizes="(min-width: 768px) and (max-width: 1199px) 50vw, 1px"
+            sizes="(min-width: 768px) and (max-width: 1199px) 50vw, 350px"
             src={project.desktopImage}
+            quality={90}
           />
         </motion.div>
 
