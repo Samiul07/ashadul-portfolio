@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
 import SectionCrosshairs from "../ui/section-crosshairs";
 
@@ -154,6 +156,7 @@ function ProfileContactCard({
   reduceMotion: boolean | null;
 }) {
   const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     // This mount gate intentionally keeps Framer Motion attributes out of the
@@ -161,6 +164,36 @@ function ProfileContactCard({
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
+
+  const isContactPage = pathname === "/contact";
+  const buttonClassName = `relative inline-flex h-[52px] w-full transform-gpu items-center justify-center overflow-hidden bg-[linear-gradient(#fff6f5_32%,#ffaea6_100%)] font-sans text-base leading-[1.2] font-semibold tracking-[-0.32px] text-[#c71900] shadow-[inset_0_2px_0_#fff,inset_0_-12px_34px_17px_rgba(255,30,0,0.45),inset_0_-5px_0_#ff6452] outline-none transition-[box-shadow,color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:text-[#a81200] group-hover:shadow-[inset_0_2px_0_#fff,inset_0_-22px_34px_16px_rgba(255,30,0,0.52),inset_0_-2px_0_#ff5240] group-focus-within:text-[#a81200] group-focus-within:shadow-[inset_0_2px_0_#fff,inset_0_-22px_34px_16px_rgba(255,30,0,0.52),inset_0_-2px_0_#ff5240] focus-visible:ring-2 focus-visible:ring-white ${contactButtonShape}`;
+
+  const buttonContent = (
+    <>
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 bg-[linear-gradient(#fff_32%,#ff9387_100%)] opacity-0 transition-opacity duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-focus-within:opacity-100 motion-reduce:transition-none"
+      />
+      <span className="relative z-1 inline-flex items-center gap-2">
+        Contact Me <MailIcon />
+      </span>
+    </>
+  );
+
+  const renderButton = () => {
+    if (isContactPage) {
+      return (
+        <a className={buttonClassName} href="mailto:ashadulislamsamiul@gmail.com">
+          {buttonContent}
+        </a>
+      );
+    }
+    return (
+      <Link className={buttonClassName} href="/contact">
+        {buttonContent}
+      </Link>
+    );
+  };
 
   // The motion.div writes transform/translate style attributes on the client
   // during hydration that the server never rendered, which React reports as a
@@ -183,18 +216,7 @@ function ProfileContactCard({
             />
           </div>
           <div className="flex h-[52px] w-full shrink-0 items-center justify-center">
-            <a
-              className={`relative inline-flex h-[52px] w-full transform-gpu items-center justify-center overflow-hidden bg-[linear-gradient(#fff6f5_32%,#ffaea6_100%)] font-sans text-base leading-[1.2] font-semibold tracking-[-0.32px] text-[#c71900] shadow-[inset_0_2px_0_#fff,inset_0_-12px_34px_17px_rgba(255,30,0,0.45),inset_0_-5px_0_#ff6452] outline-none transition-[box-shadow,color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:text-[#a81200] group-hover:shadow-[inset_0_2px_0_#fff,inset_0_-22px_34px_16px_rgba(255,30,0,0.52),inset_0_-2px_0_#ff5240] group-focus-within:text-[#a81200] group-focus-within:shadow-[inset_0_2px_0_#fff,inset_0_-22px_34px_16px_rgba(255,30,0,0.52),inset_0_-2px_0_#ff5240] focus-visible:ring-2 focus-visible:ring-white ${contactButtonShape}`}
-              href="mailto:ashadulislamsamiul@gmail.com"
-            >
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 bg-[linear-gradient(#fff_32%,#ff9387_100%)] opacity-0 transition-opacity duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-focus-within:opacity-100 motion-reduce:transition-none"
-              />
-              <span className="relative z-1 inline-flex items-center gap-2">
-                Contact Me <MailIcon />
-              </span>
-            </a>
+            {renderButton()}
           </div>
         </div>
       </div>
@@ -236,18 +258,7 @@ function ProfileContactCard({
           />
         </div>
         <div className="flex h-[52px] w-full shrink-0 items-center justify-center">
-          <a
-            className={`relative inline-flex h-[52px] w-full transform-gpu items-center justify-center overflow-hidden bg-[linear-gradient(#fff6f5_32%,#ffaea6_100%)] font-sans text-base leading-[1.2] font-semibold tracking-[-0.32px] text-[#c71900] shadow-[inset_0_2px_0_#fff,inset_0_-12px_34px_17px_rgba(255,30,0,0.45),inset_0_-5px_0_#ff6452] outline-none transition-[box-shadow,color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:text-[#a81200] group-hover:shadow-[inset_0_2px_0_#fff,inset_0_-22px_34px_16px_rgba(255,30,0,0.52),inset_0_-2px_0_#ff5240] group-focus-within:text-[#a81200] group-focus-within:shadow-[inset_0_2px_0_#fff,inset_0_-22px_34px_16px_rgba(255,30,0,0.52),inset_0_-2px_0_#ff5240] focus-visible:ring-2 focus-visible:ring-white ${contactButtonShape}`}
-            href="mailto:ashadulislamsamiul@gmail.com"
-          >
-            <span
-              aria-hidden="true"
-              className="absolute inset-0 bg-[linear-gradient(#fff_32%,#ff9387_100%)] opacity-0 transition-opacity duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-focus-within:opacity-100 motion-reduce:transition-none"
-            />
-            <span className="relative z-1 inline-flex items-center gap-2">
-              Contact Me <MailIcon />
-            </span>
-          </a>
+          {renderButton()}
         </div>
       </div>
     </motion.div>
