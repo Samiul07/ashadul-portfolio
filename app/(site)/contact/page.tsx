@@ -16,7 +16,7 @@ export default function ContactPage() {
       <ContactHeroSection />
       <ContactFaqSection />
       <LogoListSection topBorder transparent />
-      <ContactFooterSection workHref="/portfolio" />
+      <ContactFooterSection workHref="/portfolio" isContactPage={true} />
     </>
   );
 }

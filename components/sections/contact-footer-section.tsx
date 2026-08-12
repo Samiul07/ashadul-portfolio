@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
 import SectionCrosshairs from "../ui/section-crosshairs";
 
@@ -151,12 +150,13 @@ function MailIcon() {
 function ProfileContactCard({
   className,
   reduceMotion,
+  isContactPage = false,
 }: {
   className: string;
   reduceMotion: boolean | null;
+  isContactPage?: boolean;
 }) {
   const [mounted, setMounted] = useState(false);
-  const pathname = usePathname();
 
   useEffect(() => {
     // This mount gate intentionally keeps Framer Motion attributes out of the
@@ -165,7 +165,6 @@ function ProfileContactCard({
     setMounted(true);
   }, []);
 
-  const isContactPage = pathname === "/contact";
   const buttonClassName = `relative inline-flex h-[52px] w-full transform-gpu items-center justify-center overflow-hidden bg-[linear-gradient(#fff6f5_32%,#ffaea6_100%)] font-sans text-base leading-[1.2] font-semibold tracking-[-0.32px] text-[#c71900] shadow-[inset_0_2px_0_#fff,inset_0_-12px_34px_17px_rgba(255,30,0,0.45),inset_0_-5px_0_#ff6452] outline-none transition-[box-shadow,color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:text-[#a81200] group-hover:shadow-[inset_0_2px_0_#fff,inset_0_-22px_34px_16px_rgba(255,30,0,0.52),inset_0_-2px_0_#ff5240] group-focus-within:text-[#a81200] group-focus-within:shadow-[inset_0_2px_0_#fff,inset_0_-22px_34px_16px_rgba(255,30,0,0.52),inset_0_-2px_0_#ff5240] focus-visible:ring-2 focus-visible:ring-white ${contactButtonShape}`;
 
   const buttonContent = (
@@ -280,9 +279,11 @@ function CrossMark({ className }: { className: string }) {
 export default function ContactFooterSection({
   ctaOnly = false,
   workHref = "/portfolio",
+  isContactPage = false,
 }: {
   ctaOnly?: boolean;
   workHref?: string;
+  isContactPage?: boolean;
 } = {}) {
   const reduceMotion = useReducedMotion();
 
@@ -361,12 +362,14 @@ export default function ContactFooterSection({
           <ProfileContactCard
             className="absolute top-[135.25px] left-[182px] rotate-[-5.67deg] max-[1200px]:left-[82px] max-[1200px]:hidden"
             reduceMotion={reduceMotion}
+            isContactPage={isContactPage}
           />
         </div>
 
         <ProfileContactCard
           className="hidden max-[1200px]:relative max-[1200px]:block max-[1200px]:shrink-0"
           reduceMotion={reduceMotion}
+          isContactPage={isContactPage}
         />
 
         {!ctaOnly ? <footer className="flex w-full flex-col gap-12 border-t border-white/12 py-8 text-white max-[640px]:border-white/28 min-[1201px]:gap-10 min-[1201px]:py-10">
