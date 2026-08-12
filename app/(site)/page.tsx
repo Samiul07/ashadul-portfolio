@@ -1,3 +1,4 @@
+import Image from "next/image";
 import FeedbackWidget from "@/components/hero/desktop-feedback-widget";
 import AvailabilityBadge from "@/components/hero/availability-badge";
 import MobileVisualViewport from "@/components/hero/mobile-visual-viewport";
@@ -207,27 +208,16 @@ function HeroSection() {
         className={`pointer-events-none absolute right-[max(calc((100vw-1400px)/2),24px)] bottom-[48px] z-[130] h-[939px] w-[697px] overflow-hidden min-[768px]:z-[253] min-[641px]:max-[1200px]:right-[-140px] max-[1200px]:opacity-55 max-[640px]:right-[-220px] max-[640px]:bottom-auto max-[640px]:left-auto max-[640px]:z-[130] max-[640px]:h-[621px] max-[640px]:w-[460px] ${heroStyles.portrait}`}
         data-hero-portrait
       >
-        <picture>
-          <source
-            media="(max-width: 639px)"
-            srcSet="/images/magnific-portrait-hero-mobile.avif"
-            type="image/avif"
-          />
-          <source
-            media="(min-width: 640px)"
-            srcSet="/images/magnific-portrait-hero.avif"
-            type="image/avif"
-          />
-          <img
-            alt=""
-            className={`absolute right-0 bottom-0 h-[939px] w-[697px] max-[640px]:h-[621px] max-[640px]:w-[460px] select-none object-cover ${heroStyles.portraitImage}`}
-            decoding="sync"
-            fetchPriority="high"
-            height={939}
-            src="/images/magnific-portrait.png"
-            width={697}
-          />
-        </picture>
+        <Image
+          alt=""
+          className={`absolute right-0 bottom-0 select-none object-cover ${heroStyles.portraitImage} max-[640px]:h-[621px] max-[640px]:w-[460px]`}
+          priority
+          height={939}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 697px"
+          src="/images/why-me-portrait.png"
+          width={697}
+          quality={90}
+        />
       </div>
       <div aria-hidden="true" className={heroStyles.mobileAtmosphere}>
         <span
@@ -402,22 +392,6 @@ export default async function Home() {
   const notes = recentArticles.map(sanityArticleToNoteCard);
   return (
     <>
-      <link
-        as="image"
-        fetchPriority="high"
-        href="/images/magnific-portrait-hero-mobile.avif"
-        media="(max-width: 639px)"
-        rel="preload"
-        type="image/avif"
-      />
-      <link
-        as="image"
-        fetchPriority="high"
-        href="/images/magnific-portrait-hero.avif"
-        media="(min-width: 640px)"
-        rel="preload"
-        type="image/avif"
-      />
       <HeroSection />
       <StatsSection />
       <LogoListSection />
