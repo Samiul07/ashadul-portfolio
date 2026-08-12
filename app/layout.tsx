@@ -37,9 +37,25 @@ const switzer = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "ASHADUL | Premium SaaS Product Designer",
+  metadataBase: new URL("https://ashadul.design"),
+  title: {
+    default: "Ashadul | Design, Vibe Code & Deploy Products",
+    template: "%s | Ashadul",
+  },
   description:
-    "Brutalist portfolio of Ashadul, showcasing high-impact design and engineering systems for SaaS products.",
+    "Looking for your next senior product builder? I bring 12+ years of UI/UX experience to design, vibe code, and successfully deploy your next big idea.",
+  openGraph: {
+    title: "Ashadul | Design, Vibe Code & Deploy Products",
+    description:
+      "Looking for your next senior product builder? I bring 12+ years of UI/UX experience to design, vibe code, and successfully deploy your next big idea.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ashadul | Design, Vibe Code & Deploy Products",
+    description:
+      "Looking for your next senior product builder? I bring 12+ years of UI/UX experience to design, vibe code, and successfully deploy your next big idea.",
+  },
 };
 
 export default function RootLayout({
