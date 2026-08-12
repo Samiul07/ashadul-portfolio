@@ -88,10 +88,15 @@
   height: 100svh;
   overflow: hidden;
   pointer-events: auto;
+  animation-duration: 80ms;
+  animation-timing-function: linear;
+  animation-delay: 880ms;
+  animation-fill-mode: forwards;
+  animation-name: none;
 }
 
 .page-load-curtain.is-animating {
-  animation: page-load-curtain-cleanup 80ms linear 880ms forwards;
+  animation-name: page-load-curtain-cleanup;
 }
 
 .page-load-curtain__column {
@@ -111,11 +116,14 @@
   transform: translateZ(0) scaleY(1);
   transform-origin: top center;
   will-change: transform;
+  animation-duration: 680ms;
+  animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+  animation-fill-mode: forwards;
+  animation-name: none;
 }
 
 .page-load-curtain.is-animating .page-load-curtain__panel {
-  animation: page-load-curtain-retract 680ms cubic-bezier(0.76, 0, 0.24, 1)
-    forwards;
+  animation-name: page-load-curtain-retract;
 }
 
 .page-load-curtain__panel--center {
