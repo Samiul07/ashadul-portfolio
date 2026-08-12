@@ -43,9 +43,9 @@ const projects: Project[] = [
   {
     description:
       "A comprehensive UX overhaul of an enterprise localization platform, streamlining the translation pipeline to improve client onboarding and task completion rates.",
-    desktopImage: "/images/work-day-translations-desktop.webp",
-    desktopImageHeight: 1067,
-    desktopImageWidth: 1600,
+    desktopImage: "/images/day-translations.png",
+    desktopImageHeight: 649,
+    desktopImageWidth: 1024,
     imageClassName:
       "absolute top-[-2.86%] left-[-0.27%] h-[105.73%] w-[100.55%] max-w-none",
     index: "01",
@@ -55,15 +55,15 @@ const projects: Project[] = [
       { label: "Focus", value: "2023" },
       { label: "Deliverable", value: "Web & Design System" },
     ],
-    mobileImage: "/images/work-day-translations-mobile.webp",
+    mobileImage: "/images/day-translations.png",
     title: "Day Translations — Linguist SaaS",
   },
   {
     description:
       "An end-to-end healthcare platform connecting patients' wearable fitness data with a diagnostic web dashboard, enabling doctors to monitor remote health metrics.",
-    desktopImage: "/images/work-metabolix-desktop.webp",
-    desktopImageHeight: 1100,
-    desktopImageWidth: 1600,
+    desktopImage: "/images/metabolix.png",
+    desktopImageHeight: 649,
+    desktopImageWidth: 1024,
     imageClassName:
       "absolute top-[-3.79%] left-[-9.36%] h-[128.72%] w-[118.72%] max-w-none",
     index: "02",
@@ -73,15 +73,15 @@ const projects: Project[] = [
       { label: "Focus", value: "2025" },
       { label: "Deliverable", value: "Web & Mobile App" },
     ],
-    mobileImage: "/images/work-metabolix-mobile.webp",
+    mobileImage: "/images/metabolix.png",
     title: "Metabolix — Telehealth Ecosystem",
   },
   {
     description:
       "An AI-powered journaling application designed for the global market, utilizing calming interfaces and habit-loop mechanics to support daily mental well-being.",
-    desktopImage: "/images/work-betr-desktop.webp",
-    desktopImageHeight: 1014,
-    desktopImageWidth: 1600,
+    desktopImage: "/images/betr.png",
+    desktopImageHeight: 649,
+    desktopImageWidth: 1024,
     imageClassName: "absolute inset-0 h-full w-full max-w-none",
     index: "03",
     meta: [
@@ -90,15 +90,15 @@ const projects: Project[] = [
       { label: "Focus", value: "2026" },
       { label: "Deliverable", value: "Mobile App" },
     ],
-    mobileImage: "/images/work-betr-mobile.webp",
+    mobileImage: "/images/betr.png",
     title: "Betr — AI Wellness Journal App",
   },
   {
     description:
       "A consumer-facing solar energy marketplace. Designed a high-converting e-commerce interface that simplifies the purchasing process for sustainable home power solutions.",
-    desktopImage: "/images/work-solence-desktop.webp",
-    desktopImageHeight: 999,
-    desktopImageWidth: 1600,
+    desktopImage: "/images/solence.png",
+    desktopImageHeight: 649,
+    desktopImageWidth: 1024,
     imageClassName:
       "absolute top-[-1.1%] left-[-3.45%] h-[105.29%] w-[106.9%] max-w-none",
     index: "04",
@@ -108,7 +108,7 @@ const projects: Project[] = [
       { label: "Focus", value: "2026" },
       { label: "Deliverable", value: "Web Platform" },
     ],
-    mobileImage: "/images/work-solence-mobile.webp",
+    mobileImage: "/images/solence.png",
     title: "Solence — Solar E-commerce",
   },
 ];
@@ -162,7 +162,8 @@ function ProjectCard({
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 716px"
               src={project.desktopImage}
               width={project.desktopImageWidth}
-              quality={90}
+              quality={100}
+              unoptimized={true}
             />
           </picture>
           <Image
@@ -172,7 +173,8 @@ function ProjectCard({
             loading={project.index === "01" ? "eager" : "lazy"}
             sizes="(min-width: 768px) and (max-width: 1199px) 50vw, 350px"
             src={project.desktopImage}
-            quality={90}
+            quality={100}
+            unoptimized={true}
           />
         </motion.div>
 
