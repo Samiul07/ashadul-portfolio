@@ -21,11 +21,11 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       lenis = new Lenis({
         anchors: { offset: -86 },
         autoRaf: true,
-        duration: 1.05,
+        duration: 0.8,
         smoothWheel: true,
         stopInertiaOnNavigate: true,
         syncTouch: false,
-        wheelMultiplier: 0.82,
+        wheelMultiplier: 0.9,
       });
       portfolioWindow.__portfolioLenis = lenis;
     });
