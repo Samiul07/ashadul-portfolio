@@ -3,10 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 
 const trailLayers = [
-  { color: "#ff1e00", points: 18 },
-  { color: "rgba(255, 255, 255, 0.2)", points: 14 },
-  { color: "rgba(255, 255, 255, 0.4)", points: 10 },
-  { color: "rgba(255, 255, 255, 0.65)", points: 6 },
+  { color: "#ff1e00", points: 30 },
+  { color: "rgba(255, 255, 255, 0.16)", points: 24 },
+  { color: "rgba(255, 255, 255, 0.32)", points: 18 },
+  { color: "rgba(255, 255, 255, 0.52)", points: 12 },
+  { color: "rgba(255, 255, 255, 0.64)", points: 6 },
 ] as const;
 
 type Point = {
@@ -14,18 +15,18 @@ type Point = {
   y: number;
 };
 
+type TrailPath = SVGPathElement & {
+  points?: Point[];
+};
+
 export default function CursorTrail() {
-  const lineRefs = useRef<Array<Array<SVGLineElement | null>>>(
-    trailLayers.map((layer) => new Array(layer.points - 1).fill(null)),
-  );
-  const layerPoints = useRef<Array<Point[]>>(
-    trailLayers.map(() => []),
-  );
+  const pathRefs = useRef<Array<TrailPath | null>>([]);
   const currentPoint = useRef<Point | null>(null);
   const targetPoint = useRef<Point | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    const paths = pathRefs.current;
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     );
@@ -42,8 +43,8 @@ export default function CursorTrail() {
       const target = targetPoint.current;
 
       if (current && target) {
-        current.x += (target.x - current.x) / 5;
-        current.y += (target.y - current.y) / 5;
+        current.x += (target.x - current.x) / 10;
+        current.y += (target.y - current.y) / 10;
       }
 
       followerFrame = requestAnimationFrame(updateFollower);
@@ -53,31 +54,24 @@ export default function CursorTrail() {
       const current = currentPoint.current;
 
       if (current) {
-        trailLayers.forEach((layer, layerIndex) => {
-          const points = layerPoints.current[layerIndex];
-          points.unshift({ x: current.x, y: current.y });
-          if (points.length > layer.points) {
-            points.length = layer.points;
-          }
+        paths.forEach((path, index) => {
+          if (!path) return;
 
-          const lines = lineRefs.current[layerIndex];
-          const totalSegments = layer.points - 1;
+          const points = path.points ?? [];
+          points.unshift({ ...current });
+          points.length = Math.min(points.length, trailLayers[index].points);
+          path.points = points;
 
-          for (let i = 0; i < totalSegments; i++) {
-            const line = lines?.[i];
-            if (!line) continue;
-
-            if (i < points.length - 1) {
-              const p1 = points[i];
-              const p2 = points[i + 1];
-              line.setAttribute("x1", String(p1.x));
-              line.setAttribute("y1", String(p1.y));
-              line.setAttribute("x2", String(p2.x));
-              line.setAttribute("y2", String(p2.y));
-              line.style.display = "";
-            } else {
-              line.style.display = "none";
-            }
+          if (points.length > 1) {
+            path.setAttribute(
+              "d",
+              points
+                .map(
+                  (point, pointIndex) =>
+                    `${pointIndex === 0 ? "M" : "L"} ${point.x} ${point.y}`,
+                )
+                .join(" "),
+            );
           }
         });
       }
@@ -105,8 +99,8 @@ export default function CursorTrail() {
       window.removeEventListener("mousemove", handleMouseMove);
       cancelAnimationFrame(followerFrame);
       cancelAnimationFrame(trailFrame);
-      layerPoints.current.forEach((points) => {
-        points.length = 0;
+      paths.forEach((path) => {
+        if (path) path.points = [];
       });
     };
   }, []);
@@ -118,40 +112,25 @@ export default function CursorTrail() {
         isVisible ? "opacity-100" : "opacity-0"
       }`}
     >
-      {trailLayers.map((layer, layerIndex) => {
-        const totalSegments = layer.points - 1;
-        return (
-          <svg
-            className="absolute inset-0 h-full w-full"
-            key={layer.color + layer.points}
-            preserveAspectRatio="none"
-          >
-            {Array.from({ length: totalSegments }).map((_, segmentIndex) => {
-              // Diminishes smoothly from 100% opacity at head to ~5% at tail tip
-              const opacity = Math.max(
-                0.05,
-                1 - segmentIndex / totalSegments,
-              );
-
-              return (
-                <line
-                  key={segmentIndex}
-                  ref={(el) => {
-                    if (lineRefs.current[layerIndex]) {
-                      lineRefs.current[layerIndex][segmentIndex] = el;
-                    }
-                  }}
-                  stroke={layer.color}
-                  strokeLinecap="round"
-                  strokeOpacity={opacity}
-                  strokeWidth="2"
-                  style={{ display: "none" }}
-                />
-              );
-            })}
-          </svg>
-        );
-      })}
+      {trailLayers.map((layer, index) => (
+        <svg
+          className="absolute inset-0 h-full w-full"
+          key={layer.color + layer.points}
+          preserveAspectRatio="none"
+        >
+          <path
+            className="trail"
+            fill="none"
+            ref={(path) => {
+              pathRefs.current[index] = path as TrailPath | null;
+            }}
+            stroke={layer.color}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+          />
+        </svg>
+      ))}
     </div>
   );
 }
