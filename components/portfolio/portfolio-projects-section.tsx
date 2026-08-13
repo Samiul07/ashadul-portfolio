@@ -62,9 +62,12 @@ function ProjectCard({ project }: { project: Project }) {
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-900">
         <Image
           alt={project.title}
-          className={`transition-[transform,filter] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 group-hover:brightness-[0.52] group-hover:saturate-[0.72] group-focus-visible:scale-105 group-focus-visible:brightness-[0.52] group-focus-visible:saturate-[0.72] motion-reduce:transition-none ${
+          className={`will-change-transform group-hover:scale-105 group-hover:brightness-[0.52] group-hover:saturate-[0.72] group-focus-visible:scale-105 group-focus-visible:brightness-[0.52] group-focus-visible:saturate-[0.72] motion-reduce:transition-none ${
             project.imageClassName ?? "object-cover"
           }`}
+          style={{
+            transition: "transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), filter 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
+          }}
           fill
           loading="lazy"
           sizes="(max-width: 639px) calc(100vw - 40px), (max-width: 1023px) 45vw, 640px"
