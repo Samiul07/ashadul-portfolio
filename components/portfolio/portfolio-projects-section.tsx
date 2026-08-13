@@ -62,7 +62,7 @@ function ProjectCard({ project }: { project: Project }) {
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-900">
         <Image
           alt={project.title}
-          className={`will-change-transform group-hover:scale-105 group-hover:brightness-[0.45] group-hover:saturate-[0.72] group-focus-visible:scale-105 group-focus-visible:brightness-[0.45] group-focus-visible:saturate-[0.72] motion-reduce:transition-none ${
+          className={`will-change-transform blur-0 group-hover:scale-105 group-hover:brightness-[0.45] group-hover:saturate-[0.72] group-hover:blur-[3px] group-focus-visible:scale-105 group-focus-visible:brightness-[0.45] group-focus-visible:saturate-[0.72] group-focus-visible:blur-[3px] motion-reduce:transition-none ${
             project.imageClassName ?? "object-cover"
           }`}
           style={{
