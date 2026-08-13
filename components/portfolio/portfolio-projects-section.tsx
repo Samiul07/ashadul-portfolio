@@ -66,7 +66,7 @@ function ProjectCard({ project }: { project: Project }) {
             project.imageClassName ?? "object-cover"
           }`}
           style={{
-            transition: "transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), filter 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
+            transition: "transform 1.0s cubic-bezier(0.16, 1, 0.3, 1), filter 1.0s cubic-bezier(0.16, 1, 0.3, 1)",
           }}
           fill
           loading="lazy"
@@ -75,21 +75,32 @@ function ProjectCard({ project }: { project: Project }) {
         />
 
         {/* A single typographic action keeps the artwork and hierarchy uncluttered. */}
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden opacity-0 transition-opacity duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none">
+        <div
+          className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none"
+          style={{
+            transition: "opacity 1.0s cubic-bezier(0.16, 1, 0.3, 1)",
+          }}
+        >
           <span
             aria-hidden="true"
             className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.3)_100%)]"
           />
 
-          <span className="relative flex translate-y-4 items-start gap-3 opacity-0 blur-[4px] transition-[translate,opacity,filter] duration-600 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:opacity-100 group-hover:blur-none group-focus-visible:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:blur-none motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:blur-none motion-reduce:transition-none">
-            <span className="relative pb-4 font-display text-[clamp(72px,7vw,98px)] leading-[0.78] font-black tracking-[-0.045em] text-white uppercase">
+          <span
+            className="relative flex translate-y-4 items-center gap-3 opacity-0 blur-[4px] group-hover:translate-y-0 group-hover:opacity-100 group-hover:blur-none group-focus-visible:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:blur-none motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:blur-none motion-reduce:transition-none"
+            style={{
+              transition: "transform 1.0s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.0s cubic-bezier(0.16, 1, 0.3, 1), filter 1.0s cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+          >
+            <span className="relative font-display text-[clamp(72px,7vw,98px)] leading-none font-black tracking-[-0.045em] text-white uppercase">
               View
-              <span
-                aria-hidden="true"
-                className="absolute inset-x-0 bottom-0 h-[3px] origin-left scale-x-0 bg-primary transition-transform delay-100 duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 group-focus-visible:scale-x-100 motion-reduce:scale-x-100 motion-reduce:transition-none"
-              />
             </span>
-            <span className="mt-[-2px] inline-flex h-10 w-10 items-center justify-center text-primary transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1 group-hover:-translate-y-1 group-focus-visible:translate-x-1 group-focus-visible:-translate-y-1 motion-reduce:transition-none">
+            <span
+              className="inline-flex h-10 w-10 items-center justify-center text-primary group-hover:translate-x-1 group-hover:-translate-y-1 group-focus-visible:translate-x-1 group-focus-visible:-translate-y-1 motion-reduce:transition-none"
+              style={{
+                transition: "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+              }}
+            >
               <ArrowUpRight className="h-10 w-10" />
             </span>
           </span>
