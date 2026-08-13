@@ -14,6 +14,14 @@ const navLinks = [
   { label: "Product Notes", href: "/blog" },
 ];
 
+const homeSectionLabels = {
+  about: "About Me",
+  expertise: "Expertise",
+  process: "Process",
+} as const;
+
+type HomeSectionId = keyof typeof homeSectionLabels;
+
 /**
  * Read the REAL scroll top from every possible source.
  * Lenis in "native" mode keeps window.scrollY accurate,
@@ -48,6 +56,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeHomeSection, setActiveHomeSection] = useState<HomeSectionId | null>(null);
   const sentinelRef = useRef<HTMLElement>(null);
   const scrolledRef = useRef(false);
   const mobileMenuDisclosureRef = useRef<HTMLDetailsElement>(null);
@@ -95,6 +104,17 @@ export default function Navbar() {
         : navLinks;
 
   const contactHref = pathname === "/contact" ? "#contact-form" : "/contact";
+  const routeActiveLabel =
+    pathname === "/portfolio"
+      ? "My Work"
+      : pathname === "/blog" || pathname.startsWith("/blog/")
+        ? "Product Notes"
+        : null;
+  const activeNavLabel =
+    routeActiveLabel ??
+    (pathname === "/" && activeHomeSection
+      ? homeSectionLabels[activeHomeSection]
+      : null);
 
   const progressScale = useSpring(scrollYProgress, {
     damping: 34,
@@ -155,6 +175,65 @@ export default function Navbar() {
       visualViewport?.removeEventListener("resize", syncScrollState);
     };
   }, [syncScrollState]);
+
+  useEffect(() => {
+    if (pathname !== "/") {
+      return;
+    }
+
+    const visibleSections = new Map<HomeSectionId, number>();
+    const sectionIds = Object.keys(homeSectionLabels) as HomeSectionId[];
+
+    const syncActiveSection = () => {
+      const hash = window.location.hash.slice(1) as HomeSectionId;
+      if (hash in homeSectionLabels) {
+        setActiveHomeSection(hash);
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const sectionId = entry.target.id as HomeSectionId;
+          if (entry.isIntersecting) {
+            visibleSections.set(sectionId, entry.intersectionRatio);
+          } else {
+            visibleSections.delete(sectionId);
+          }
+        }
+
+        const activeSection = [...visibleSections.entries()].sort(
+          (first, second) => second[1] - first[1],
+        )[0]?.[0];
+
+        if (activeSection) {
+          setActiveHomeSection(activeSection);
+        } else if (window.scrollY < window.innerHeight * 0.7) {
+          setActiveHomeSection(null);
+        }
+      },
+      {
+        rootMargin: "-86px 0px -52% 0px",
+        threshold: [0.08, 0.2, 0.4, 0.65],
+      },
+    );
+
+    for (const sectionId of sectionIds) {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        observer.observe(section);
+      }
+    }
+
+    window.addEventListener("hashchange", syncActiveSection);
+    const initialSyncTimer = window.setTimeout(syncActiveSection, 0);
+
+    return () => {
+      window.clearTimeout(initialSyncTimer);
+      window.removeEventListener("hashchange", syncActiveSection);
+      observer.disconnect();
+    };
+  }, [pathname]);
 
   useEffect(() => {
     const desktopQuery = window.matchMedia("(min-width: 1200px)");
@@ -302,20 +381,61 @@ export default function Navbar() {
           </div>
 
           <div className="relative flex h-11 items-center justify-center gap-7 max-[1200px]:hidden">
-            {links.map((link) => (
-              <Link
-                key={link.label}
-                className="relative z-2 font-sans text-[15px] font-light leading-[1.4] tracking-[-0.5px] uppercase no-underline text-white/68 transition-[color,opacity] duration-200 hover:text-white"
-                href={link.href}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {links.map((link) => {
+              const isActive = activeNavLabel === link.label;
+
+              return (
+                <Link
+                  aria-current={
+                    isActive
+                      ? link.href.startsWith("#")
+                        ? "location"
+                        : "page"
+                      : undefined
+                  }
+                  className={`group relative isolate z-2 px-3 py-2 font-sans text-[15px] leading-[1.4] tracking-[-0.5px] uppercase no-underline transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/80 ${
+                    isActive
+                      ? "font-medium text-primary"
+                      : "font-light text-white/68 hover:text-white"
+                  }`}
+                  href={link.href}
+                  key={link.label}
+                  onClick={() => {
+                    if (pathname === "/" && link.href.startsWith("#")) {
+                      const sectionId = link.href.slice(1) as HomeSectionId;
+                      if (sectionId in homeSectionLabels) {
+                        setActiveHomeSection(sectionId);
+                      }
+                    }
+                  }}
+                >
+                  <span className="relative z-1">{link.label}</span>
+                  {isActive ? (
+                    <motion.span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute bottom-[2px] left-1/2 z-2 h-[2px] w-5 -translate-x-1/2 bg-primary"
+                      layoutId="desktop-active-navigation"
+                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    />
+                  ) : (
+                    <span
+                      aria-hidden="true"
+                      className="absolute bottom-[2px] left-1/2 z-2 h-px w-0 -translate-x-1/2 bg-white/55 opacity-0 transition-[width,opacity] duration-300 group-hover:w-3 group-hover:opacity-100"
+                    />
+                  )}
+                </Link>
+              );
+            })}
           </div>
 
           <div className="flex items-center justify-end gap-2">
             <Link
-              className="relative inline-flex h-[52px] w-[146px] items-center justify-center gap-2 overflow-hidden rounded-[2px] bg-white px-6 py-3 font-sans text-base leading-[22px] font-normal tracking-[-0.32px] whitespace-nowrap text-black no-underline transition-[color,background-color] duration-200 [clip-path:polygon(0_0,calc(100%_-_12px)_0,100%_12px,100%_100%,12px_100%,0_calc(100%_-_12px))] hover:bg-primary hover:text-white max-[1200px]:h-11 max-[1200px]:w-auto max-[1200px]:gap-1.5 max-[1200px]:px-3.5 max-[1200px]:text-[13px] max-[1200px]:[clip-path:polygon(0_0,calc(100%_-_10px)_0,100%_10px,100%_100%,10px_100%,0_calc(100%_-_10px))] max-[359px]:px-3"
+              aria-current={pathname === "/contact" ? "page" : undefined}
+              className={`relative inline-flex h-[52px] w-[146px] items-center justify-center gap-2 overflow-hidden rounded-[2px] px-6 py-3 font-sans text-base leading-[22px] font-normal tracking-[-0.32px] whitespace-nowrap no-underline transition-[color,background-color,box-shadow] duration-200 [clip-path:polygon(0_0,calc(100%_-_12px)_0,100%_12px,100%_100%,12px_100%,0_calc(100%_-_12px))] max-[1200px]:h-11 max-[1200px]:w-auto max-[1200px]:gap-1.5 max-[1200px]:px-3.5 max-[1200px]:text-[13px] max-[1200px]:[clip-path:polygon(0_0,calc(100%_-_10px)_0,100%_10px,100%_100%,10px_100%,0_calc(100%_-_10px))] max-[359px]:px-3 ${
+                pathname === "/contact"
+                  ? "bg-primary text-white shadow-[inset_0_-2px_0_rgba(120,0,0,0.45),0_0_28px_rgba(255,30,0,0.22)]"
+                  : "bg-white text-black hover:bg-primary hover:text-white"
+              }`}
               href={contactHref}
             >
               Let&apos;s Talk
@@ -332,7 +452,7 @@ export default function Navbar() {
 
             <details
               ref={mobileMenuDisclosureRef}
-              className="group relative z-[260] hidden shrink-0 max-[1200px]:block"
+              className="group/menu relative z-[260] hidden shrink-0 max-[1200px]:block"
               data-mobile-menu-disclosure
             >
               <summary
@@ -352,8 +472,8 @@ export default function Navbar() {
               >
                 <span className="sr-only">Menu</span>
                 <span aria-hidden="true" className="relative block h-4 w-5">
-                  <span className="absolute left-0 top-[3px] block h-px w-5 bg-current transition-transform duration-300 group-open:translate-y-[5px] group-open:rotate-45" />
-                  <span className="absolute bottom-[3px] left-0 block h-px w-5 bg-current transition-transform duration-300 group-open:-translate-y-[5px] group-open:-rotate-45" />
+                  <span className="absolute left-0 top-[3px] block h-px w-5 bg-current transition-transform duration-300 group-open/menu:translate-y-[5px] group-open/menu:rotate-45" />
+                  <span className="absolute bottom-[3px] left-0 block h-px w-5 bg-current transition-transform duration-300 group-open/menu:-translate-y-[5px] group-open/menu:-rotate-45" />
                 </span>
               </summary>
 
@@ -374,21 +494,44 @@ export default function Navbar() {
                     aria-label="Mobile primary navigation"
                     className="flex flex-1 flex-col justify-center py-6"
                   >
-                    {links.map((link, index) => (
-                      <Link
-                        className="group flex min-h-[66px] items-center gap-4 border-b border-white/12 px-5 py-3 no-underline first:border-t hover:bg-white/[0.04] focus-visible:bg-white/[0.04] focus-visible:outline-none"
-                        href={link.href}
-                        key={link.label}
-                        onClick={closeMobileMenu}
-                      >
-                        <span className="w-7 shrink-0 font-sans text-[11px] font-medium tracking-[0.12em] text-primary">
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
-                        <span className="font-display text-[clamp(34px,10vw,48px)] leading-[0.92] font-black tracking-[-0.04em] text-white uppercase transition-colors duration-200 group-hover:text-primary group-focus-visible:text-primary">
-                          {link.label}
-                        </span>
-                      </Link>
-                    ))}
+                    {links.map((link, index) => {
+                      const isActive = activeNavLabel === link.label;
+
+                      return (
+                        <Link
+                          aria-current={
+                            isActive
+                              ? link.href.startsWith("#")
+                                ? "location"
+                                : "page"
+                              : undefined
+                          }
+                          className="group/mobile-link relative flex min-h-[66px] items-center gap-4 border-b border-white/12 px-5 py-3 no-underline first:border-t hover:bg-white/[0.04] focus-visible:bg-white/[0.04] focus-visible:outline-none"
+                          href={link.href}
+                          key={link.label}
+                          onClick={() => {
+                            if (pathname === "/" && link.href.startsWith("#")) {
+                              const sectionId = link.href.slice(1) as HomeSectionId;
+                              if (sectionId in homeSectionLabels) {
+                                setActiveHomeSection(sectionId);
+                              }
+                            }
+                            closeMobileMenu();
+                          }}
+                        >
+                          <span className={`flex h-7 w-7 shrink-0 items-center justify-center font-sans text-[10px] font-medium tracking-[0.08em] transition-colors duration-200 ${isActive ? "text-primary" : "text-white/38"}`}>
+                            {String(index + 1).padStart(2, "0")}
+                          </span>
+                          <span
+                            className={`font-display text-[clamp(34px,10vw,48px)] leading-[0.92] font-black tracking-[-0.04em] uppercase transition-colors duration-200 group-hover/mobile-link:text-primary group-focus-visible/mobile-link:text-primary ${
+                              isActive ? "text-primary" : "text-white/86"
+                            }`}
+                          >
+                            {link.label}
+                          </span>
+                        </Link>
+                      );
+                    })}
                   </nav>
 
                   <div className="border-t border-white/12 px-5 pb-[max(20px,env(safe-area-inset-bottom))] pt-5">
