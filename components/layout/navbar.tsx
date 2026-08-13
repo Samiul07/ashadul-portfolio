@@ -178,43 +178,42 @@ export default function Navbar() {
 
   useEffect(() => {
     if (pathname !== "/") {
+      setActiveHomeSection(null);
       return;
     }
 
-    const visibleSections = new Map<HomeSectionId, number>();
     const sectionIds = Object.keys(homeSectionLabels) as HomeSectionId[];
+    const portfolioWindow = window as PortfolioWindow;
 
-    const syncActiveSection = () => {
-      const hash = window.location.hash.slice(1) as HomeSectionId;
-      if (hash in homeSectionLabels) {
-        setActiveHomeSection(hash);
+    const updateActiveSection = () => {
+      // Offset from top of viewport where section is considered active (below navbar)
+      const headerOffset = Math.min(window.innerHeight * 0.35, 180);
+      let currentActive: HomeSectionId | null = null;
+
+      for (const sectionId of sectionIds) {
+        const element = document.getElementById(sectionId);
+        if (!element) continue;
+
+        const rect = element.getBoundingClientRect();
+        // Section is active ONLY if it currently spans across the active trigger point
+        if (rect.top <= headerOffset && rect.bottom > headerOffset) {
+          currentActive = sectionId;
+          break;
+        }
       }
+
+      setActiveHomeSection(currentActive);
     };
 
+    updateActiveSection();
+
     const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          const sectionId = entry.target.id as HomeSectionId;
-          if (entry.isIntersecting) {
-            visibleSections.set(sectionId, entry.intersectionRatio);
-          } else {
-            visibleSections.delete(sectionId);
-          }
-        }
-
-        const activeSection = [...visibleSections.entries()].sort(
-          (first, second) => second[1] - first[1],
-        )[0]?.[0];
-
-        if (activeSection) {
-          setActiveHomeSection(activeSection);
-        } else if (window.scrollY < window.innerHeight * 0.7) {
-          setActiveHomeSection(null);
-        }
+      () => {
+        updateActiveSection();
       },
       {
-        rootMargin: "-86px 0px -52% 0px",
-        threshold: [0.08, 0.2, 0.4, 0.65],
+        rootMargin: "-86px 0px -40% 0px",
+        threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
       },
     );
 
@@ -225,13 +224,21 @@ export default function Navbar() {
       }
     }
 
-    window.addEventListener("hashchange", syncActiveSection);
-    const initialSyncTimer = window.setTimeout(syncActiveSection, 0);
+    const onScroll = () => {
+      updateActiveSection();
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    window.addEventListener("hashchange", onScroll);
+    portfolioWindow.__portfolioLenis?.on?.("scroll", onScroll);
 
     return () => {
-      window.clearTimeout(initialSyncTimer);
-      window.removeEventListener("hashchange", syncActiveSection);
       observer.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("hashchange", onScroll);
+      portfolioWindow.__portfolioLenis?.off?.("scroll", onScroll);
     };
   }, [pathname]);
 
