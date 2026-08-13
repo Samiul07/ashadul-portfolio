@@ -249,11 +249,7 @@ export default function RevealMotion() {
       pageLoad: true,
       variant: "rise",
     });
-    registerAll("#portfolio-projects .grid > *", {
-      delay: 100,
-      stagger: 70,
-      variant: "soft",
-    });
+
 
     // Add the gate only after every target has been marked, preventing a
     // hydration flash while keeping the server-rendered page usable without JS.

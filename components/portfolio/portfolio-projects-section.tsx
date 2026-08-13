@@ -53,7 +53,7 @@ function ProjectCard({ project }: { project: Project }) {
 
   return (
     <a
-      className="group flex min-w-0 flex-col border border-white/18 bg-transparent p-2 text-white no-underline outline-none transition-colors duration-500 hover:border-white/38 focus-visible:border-white focus-visible:ring-2 focus-visible:ring-white max-[640px]:border-white/14 max-[640px]:p-0"
+      className="group flex min-w-0 flex-col border border-white/18 bg-transparent p-2 text-white no-underline outline-none transition-transform duration-300 active:scale-[0.98] focus-visible:border-white focus-visible:ring-2 focus-visible:ring-white max-[640px]:border-white/14 max-[640px]:p-0"
       href={project.figmaUrl || "#contact"}
       rel={isExternal ? "noreferrer" : undefined}
       target={isExternal ? "_blank" : undefined}
@@ -62,7 +62,7 @@ function ProjectCard({ project }: { project: Project }) {
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-900">
         <Image
           alt={project.title}
-          className={`transition-[transform,filter] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.035] group-hover:brightness-[0.52] group-hover:saturate-[0.72] group-focus-visible:scale-[1.035] group-focus-visible:brightness-[0.52] group-focus-visible:saturate-[0.72] motion-reduce:transition-none ${
+          className={`transition-[transform,filter] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105 group-hover:brightness-[0.52] group-hover:saturate-[0.72] group-focus-visible:scale-105 group-focus-visible:brightness-[0.52] group-focus-visible:saturate-[0.72] motion-reduce:transition-none ${
             project.imageClassName ?? "object-cover"
           }`}
           fill
@@ -90,11 +90,6 @@ function ProjectCard({ project }: { project: Project }) {
               <ArrowUpRight className="h-10 w-10" />
             </span>
           </span>
-
-          <span
-            aria-hidden="true"
-            className="absolute right-0 bottom-0 left-0 h-[3px] origin-left scale-x-0 bg-primary transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 group-focus-visible:scale-x-100 motion-reduce:scale-x-100 motion-reduce:transition-none"
-          />
         </div>
       </div>
 
