@@ -62,7 +62,7 @@ function ProjectCard({ project }: { project: Project }) {
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-900">
         <Image
           alt={project.title}
-          className={`will-change-transform group-hover:scale-105 group-hover:brightness-[0.52] group-hover:saturate-[0.72] group-focus-visible:scale-105 group-focus-visible:brightness-[0.52] group-focus-visible:saturate-[0.72] motion-reduce:transition-none ${
+          className={`will-change-transform group-hover:scale-105 group-hover:brightness-[0.45] group-hover:saturate-[0.72] group-focus-visible:scale-105 group-focus-visible:brightness-[0.45] group-focus-visible:saturate-[0.72] motion-reduce:transition-none ${
             project.imageClassName ?? "object-cover"
           }`}
           style={{
@@ -83,7 +83,7 @@ function ProjectCard({ project }: { project: Project }) {
         >
           <span
             aria-hidden="true"
-            className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08)_0%,rgba(0,0,0,0.3)_100%)]"
+            className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.28)_0%,rgba(0,0,0,0.55)_100%)]"
           />
 
           <span className="relative flex items-start gap-3">
