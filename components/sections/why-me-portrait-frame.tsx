@@ -49,7 +49,7 @@ export default function WhyMePortraitFrame({
           height={1537}
           loading="lazy"
           sizes={sizes}
-          src="/images/hero-portrait-highres.webp"
+          src="/images/why-me-blue-portrait.png"
           width={1023}
           quality={90}
         />
@@ -88,7 +88,7 @@ export default function WhyMePortraitFrame({
             height={1537}
             loading="lazy"
             sizes={sizes}
-            src="/images/hero-portrait-highres.webp"
+            src="/images/why-me-blue-portrait.png"
             width={1023}
             quality={90}
           />
