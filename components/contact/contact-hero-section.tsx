@@ -99,7 +99,7 @@ function Field({
       {children ?? (
         <input
           autoComplete={autoComplete}
-          className="h-8 min-w-0 border-0 bg-transparent p-0 font-sans text-lg leading-[1.2] font-normal tracking-[-0.35px] text-white outline-none placeholder:text-white/28"
+          className="h-8 min-w-0 border-0 bg-transparent p-0 font-sans text-lg leading-[1.2] font-normal tracking-[-0.35px] text-white outline-none placeholder:text-white/28 autofill:bg-transparent autofill:[-webkit-text-fill-color:white] autofill:[transition:background-color_9999s_ease-in-out_0s]"
           name={name}
           placeholder={placeholder}
           required={required}
@@ -307,7 +307,7 @@ export default function ContactHeroSection() {
                   required
                 >
                   <textarea
-                    className="min-h-[210px] w-full flex-1 resize-none border-0 bg-transparent p-0 font-sans text-lg leading-[1.4] font-normal tracking-[-0.35px] text-white outline-none placeholder:text-white/28 max-[640px]:min-h-[154px]"
+                    className="min-h-[210px] w-full flex-1 resize-none border-0 bg-transparent p-0 font-sans text-lg leading-[1.4] font-normal tracking-[-0.35px] text-white outline-none placeholder:text-white/28 max-[640px]:min-h-[154px] autofill:bg-transparent autofill:[-webkit-text-fill-color:white] autofill:[transition:background-color_9999s_ease-in-out_0s]"
                     name="message"
                     placeholder="What would you like to talk about?"
                     required
