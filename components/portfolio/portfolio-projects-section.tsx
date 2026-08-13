@@ -87,16 +87,16 @@ function ProjectCard({ project }: { project: Project }) {
           />
 
           <span
-            className="relative flex translate-y-4 items-center gap-3 opacity-0 blur-[4px] group-hover:translate-y-0 group-hover:opacity-100 group-hover:blur-none group-focus-visible:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:blur-none motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:blur-none motion-reduce:transition-none"
+            className="relative flex translate-y-4 items-start gap-3 opacity-0 blur-[4px] group-hover:translate-y-0 group-hover:opacity-100 group-hover:blur-none group-focus-visible:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:blur-none motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:blur-none motion-reduce:transition-none"
             style={{
               transition: "transform 1.0s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.0s cubic-bezier(0.16, 1, 0.3, 1), filter 1.0s cubic-bezier(0.16, 1, 0.3, 1)",
             }}
           >
-            <span className="relative font-display text-[clamp(72px,7vw,98px)] leading-none font-black tracking-[-0.045em] text-white uppercase">
+            <span className="relative pb-4 font-display text-[clamp(72px,7vw,98px)] leading-[0.78] font-black tracking-[-0.045em] text-white uppercase">
               View
             </span>
             <span
-              className="inline-flex h-10 w-10 items-center justify-center text-primary group-hover:translate-x-1 group-hover:-translate-y-1 group-focus-visible:translate-x-1 group-focus-visible:-translate-y-1 motion-reduce:transition-none"
+              className="mt-[-2px] inline-flex h-10 w-10 items-center justify-center text-primary group-hover:translate-x-1 group-hover:-translate-y-1 group-focus-visible:translate-x-1 group-focus-visible:-translate-y-1 motion-reduce:transition-none"
               style={{
                 transition: "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
               }}
