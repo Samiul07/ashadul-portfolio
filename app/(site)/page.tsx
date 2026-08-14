@@ -225,14 +225,13 @@ function HeroSection() {
 
       <div
         aria-hidden="true"
-        className={`pointer-events-none absolute right-[max(calc((100vw-1400px)/2),24px)] bottom-[48px] z-[130] h-[939px] w-[697px] overflow-hidden min-[768px]:z-[253] min-[641px]:max-[1200px]:right-[-140px] max-[1200px]:opacity-55 max-[640px]:right-0 max-[640px]:top-[-40px] max-[640px]:bottom-auto max-[640px]:left-auto max-[640px]:z-[130] max-[640px]:h-[360px] max-[640px]:w-[240px] ${heroStyles.portrait}`}
+        className={`pointer-events-none absolute right-[max(calc((100vw-1400px)/2),24px)] bottom-[48px] z-[130] h-[939px] w-[697px] overflow-hidden min-[768px]:z-[253] min-[641px]:max-[1200px]:right-[-140px] max-[1200px]:opacity-55 max-[640px]:right-[-220px] max-[640px]:bottom-auto max-[640px]:left-auto max-[640px]:z-[130] max-[640px]:h-[621px] max-[640px]:w-[460px] ${heroStyles.portrait}`}
         data-hero-portrait
       >
         <Image
           alt=""
-          className={`absolute right-0 bottom-0 h-[939px] w-[697px] max-[640px]:h-[360px] max-[640px]:w-[240px] select-none object-cover ${heroStyles.portraitImage}`}
-          loading="eager"
-          fetchPriority="high"
+          className={`absolute right-0 bottom-0 h-[939px] w-[697px] max-[640px]:h-[621px] max-[640px]:w-[460px] select-none object-cover ${heroStyles.portraitImage}`}
+          priority
           height={939}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 697px"
           src="/images/hero-portrait-highres.webp"
