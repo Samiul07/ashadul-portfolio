@@ -207,9 +207,9 @@ function HeroSection() {
           priority={true}
           fetchPriority="high"
           height={939}
-          quality={60}
-          sizes="(max-width: 640px) 65vw, (max-width: 1200px) 70vw, 697px"
-          src="/images/hero-portrait-highres.webp"
+          quality={100}
+          unoptimized={true}
+          src="/images/hero-portrait-highres.png"
           width={697}
         />
       </div>
