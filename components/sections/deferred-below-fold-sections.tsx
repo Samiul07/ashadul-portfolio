@@ -88,33 +88,8 @@ export default function DeferredBelowFoldSections({
 
     observer.observe(sentinel);
 
-    // Fallback: activate when browser is idle or after LCP critical window settles
-    let idleId: number | undefined;
-    let timerId: ReturnType<typeof setTimeout> | undefined;
-
-    if ("requestIdleCallback" in window) {
-      idleId = (
-        window as Window & {
-          requestIdleCallback: (
-            cb: () => void,
-            opts?: { timeout: number }
-          ) => number;
-        }
-      ).requestIdleCallback(() => setIsActivated(true), { timeout: 3500 });
-    } else {
-      timerId = setTimeout(() => setIsActivated(true), 2500);
-    }
-
     return () => {
       observer.disconnect();
-      if (idleId && "cancelIdleCallback" in window) {
-        (
-          window as Window & {
-            cancelIdleCallback: (id: number) => void;
-          }
-        ).cancelIdleCallback(idleId);
-      }
-      if (timerId) clearTimeout(timerId);
     };
   }, []);
 
