@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   motion,
+  useMotionValueEvent,
   useScroll,
   useSpring,
   useTransform,
@@ -72,6 +73,7 @@ export default function ProjectGallerySection() {
   const [scaleMultiplier, setScaleMultiplier] = useState(1);
   const [windowWidth, setWindowWidth] = useState(1920);
   const [isHovered, setIsHovered] = useState(false);
+  const [isButtonRevealed, setIsButtonRevealed] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const buttonOuterRef = useRef<HTMLAnchorElement>(null);
 
@@ -162,17 +164,14 @@ export default function ProjectGallerySection() {
   // 4. The shaped cover still follows the gallery's scroll choreography.
   const orangeCoverOpacity = useTransform(smoothProgress, [0.32, 0.58], [0, 1]);
 
-  // The CTA follows scroll progress directly, so forward and reverse motion are identical.
-  const buttonOpacity = useTransform(scrollYProgress, [0.39, 0.54], [0, 1]);
-  const buttonScale = useTransform(scrollYProgress, [0.39, 0.54], [0.82, 1]);
-  const buttonY = useTransform(scrollYProgress, [0.39, 0.54], [32, 0]);
-  const buttonBlur = useTransform(scrollYProgress, [0.39, 0.54], [16, 0]);
-  const buttonFilter = useTransform(buttonBlur, (blur) => `blur(${blur}px)`);
-  const buttonPointerEvents = useTransform(
-    scrollYProgress,
-    [0, 0.49, 0.4901],
-    ["none", "none", "auto"],
-  );
+  // 5. Once reveal begins, finish it on a timeline instead of tying it to more scrolling.
+  useMotionValueEvent(smoothProgress, "change", (latest) => {
+    if (latest >= 0.35) {
+      setIsButtonRevealed(true);
+    } else if (latest <= 0.28) {
+      setIsButtonRevealed(false);
+    }
+  });
 
   const buttonOutlinePath = useMemo(() => {
     const width = dimensions.width || 500;
@@ -430,17 +429,28 @@ export default function ProjectGallerySection() {
           />
         </motion.svg>
         <motion.div
+          animate={
+            isButtonRevealed
+              ? { filter: "blur(0px)", opacity: 1, scale: 1, y: 0 }
+              : { filter: "blur(16px)", opacity: 0, scale: 0.82, y: 32 }
+          }
           className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
-          style={{
-            filter: buttonFilter,
-            opacity: buttonOpacity,
-            scale: buttonScale,
-            y: buttonY,
-          }}
+          initial={false}
+          transition={
+            isButtonRevealed
+              ? {
+                  duration: 1.1,
+                  ease: [0.16, 1, 0.3, 1],
+                  opacity: { duration: 0.72, ease: "easeOut" },
+                }
+              : { duration: 0.42, ease: [0.4, 0, 1, 1] }
+          }
         >
           {/* The Framer shadow stack sits outside the two clipped surfaces. */}
-          <motion.div
-            className="relative"
+          <div
+            className={`relative ${
+              isButtonRevealed ? "pointer-events-auto" : "pointer-events-none"
+            }`}
             style={{
               filter: isHovered
                 ? `
@@ -457,7 +467,6 @@ export default function ProjectGallerySection() {
                 `,
               transform: "none",
               transition: "filter 300ms cubic-bezier(0.16, 1, 0.3, 1)",
-              pointerEvents: buttonPointerEvents,
             }}
           >
             <a
@@ -531,7 +540,7 @@ export default function ProjectGallerySection() {
                 </span>
               </span>
             </a>
-          </motion.div>
+          </div>
         </motion.div>
 
       </div>

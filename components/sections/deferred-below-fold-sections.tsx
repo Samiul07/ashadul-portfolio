@@ -5,10 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import type { SanityTestimonial } from "@/sanity/lib/types";
 import type { Note } from "@/components/sections/notes-section";
 
-const ProjectGallerySection = dynamic(
-  () => import("@/components/sections/project-gallery-section"),
-  { ssr: false }
-);
 const CalloutNotesSection = dynamic(
   () => import("@/components/sections/callout-notes-section"),
   { ssr: false }
@@ -163,7 +159,6 @@ export default function DeferredBelowFoldSections({
       <div ref={sentinelRef} aria-hidden="true" className="h-0 w-full" />
       {isActivated && (
         <>
-          <ProjectGallerySection />
           <CalloutNotesSection testimonials={testimonials} />
           <WhyMeCardsSection />
           <ServicesSection />

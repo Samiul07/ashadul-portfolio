@@ -5,6 +5,7 @@ import MobileVisualViewport from "@/components/hero/mobile-visual-viewport";
 import HeroGradient from "@/components/background/desktop-hero-gradient";
 import LogoListSection from "@/components/sections/logo-list-section";
 import SelectedWork from "@/components/sections/selected-work";
+import ProjectGallerySection from "@/components/sections/project-gallery-section";
 import DeferredBelowFoldSections from "@/components/sections/deferred-below-fold-sections";
 import heroStyles from "./home-hero.module.css";
 import { getRecentArticles, getTestimonials } from "@/sanity/lib/data";
@@ -400,6 +401,7 @@ export default async function Home() {
       <StatsSection />
       <LogoListSection />
       <SelectedWork />
+      <ProjectGallerySection />
       <DeferredBelowFoldSections notes={notes} testimonials={testimonials} />
     </>
   );

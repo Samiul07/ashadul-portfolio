@@ -26,25 +26,14 @@ export default function PageLoadCurtain() {
   }
 
   useEffect(() => {
-    const isMobileOrReduced =
-      typeof window !== "undefined" &&
-      (window.innerWidth < 768 ||
-        window.matchMedia("(max-width: 767px)").matches ||
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches);
-
-    if (isMobileOrReduced) {
-      setIsComplete(true);
-      return;
-    }
-
-    // Start curtain opening animation on next animation frame without blocking holds
+    // Start curtain opening animation on next animation frame
     const frame = requestAnimationFrame(() => {
       setIsReady(true);
     });
 
     const timer = setTimeout(() => {
       setIsComplete(true);
-    }, 600);
+    }, 1000);
 
     return () => {
       cancelAnimationFrame(frame);
@@ -56,7 +45,7 @@ export default function PageLoadCurtain() {
 
   return (
     <div
-      className={`page-load-curtain hidden md:flex ${isReady ? "is-animating" : ""}`}
+      className={`page-load-curtain ${isReady ? "is-animating" : ""}`}
       aria-hidden="true"
     >
       {panels.map((panelClassName, index) => (
