@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   motion,
+  useMotionValueEvent,
   useScroll,
   useSpring,
   useTransform,
@@ -72,6 +73,7 @@ export default function ProjectGallerySection() {
   const [scaleMultiplier, setScaleMultiplier] = useState(1);
   const [windowWidth, setWindowWidth] = useState(1920);
   const [isHovered, setIsHovered] = useState(false);
+  const [isButtonRevealed, setIsButtonRevealed] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const buttonOuterRef = useRef<HTMLAnchorElement>(null);
 
@@ -159,16 +161,17 @@ export default function ProjectGallerySection() {
   // 2. Entire grid translation Y
   const gridY = 0;
 
-  // 3. Hardware-accelerated opacity transforms (eliminates GPU dynamic blur jitter)
+  // 3. Hardware-accelerated background cover (static blur, opacity animated)
   const orangeCoverOpacity = useTransform(smoothProgress, [0.18, 0.38], [0, 1]);
-  const buttonOpacity = useTransform(smoothProgress, [0.22, 0.38], [0, 1]);
-  const buttonScale = useTransform(smoothProgress, [0.22, 0.38], [0.82, 1]);
-  const buttonY = useTransform(smoothProgress, [0.22, 0.38], [32, 0]);
-  const buttonPointerEvents = useTransform(
-    smoothProgress,
-    [0, 0.28, 0.2801],
-    ["none", "none", "auto"],
-  );
+
+  // 4. Autonomous CTA button trigger with reverse scroll grace
+  useMotionValueEvent(smoothProgress, "change", (latest) => {
+    if (latest >= 0.24) {
+      setIsButtonRevealed(true);
+    } else if (latest <= 0.12) {
+      setIsButtonRevealed(false);
+    }
+  });
 
   const buttonOutlinePath = useMemo(() => {
     const width = dimensions.width || 500;
@@ -430,17 +433,28 @@ export default function ProjectGallerySection() {
           </motion.svg>
 
           <motion.div
+            animate={
+              isButtonRevealed
+                ? { filter: "blur(0px)", opacity: 1, scale: 1, y: 0 }
+                : { filter: "blur(16px)", opacity: 0, scale: 0.82, y: 32 }
+            }
             className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
-            style={{
-              opacity: buttonOpacity,
-              scale: buttonScale,
-              y: buttonY,
-              pointerEvents: buttonPointerEvents,
-            }}
+            initial={false}
+            transition={
+              isButtonRevealed
+                ? {
+                    duration: 1.1,
+                    ease: [0.16, 1, 0.3, 1],
+                    opacity: { duration: 0.72, ease: "easeOut" },
+                  }
+                : { duration: 0.42, ease: [0.4, 0, 1, 1] }
+            }
           >
             {/* The Framer shadow stack sits outside the two clipped surfaces. */}
             <div
-              className="relative pointer-events-auto"
+              className={`relative ${
+                isButtonRevealed ? "pointer-events-auto" : "pointer-events-none"
+              }`}
               style={{
                 filter: isHovered
                   ? `
