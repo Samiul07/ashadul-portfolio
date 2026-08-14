@@ -6,6 +6,7 @@ import {
   useMotionValueEvent,
   useScroll,
   useSpring,
+  useTransform,
 } from "framer-motion";
 import Image from "next/image";
 
@@ -141,27 +142,33 @@ export default function ProjectGallerySection() {
     offset: ["start end", "end start"],
   });
 
-  // Smooth scroll progress using a spring for physics, damping, and inertia
+  // Smooth scroll progress using a spring for physics, damping, and inertia (creates heavy scroll resistance feel)
   const smoothProgress = useSpring(scrollYProgress, {
     damping: 26,
     stiffness: 48,
     mass: 1.15,
   });
 
-  // 1. Dynamic card sizes (initial zoomed-in vs final zoomed-out 4:3 ratio)
-  const initialCardWidth = 750 * 1.55 * scaleMultiplier;
-  const initialCardHeight = 562.5 * 1.55 * scaleMultiplier;
+  // 1. Dynamic card sizes (zooms out while preserving the 4:3 Figma thumbnail ratio)
   const finalCardWidth = (windowWidth - 60) / 4;
   const finalCardHeight = finalCardWidth * 0.75;
 
-  // 2. Entire grid translation Y
+  const cardWidth = useTransform(smoothProgress, [0, 0.62], [750 * 1.55 * scaleMultiplier, finalCardWidth]);
+  const cardHeight = useTransform(smoothProgress, [0, 0.62], [562.5 * 1.55 * scaleMultiplier, finalCardHeight]);
+
+  // 2. Entire grid translation Y (set to 0 so the grid zooms out in the middle of the screen)
   const gridY = 0;
 
-  // 3. Autonomous synchronized trigger: when user scrolls into section, animate everything together
+
+
+  // 4. The shaped cover still follows the gallery's scroll choreography.
+  const orangeCoverOpacity = useTransform(smoothProgress, [0.32, 0.58], [0, 1]);
+
+  // 5. Once reveal begins, finish it on a timeline instead of tying it to more scrolling.
   useMotionValueEvent(smoothProgress, "change", (latest) => {
-    if (latest >= 0.25) {
+    if (latest >= 0.35) {
       setIsButtonRevealed(true);
-    } else if (latest <= 0.12) {
+    } else if (latest <= 0.28) {
       setIsButtonRevealed(false);
     }
   });
@@ -267,321 +274,276 @@ export default function ProjectGallerySection() {
       <section
         ref={containerRef}
         aria-label="More Selected Projects"
-        className="relative z-[100] mt-[calc(1217px-100vh)] hidden h-[180vh] w-full overflow-visible bg-black min-[1200px]:block"
+        className="relative z-[100] mt-[calc(1217px-100vh)] hidden h-[320vh] w-full overflow-visible bg-black min-[1200px]:block"
       >
-        {/* Sticky wrapper aligned to the bottom of the hovering header (top-[86px]) with height adjusted and overflow-hidden to prevent grid from going under navbar */}
-        <div className="sticky top-[86px] max-[768px]:top-[70px] h-[calc(100vh-86px)] max-[768px]:h-[calc(100vh-70px)] w-full overflow-hidden flex items-start justify-center bg-transparent z-[20]">
-          {/* Borders matching other portfolio layout frames (inside sticky wrapper for proper masking and z-index below cards) */}
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 left-[50vw] z-[10] box-content w-[1400px] -translate-x-1/2 border-x border-white/12 max-[1439px]:w-[calc(100%_-_48px)]"
-          />
+      {/* Sticky wrapper aligned to the bottom of the hovering header (top-[86px]) with height adjusted and overflow-hidden to prevent grid from going under navbar */}
+      <div className="sticky top-[86px] max-[768px]:top-[70px] h-[calc(100vh-86px)] max-[768px]:h-[calc(100vh-70px)] w-full overflow-hidden flex items-start justify-center bg-transparent z-[20]">
+        {/* Borders matching other portfolio layout frames (inside sticky wrapper for proper masking and z-index below cards) */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 left-[50vw] z-[10] box-content w-[1400px] -translate-x-1/2 border-x border-white/12 max-[1439px]:w-[calc(100%_-_48px)]"
+        />
 
-          {/* 4x3 Grid Wrapper (Full screen layout with 4 columns of 3 rows) */}
-          <motion.div
-            className="relative flex flex-row gap-5 items-center justify-center overflow-visible select-none z-[20]"
-            style={{ y: gridY }}
-          >
-            {/* Column 1 */}
-            <div className="flex flex-col gap-5 h-full overflow-visible shrink-0">
-              {col1Cards.map((card) => (
-                <motion.div
-                  key={card.id}
-                  animate={{
-                    width: isButtonRevealed ? finalCardWidth : initialCardWidth,
-                    height: isButtonRevealed ? finalCardHeight : initialCardHeight,
-                  }}
-                  initial={false}
-                  transition={{
-                    duration: isButtonRevealed ? 1.2 : 0.6,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                  className="relative overflow-hidden rounded-none border border-white/10 bg-neutral-900 select-none shrink-0"
-                >
-                  <Image
-                    alt={card.title}
-                    className="object-cover"
-                    fill
-                    loading="lazy"
-                    sizes="750px"
-                    src={card.image}
-                  />
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Column 2 */}
-            <div className="flex flex-col gap-5 h-full overflow-visible shrink-0">
-              {col2Cards.map((card) => (
-                <motion.div
-                  key={card.id}
-                  animate={{
-                    width: isButtonRevealed ? finalCardWidth : initialCardWidth,
-                    height: isButtonRevealed ? finalCardHeight : initialCardHeight,
-                  }}
-                  initial={false}
-                  transition={{
-                    duration: isButtonRevealed ? 1.2 : 0.6,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                  className="relative overflow-hidden rounded-none border border-white/10 bg-neutral-900 select-none shrink-0"
-                >
-                  <Image
-                    alt={card.title}
-                    className="object-cover"
-                    fill
-                    loading="lazy"
-                    sizes="750px"
-                    src={card.image}
-                  />
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Column 3 */}
-            <div className="flex flex-col gap-5 h-full overflow-visible shrink-0">
-              {col3Cards.map((card) => (
-                <motion.div
-                  key={card.id}
-                  animate={{
-                    width: isButtonRevealed ? finalCardWidth : initialCardWidth,
-                    height: isButtonRevealed ? finalCardHeight : initialCardHeight,
-                  }}
-                  initial={false}
-                  transition={{
-                    duration: isButtonRevealed ? 1.2 : 0.6,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                  className="relative overflow-hidden rounded-none border border-white/10 bg-neutral-900 select-none shrink-0"
-                >
-                  <Image
-                    alt={card.title}
-                    className="object-cover"
-                    fill
-                    loading="lazy"
-                    sizes="750px"
-                    src={card.image}
-                  />
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Column 4 */}
-            <div className="flex flex-col gap-5 h-full overflow-visible shrink-0">
-              {col4Cards.map((card) => (
-                <motion.div
-                  key={card.id}
-                  animate={{
-                    width: isButtonRevealed ? finalCardWidth : initialCardWidth,
-                    height: isButtonRevealed ? finalCardHeight : initialCardHeight,
-                  }}
-                  initial={false}
-                  transition={{
-                    duration: isButtonRevealed ? 1.2 : 0.6,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                  className="relative overflow-hidden rounded-none border border-white/10 bg-neutral-900 select-none shrink-0"
-                >
-                  <Image
-                    alt={card.title}
-                    className="object-cover"
-                    fill
-                    loading="lazy"
-                    sizes="750px"
-                    src={card.image}
-                  />
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Blur only the portion of the grid that has entered the red field. */}
-          <motion.div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 z-24"
-            animate={{ opacity: isButtonRevealed ? 1 : 0 }}
-            initial={false}
-            transition={{
-              duration: isButtonRevealed ? 1.1 : 0.5,
-              ease: [0.16, 1, 0.3, 1],
-            }}
-            style={{
-              backdropFilter: "blur(18px)",
-              WebkitBackdropFilter: "blur(18px)",
-              maskImage:
-                "radial-gradient(ellipse 78% 55% at 51% 0%, transparent 0%, transparent 33%, rgba(0, 0, 0, 0.16) 45%, rgba(0, 0, 0, 0.68) 63%, black 79%)",
-              WebkitMaskImage:
-                "radial-gradient(ellipse 78% 55% at 51% 0%, transparent 0%, transparent 33%, rgba(0, 0, 0, 0.16) 45%, rgba(0, 0, 0, 0.68) 63%, black 79%)",
-            }}
-          />
-
-          {/* Asymmetric red field with a soft, intentionally irregular edge. */}
-          <motion.svg
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 z-25 h-full w-full"
-            preserveAspectRatio="none"
-            animate={{ opacity: isButtonRevealed ? 1 : 0 }}
-            initial={false}
-            transition={{
-              duration: isButtonRevealed ? 1.1 : 0.5,
-              ease: [0.16, 1, 0.3, 1],
-            }}
-            viewBox="0 0 1000 1000"
-          >
-            <defs>
-              <linearGradient id="gallery-red-field" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stopColor="#ff7568" stopOpacity="0.26" />
-                <stop offset="18%" stopColor="#ff4736" stopOpacity="0.62" />
-                <stop offset="42%" stopColor="#ff2814" stopOpacity="0.9" />
-                <stop offset="100%" stopColor="#d91600" stopOpacity="0.96" />
-              </linearGradient>
-              <filter id="gallery-red-haze" x="-12%" y="-12%" width="124%" height="124%">
-                <feGaussianBlur stdDeviation="68" />
-              </filter>
-              <filter id="gallery-red-soft-edge" x="-8%" y="-8%" width="116%" height="116%">
-                <feGaussianBlur stdDeviation="30" />
-              </filter>
-              <filter id="gallery-red-glow" x="-10%" y="-10%" width="120%" height="120%">
-                <feGaussianBlur stdDeviation="24" />
-              </filter>
-            </defs>
-            <path
-              d="M-40 28 C82 83 145 247 269 349 C350 416 425 378 501 390 C581 402 629 443 713 407 C826 359 903 142 1040 6 L1040 1040 L-40 1040 Z"
-              fill="#ff3d2a"
-              filter="url(#gallery-red-haze)"
-              opacity="0.42"
-            />
-            <path
-              d="M-40 127 C91 181 163 347 291 438 C375 498 444 466 516 476 C591 486 641 522 726 488 C835 444 912 225 1040 94"
-              fill="none"
-              filter="url(#gallery-red-glow)"
-              opacity="0.58"
-              stroke="#ff6b5a"
-              strokeWidth="24"
-            />
-            <path
-              d="M-40 127 C91 181 163 347 291 438 C375 498 444 466 516 476 C591 486 641 522 726 488 C835 444 912 225 1040 94 L1040 1040 L-40 1040 Z"
-              fill="url(#gallery-red-field)"
-              filter="url(#gallery-red-soft-edge)"
-            />
-          </motion.svg>
-
-          <motion.div
-            animate={
-              isButtonRevealed
-                ? { filter: "blur(0px)", opacity: 1, scale: 1, y: 0 }
-                : { filter: "blur(16px)", opacity: 0, scale: 0.82, y: 32 }
-            }
-            className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
-            initial={false}
-            transition={
-              isButtonRevealed
-                ? {
-                    duration: 1.1,
-                    ease: [0.16, 1, 0.3, 1],
-                    opacity: { duration: 0.72, ease: "easeOut" },
-                  }
-                : { duration: 0.42, ease: [0.4, 0, 1, 1] }
-            }
-          >
-            {/* The Framer shadow stack sits outside the two clipped surfaces. */}
-            <div
-              className={`relative ${
-                isButtonRevealed ? "pointer-events-auto" : "pointer-events-none"
-              }`}
-              style={{
-                filter: isHovered
-                  ? `
-                    drop-shadow(0px 7.9px 14.2px rgba(153, 0, 0, 0.075))
-                    drop-shadow(0px 21.2px 38.2px rgba(153, 0, 0, 0.094))
-                    drop-shadow(0px 59.9px 107.8px rgba(153, 0, 0, 0.16))
-                    drop-shadow(0px 109px 196.2px rgba(153, 0, 0, 0.24))
-                  `
-                  : `
-                    drop-shadow(0px 7.9px 14.2px rgba(153, 0, 0, 0.06))
-                    drop-shadow(0px 21.2px 38.2px rgba(153, 0, 0, 0.075))
-                    drop-shadow(0px 59.9px 107.8px rgba(153, 0, 0, 0.12))
-                    drop-shadow(0px 109px 196.2px rgba(153, 0, 0, 0.18))
-                  `,
-                transform: "none",
-                transition: "filter 300ms cubic-bezier(0.16, 1, 0.3, 1)",
-              }}
-            >
-              <a
-                ref={buttonOuterRef}
-                href="/portfolio"
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-                onFocus={() => setIsHovered(true)}
-                onBlur={() => setIsHovered(false)}
-                className="relative flex items-center justify-center overflow-visible p-[12px] pointer-events-auto outline-none"
+        {/* 4x3 Grid Wrapper (Full screen layout with 4 columns of 3 rows) */}
+        <motion.div
+          className="relative flex flex-row gap-5 items-center justify-center overflow-visible select-none z-[20]"
+          style={{ y: gridY }}
+        >
+          {/* Column 1 */}
+          <div className="flex flex-col gap-5 h-full overflow-visible shrink-0">
+            {col1Cards.map((card) => (
+              <motion.div
+                key={card.id}
+                style={{ width: cardWidth, height: cardHeight }}
+                className="relative overflow-hidden rounded-none border border-white/10 bg-neutral-900 select-none shrink-0"
               >
-                <div
-                  aria-hidden="true"
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    backdropFilter: "blur(1px)",
-                    WebkitBackdropFilter: "blur(1px)",
-                    backgroundColor: "rgba(0, 0, 0, 0.03)",
-                    boxShadow:
-                      "rgba(255, 255, 255, 0.25) 0 -1px 0 inset, rgba(189, 22, 0, 0.49) 0 2px 2px inset, rgba(0, 0, 0, 0.04) 0 7px 10px inset",
-                    clipPath:
-                      "polygon(0 0, calc(100% - 56px) 0, 100% 56px, 100% 100%, 56px 100%, 0 calc(100% - 56px))",
-                    transform: isHovered ? "scale(1.042, 1.12)" : "scale(1)",
-                    transformOrigin: "center",
-                    transition: "transform 380ms cubic-bezier(0.16, 1, 0.3, 1)",
-                    zIndex: 0,
-                  }}
+                <Image
+                  alt={card.title}
+                  className="object-cover"
+                  fill
+                  loading="lazy"
+                  sizes="750px"
+                  src={card.image}
                 />
+              </motion.div>
+            ))}
+          </div>
 
-                {/* A vector outline keeps the border clean along both diagonal cuts. */}
-                <svg
-                  className="absolute inset-0 h-full w-full overflow-visible pointer-events-none"
-                  style={{
-                    transform: isHovered ? "scale(1.042, 1.12)" : "scale(1)",
-                    transformOrigin: "center",
-                    transition: "transform 380ms cubic-bezier(0.16, 1, 0.3, 1)",
-                    zIndex: 1,
-                  }}
-                >
-                  <path
-                    d={buttonOutlinePath}
-                    fill="none"
-                    stroke="rgba(255, 255, 255, 0.17)"
-                    strokeWidth="1"
-                    vectorEffect="non-scaling-stroke"
-                  />
-                </svg>
+          {/* Column 2 */}
+          <div className="flex flex-col gap-5 h-full overflow-visible shrink-0">
+            {col2Cards.map((card) => (
+              <motion.div
+                key={card.id}
+                style={{ width: cardWidth, height: cardHeight }}
+                className="relative overflow-hidden rounded-none border border-white/10 bg-neutral-900 select-none shrink-0"
+              >
+                <Image
+                  alt={card.title}
+                  className="object-cover"
+                  fill
+                  loading="lazy"
+                  sizes="750px"
+                  src={card.image}
+                />
+              </motion.div>
+            ))}
+          </div>
 
+          {/* Column 3 */}
+          <div className="flex flex-col gap-5 h-full overflow-visible shrink-0">
+            {col3Cards.map((card) => (
+              <motion.div
+                key={card.id}
+                style={{ width: cardWidth, height: cardHeight }}
+                className="relative overflow-hidden rounded-none border border-white/10 bg-neutral-900 select-none shrink-0"
+              >
+                <Image
+                  alt={card.title}
+                  className="object-cover"
+                  fill
+                  loading="lazy"
+                  sizes="750px"
+                  src={card.image}
+                />
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Column 4 */}
+          <div className="flex flex-col gap-5 h-full overflow-visible shrink-0">
+            {col4Cards.map((card) => (
+              <motion.div
+                key={card.id}
+                style={{ width: cardWidth, height: cardHeight }}
+                className="relative overflow-hidden rounded-none border border-white/10 bg-neutral-900 select-none shrink-0"
+              >
+                <Image
+                  alt={card.title}
+                  className="object-cover"
+                  fill
+                  loading="lazy"
+                  sizes="750px"
+                  src={card.image}
+                />
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+        {/* Blur only the portion of the grid that has entered the red field. */}
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-24"
+          style={{
+            opacity: orangeCoverOpacity,
+            backdropFilter: "blur(18px)",
+            WebkitBackdropFilter: "blur(18px)",
+            maskImage:
+              "radial-gradient(ellipse 78% 55% at 51% 0%, transparent 0%, transparent 33%, rgba(0, 0, 0, 0.16) 45%, rgba(0, 0, 0, 0.68) 63%, black 79%)",
+            WebkitMaskImage:
+              "radial-gradient(ellipse 78% 55% at 51% 0%, transparent 0%, transparent 33%, rgba(0, 0, 0, 0.16) 45%, rgba(0, 0, 0, 0.68) 63%, black 79%)",
+          }}
+        />
+        {/* Asymmetric red field with a soft, intentionally irregular edge. */}
+        <motion.svg
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-25 h-full w-full"
+          preserveAspectRatio="none"
+          style={{ opacity: orangeCoverOpacity }}
+          viewBox="0 0 1000 1000"
+        >
+          <defs>
+            <linearGradient id="gallery-red-field" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stopColor="#ff7568" stopOpacity="0.26" />
+              <stop offset="18%" stopColor="#ff4736" stopOpacity="0.62" />
+              <stop offset="42%" stopColor="#ff2814" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#d91600" stopOpacity="0.96" />
+            </linearGradient>
+            <filter id="gallery-red-haze" x="-12%" y="-12%" width="124%" height="124%">
+              <feGaussianBlur stdDeviation="68" />
+            </filter>
+            <filter id="gallery-red-soft-edge" x="-8%" y="-8%" width="116%" height="116%">
+              <feGaussianBlur stdDeviation="30" />
+            </filter>
+            <filter id="gallery-red-glow" x="-10%" y="-10%" width="120%" height="120%">
+              <feGaussianBlur stdDeviation="24" />
+            </filter>
+          </defs>
+          <path
+            d="M-40 28 C82 83 145 247 269 349 C350 416 425 378 501 390 C581 402 629 443 713 407 C826 359 903 142 1040 6 L1040 1040 L-40 1040 Z"
+            fill="#ff3d2a"
+            filter="url(#gallery-red-haze)"
+            opacity="0.42"
+          />
+          <path
+            d="M-40 127 C91 181 163 347 291 438 C375 498 444 466 516 476 C591 486 641 522 726 488 C835 444 912 225 1040 94"
+            fill="none"
+            filter="url(#gallery-red-glow)"
+            opacity="0.58"
+            stroke="#ff6b5a"
+            strokeWidth="24"
+          />
+          <path
+            d="M-40 127 C91 181 163 347 291 438 C375 498 444 466 516 476 C591 486 641 522 726 488 C835 444 912 225 1040 94 L1040 1040 L-40 1040 Z"
+            fill="url(#gallery-red-field)"
+            filter="url(#gallery-red-soft-edge)"
+          />
+        </motion.svg>
+        <motion.div
+          animate={
+            isButtonRevealed
+              ? { filter: "blur(0px)", opacity: 1, scale: 1, y: 0 }
+              : { filter: "blur(16px)", opacity: 0, scale: 0.82, y: 32 }
+          }
+          className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
+          initial={false}
+          transition={
+            isButtonRevealed
+              ? {
+                  duration: 1.1,
+                  ease: [0.16, 1, 0.3, 1],
+                  opacity: { duration: 0.72, ease: "easeOut" },
+                }
+              : { duration: 0.42, ease: [0.4, 0, 1, 1] }
+          }
+        >
+          {/* The Framer shadow stack sits outside the two clipped surfaces. */}
+          <div
+            className={`relative ${
+              isButtonRevealed ? "pointer-events-auto" : "pointer-events-none"
+            }`}
+            style={{
+              filter: isHovered
+                ? `
+                  drop-shadow(0px 7.9px 14.2px rgba(153, 0, 0, 0.075))
+                  drop-shadow(0px 21.2px 38.2px rgba(153, 0, 0, 0.094))
+                  drop-shadow(0px 59.9px 107.8px rgba(153, 0, 0, 0.16))
+                  drop-shadow(0px 109px 196.2px rgba(153, 0, 0, 0.24))
+                `
+                : `
+                  drop-shadow(0px 7.9px 14.2px rgba(153, 0, 0, 0.06))
+                  drop-shadow(0px 21.2px 38.2px rgba(153, 0, 0, 0.075))
+                  drop-shadow(0px 59.9px 107.8px rgba(153, 0, 0, 0.12))
+                  drop-shadow(0px 109px 196.2px rgba(153, 0, 0, 0.18))
+                `,
+              transform: "none",
+              transition: "filter 300ms cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+          >
+            <a
+              ref={buttonOuterRef}
+              href="/portfolio"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              onFocus={() => setIsHovered(true)}
+              onBlur={() => setIsHovered(false)}
+              className="relative flex items-center justify-center overflow-visible p-[12px] pointer-events-auto outline-none"
+            >
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  backdropFilter: "blur(1px)",
+                  WebkitBackdropFilter: "blur(1px)",
+                  backgroundColor: "rgba(0, 0, 0, 0.03)",
+                  boxShadow:
+                    "rgba(255, 255, 255, 0.25) 0 -1px 0 inset, rgba(189, 22, 0, 0.49) 0 2px 2px inset, rgba(0, 0, 0, 0.04) 0 7px 10px inset",
+                  clipPath:
+                    "polygon(0 0, calc(100% - 56px) 0, 100% 56px, 100% 100%, 56px 100%, 0 calc(100% - 56px))",
+                  transform: isHovered ? "scale(1.042, 1.12)" : "scale(1)",
+                  transformOrigin: "center",
+                  transition: "transform 380ms cubic-bezier(0.16, 1, 0.3, 1)",
+                  zIndex: 0,
+                }}
+              />
+
+              {/* A vector outline keeps the border clean along both diagonal cuts. */}
+              <svg
+                className="absolute inset-0 h-full w-full overflow-visible pointer-events-none"
+                style={{
+                  transform: isHovered ? "scale(1.042, 1.12)" : "scale(1)",
+                  transformOrigin: "center",
+                  transition: "transform 380ms cubic-bezier(0.16, 1, 0.3, 1)",
+                  zIndex: 1,
+                }}
+              >
+                <path
+                  d={buttonOutlinePath}
+                  fill="none"
+                  stroke="rgba(255, 255, 255, 0.17)"
+                  strokeWidth="1"
+                  vectorEffect="non-scaling-stroke"
+                />
+              </svg>
+
+              <span
+                className="relative flex items-center justify-center px-12 py-8 md:px-20 md:py-12 select-none cursor-pointer"
+                style={{
+                  background: isHovered
+                    ? "linear-gradient(rgb(255, 255, 255) 32%, rgb(255, 147, 135) 100%)"
+                    : "linear-gradient(rgb(255, 246, 245) 32%, rgb(255, 174, 166) 100%)",
+                  boxShadow: isHovered
+                    ? "rgb(255, 255, 255) 0 2px 0 inset, rgba(255, 30, 0, 0.52) 0 -22px 34px 16px inset, rgb(255, 82, 64) 0 -2px 0 inset"
+                    : "rgb(255, 255, 255) 0 2px 0 inset, rgba(255, 30, 0, 0.45) 0 -12px 34px 17px inset, rgb(255, 100, 82) 0 -5px 0 inset",
+                  clipPath:
+                    "polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 44px 100%, 0 calc(100% - 44px))",
+                  transition: "background 300ms ease, box-shadow 300ms ease",
+                  zIndex: 2,
+                }}
+              >
                 <span
-                  className="relative flex items-center justify-center px-12 py-8 md:px-20 md:py-12 select-none cursor-pointer"
+                  className="block bg-clip-text pb-3 font-sans text-[36px] leading-[1.25] font-semibold tracking-[-0.01em] text-transparent select-none sm:text-[48px] md:text-[64px] lg:text-[77px]"
                   style={{
-                    background: isHovered
-                      ? "linear-gradient(rgb(255, 255, 255) 32%, rgb(255, 147, 135) 100%)"
-                      : "linear-gradient(rgb(255, 246, 245) 32%, rgb(255, 174, 166) 100%)",
-                    boxShadow: isHovered
-                      ? "rgb(255, 255, 255) 0 2px 0 inset, rgba(255, 30, 0, 0.52) 0 -22px 34px 16px inset, rgb(255, 82, 64) 0 -2px 0 inset"
-                      : "rgb(255, 255, 255) 0 2px 0 inset, rgba(255, 30, 0, 0.45) 0 -12px 34px 17px inset, rgb(255, 100, 82) 0 -5px 0 inset",
-                    clipPath:
-                      "polygon(0 0, calc(100% - 44px) 0, 100% 44px, 100% 100%, 44px 100%, 0 calc(100% - 44px))",
-                    transition: "background 300ms ease, box-shadow 300ms ease",
-                    zIndex: 2,
+                    backgroundImage: "linear-gradient(0deg, rgb(181, 18, 0) 14%, rgb(255, 30, 0) 87%)",
                   }}
                 >
-                  <span
-                    className="block bg-clip-text pb-3 font-sans text-[36px] leading-[1.25] font-semibold tracking-[-0.01em] text-transparent select-none sm:text-[48px] md:text-[64px] lg:text-[77px]"
-                    style={{
-                      backgroundImage: "linear-gradient(0deg, rgb(181, 18, 0) 14%, rgb(255, 30, 0) 87%)",
-                    }}
-                  >
-                    View All My Projects
-                  </span>
+                  View All My Projects
                 </span>
-              </a>
-            </div>
-          </motion.div>
+              </span>
+            </a>
+          </div>
+        </motion.div>
 
-        </div>
+      </div>
       </section>
     </>
   );
