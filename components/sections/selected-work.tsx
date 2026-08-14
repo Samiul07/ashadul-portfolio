@@ -4,7 +4,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
 import type { MotionValue } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const frameWidth =
   "w-[1400px] max-[1439px]:w-[calc(100%_-_48px)] max-[640px]:w-[calc(100%_-_40px)] max-[359px]:w-[calc(100%_-_24px)]";
@@ -221,32 +221,12 @@ function ProjectCard({
   );
 }
 
-function StaticSelectedWorkContent() {
+function StaticSelectedWorkCards() {
   return (
-    <div
-      className={`relative z-3 flex h-auto flex-col items-start border-x border-white/12 px-8 py-[120px] max-[1200px]:py-[clamp(72px,8vw,96px)] max-[640px]:px-5 max-[640px]:py-14 max-[359px]:px-3 ${frameWidth} ${frameMargin}`}
-    >
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-white/12"
-      />
-      <CrossMark className="absolute top-0 left-0 z-20 -translate-x-1/2 -translate-y-1/2" />
-      <CrossMark className="absolute top-0 right-0 z-20 translate-x-1/2 -translate-y-1/2" />
-      <p className="m-0 w-[448px] font-overline text-base leading-none font-medium text-white uppercase max-[640px]:w-full max-[640px]:text-sm">
-        {"// Selected Product Work"}
-      </p>
-
-      <div className="mt-8 flex w-full flex-col items-start gap-14 max-[640px]:gap-10">
-        <h2 className="m-0 w-full font-display text-[160px] leading-none font-black tracking-[-8px] text-white uppercase max-[1200px]:text-[clamp(82px,12vw,132px)] max-[1200px]:tracking-[-0.05em] max-[640px]:text-[clamp(58px,19vw,88px)] max-[640px]:tracking-[-4px]">
-          Selected Work<span className="text-primary">.</span>
-        </h2>
-
-        <div className="flex w-full flex-col items-start gap-12 min-[768px]:max-[1200px]:grid min-[768px]:max-[1200px]:grid-cols-2 min-[768px]:max-[1200px]:items-stretch min-[768px]:max-[1200px]:gap-6 max-[640px]:-mx-5 max-[640px]:w-[calc(100%_+_40px)] max-[359px]:!-mx-3 max-[359px]:!w-[calc(100%_+_24px)]">
-          {projects.map((project) => (
-            <ProjectCard key={project.index} project={project} />
-          ))}
-        </div>
-      </div>
+    <div className="flex w-full flex-col items-start gap-12 min-[768px]:max-[1200px]:grid min-[768px]:max-[1200px]:grid-cols-2 min-[768px]:max-[1200px]:items-stretch min-[768px]:max-[1200px]:gap-6 max-[640px]:-mx-5 max-[640px]:w-[calc(100%_+_40px)] max-[359px]:!-mx-3 max-[359px]:!w-[calc(100%_+_24px)]">
+      {projects.map((project) => (
+        <ProjectCard key={project.index} project={project} />
+      ))}
     </div>
   );
 }
@@ -276,9 +256,11 @@ function StackedProjectCard({
   );
 }
 
-export default function SelectedWork() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const reduceMotion = useReducedMotion();
+function DesktopStackedSelectedWork({
+  sectionRef,
+}: {
+  sectionRef: React.RefObject<HTMLElement | null>;
+}) {
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start -82px", "end end"],
@@ -295,17 +277,80 @@ export default function SelectedWork() {
     [0, -projectStackTravel],
   );
 
-  if (reduceMotion) {
-    return (
-      <section
-        id="work"
-        aria-label="Selected Work"
-        className="relative z-[120] h-auto w-full overflow-visible bg-transparent text-white"
+  return (
+    <div className="sticky top-[-82px] hidden h-[calc(100vh+82px)] w-full overflow-hidden min-[1200px]:block">
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-white/12"
+      />
+
+      <div
+        className={`relative h-full overflow-hidden border-x border-white/12 px-8 pt-[120px] ${frameWidth} ${frameMargin}`}
       >
-        <StaticSelectedWorkContent />
-      </section>
+        <CrossMark className="absolute top-0 left-0 z-20 -translate-x-1/2 -translate-y-1/2" />
+        <CrossMark className="absolute top-0 right-0 z-20 translate-x-1/2 -translate-y-1/2" />
+
+        <div>
+          <p className="m-0 w-[448px] font-overline text-base leading-none font-medium text-white uppercase">
+            {"// Selected Product Work"}
+          </p>
+          <h2 className="mt-8 mb-0 w-full font-display text-[160px] leading-none font-black tracking-[-8px] text-white uppercase max-[1279px]:text-[132px]">
+            Selected Work<span className="text-primary">.</span>
+          </h2>
+        </div>
+        <motion.div
+          className="relative mt-14 h-[calc(100vh-470px)] w-full overflow-visible"
+          style={{ y: containerY }}
+        >
+          {projects.map((project, index) => (
+            <StackedProjectCard
+              index={index}
+              key={project.index}
+              scrollY={scrollY}
+              project={project}
+            />
+          ))}
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+export default function SelectedWork() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const [isCardsActive, setIsCardsActive] = useState(false);
+
+  useEffect(() => {
+    const checkHash = () => {
+      if (typeof window !== "undefined" && window.location.hash.startsWith("#work")) {
+        setIsCardsActive(true);
+      }
+    };
+
+    checkHash();
+    window.addEventListener("hashchange", checkHash);
+
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return () => window.removeEventListener("hashchange", checkHash);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setIsCardsActive(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "1000px 0px" }
     );
-  }
+
+    observer.observe(sentinel);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("hashchange", checkHash);
+    };
+  }, []);
 
   return (
     <section
@@ -315,44 +360,68 @@ export default function SelectedWork() {
       className="relative z-[120] h-auto w-full overflow-visible bg-transparent text-white min-[1200px]:h-[calc(230vh-88px)]"
     >
       <div className="min-[1200px]:hidden">
-        <StaticSelectedWorkContent />
-      </div>
-
-      <div className="sticky top-[-82px] hidden h-[calc(100vh+82px)] w-full overflow-hidden min-[1200px]:block">
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-white/12"
-        />
-
         <div
-          className={`relative h-full overflow-hidden border-x border-white/12 px-8 pt-[120px] ${frameWidth} ${frameMargin}`}
+          className={`relative z-3 flex h-auto flex-col items-start border-x border-white/12 px-8 py-[120px] max-[1200px]:py-[clamp(72px,8vw,96px)] max-[640px]:px-5 max-[640px]:py-14 max-[359px]:px-3 ${frameWidth} ${frameMargin}`}
         >
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-white/12"
+          />
           <CrossMark className="absolute top-0 left-0 z-20 -translate-x-1/2 -translate-y-1/2" />
           <CrossMark className="absolute top-0 right-0 z-20 translate-x-1/2 -translate-y-1/2" />
+          <p className="m-0 w-[448px] font-overline text-base leading-none font-medium text-white uppercase max-[640px]:w-full max-[640px]:text-sm">
+            {"// Selected Product Work"}
+          </p>
 
-          <div>
-            <p className="m-0 w-[448px] font-overline text-base leading-none font-medium text-white uppercase">
-              {"// Selected Product Work"}
-            </p>
-            <h2 className="mt-8 mb-0 w-full font-display text-[160px] leading-none font-black tracking-[-8px] text-white uppercase max-[1279px]:text-[132px]">
+          <div className="mt-8 flex w-full flex-col items-start gap-14 max-[640px]:gap-10">
+            <h2 className="m-0 w-full font-display text-[160px] leading-none font-black tracking-[-8px] text-white uppercase max-[1200px]:text-[clamp(82px,12vw,132px)] max-[1200px]:tracking-[-0.05em] max-[640px]:text-[clamp(58px,19vw,88px)] max-[640px]:tracking-[-4px]">
               Selected Work<span className="text-primary">.</span>
             </h2>
-          </div>
-          <motion.div
-            className="relative mt-14 h-[calc(100vh-470px)] w-full overflow-visible"
-            style={{ y: containerY }}
-          >
-            {projects.map((project, index) => (
-              <StackedProjectCard
-                index={index}
-                key={project.index}
-                scrollY={scrollY}
-                project={project}
+
+            <div ref={sentinelRef} aria-hidden="true" className="h-0 w-full" />
+
+            {isCardsActive ? (
+              <StaticSelectedWorkCards />
+            ) : (
+              <div
+                aria-hidden="true"
+                className="h-[2400px] w-full min-[768px]:h-[1200px]"
               />
-            ))}
-          </motion.div>
+            )}
+          </div>
         </div>
       </div>
+
+      {isCardsActive ? (
+        <DesktopStackedSelectedWork sectionRef={sectionRef} />
+      ) : (
+        <div
+          className="sticky top-[-82px] hidden h-[calc(100vh+82px)] w-full overflow-hidden min-[1200px]:block"
+          aria-hidden="true"
+        >
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-white/12"
+          />
+
+          <div
+            className={`relative h-full overflow-hidden border-x border-white/12 px-8 pt-[120px] ${frameWidth} ${frameMargin}`}
+          >
+            <CrossMark className="absolute top-0 left-0 z-20 -translate-x-1/2 -translate-y-1/2" />
+            <CrossMark className="absolute top-0 right-0 z-20 translate-x-1/2 -translate-y-1/2" />
+
+            <div>
+              <p className="m-0 w-[448px] font-overline text-base leading-none font-medium text-white uppercase">
+                {"// Selected Product Work"}
+              </p>
+              <h2 className="mt-8 mb-0 w-full font-display text-[160px] leading-none font-black tracking-[-8px] text-white uppercase max-[1279px]:text-[132px]">
+                Selected Work<span className="text-primary">.</span>
+              </h2>
+            </div>
+            <div className="relative mt-14 h-[calc(100vh-470px)] w-full" />
+          </div>
+        </div>
+      )}
     </section>
   );
 }
