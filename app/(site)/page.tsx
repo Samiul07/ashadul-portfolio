@@ -231,13 +231,12 @@ function HeroSection() {
         <Image
           alt=""
           className={`absolute right-0 bottom-0 h-[939px] w-[697px] max-[640px]:h-[621px] max-[640px]:w-[460px] select-none object-cover ${heroStyles.portraitImage}`}
-          priority
+          priority={true}
+          fetchPriority="high"
           height={939}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 697px"
+          sizes="(max-width: 768px) 100vw, 50vw"
           src="/images/hero-portrait-highres.webp"
           width={697}
-          quality={100}
-          unoptimized={true}
         />
       </div>
       <div aria-hidden="true" className={heroStyles.mobileAtmosphere}>

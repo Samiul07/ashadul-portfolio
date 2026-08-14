@@ -154,11 +154,9 @@ function ProjectCard({
             className={`${project.imageClassName} object-fill max-[640px]:inset-0 max-[640px]:h-full max-[640px]:w-full max-[640px]:object-cover`}
             height={project.desktopImageHeight}
             loading="lazy"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 716px"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             src={project.desktopImage}
             width={project.desktopImageWidth}
-            quality={100}
-            unoptimized={true}
           />
         </motion.div>
 
