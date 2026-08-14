@@ -28,7 +28,8 @@ export default function PageLoadCurtain() {
   useEffect(() => {
     const isMobileOrReduced =
       typeof window !== "undefined" &&
-      (window.matchMedia("(max-width: 767px)").matches ||
+      (window.innerWidth < 768 ||
+        window.matchMedia("(max-width: 767px)").matches ||
         window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
     if (isMobileOrReduced) {
