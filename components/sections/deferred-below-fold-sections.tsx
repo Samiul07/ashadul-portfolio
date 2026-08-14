@@ -54,13 +54,20 @@ export default function DeferredBelowFoldSections({
     if (!isActivated || !window.location.hash) return;
 
     let frameId: number | undefined;
+    const retryIds: number[] = [];
     const scrollToHashTarget = () => {
       const targetId = decodeURIComponent(window.location.hash.slice(1));
       const target = document.getElementById(targetId);
       if (!target) return false;
 
+      const alignTarget = () => target.scrollIntoView({ block: "start" });
       frameId = window.requestAnimationFrame(() => {
-        target.scrollIntoView({ block: "start" });
+        alignTarget();
+        // The dynamically imported sections immediately before the target can
+        // finish laying out over the next few frames. Re-align after those
+        // heights settle so the requested anchor never stops short.
+        retryIds.push(window.setTimeout(alignTarget, 250));
+        retryIds.push(window.setTimeout(alignTarget, 900));
       });
       return true;
     };
@@ -68,6 +75,7 @@ export default function DeferredBelowFoldSections({
     if (scrollToHashTarget()) {
       return () => {
         if (frameId !== undefined) window.cancelAnimationFrame(frameId);
+        retryIds.forEach((retryId) => window.clearTimeout(retryId));
       };
     }
 
@@ -83,6 +91,7 @@ export default function DeferredBelowFoldSections({
       observer.disconnect();
       window.clearTimeout(timeoutId);
       if (frameId !== undefined) window.cancelAnimationFrame(frameId);
+      retryIds.forEach((retryId) => window.clearTimeout(retryId));
     };
   }, [isActivated]);
 
