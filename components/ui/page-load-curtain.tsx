@@ -36,58 +36,18 @@ export default function PageLoadCurtain() {
       return;
     }
 
-    let active = true;
-
-    const verifyCriticalAssets = () => {
-      return new Promise<void>((resolve) => {
-        let resolved = false;
-        const done = () => {
-          if (!resolved) {
-            resolved = true;
-            resolve();
-          }
-        };
-
-        // Fallback safety timeout of 2.5 seconds to prevent getting stuck
-        const timeoutId = setTimeout(done, 2500);
-
-        const check = () => {
-          const img = new window.Image();
-          img.src = "/images/hero-portrait-highres.webp";
-          img.decode()
-            .then(() => {
-              clearTimeout(timeoutId);
-              done();
-            })
-            .catch(() => {
-              clearTimeout(timeoutId);
-              done();
-            });
-        };
-
-        if (document.readyState === "complete") {
-          check();
-        } else {
-          window.addEventListener("load", check);
-        }
-      });
-    };
-
-    verifyCriticalAssets().then(() => {
-      if (!active) return;
+    // Start curtain opening animation on next animation frame without blocking holds
+    const frame = requestAnimationFrame(() => {
       setIsReady(true);
-
-      const timer = setTimeout(() => {
-        if (active) {
-          setIsComplete(true);
-        }
-      }, 1000);
-
-      return () => clearTimeout(timer);
     });
 
+    const timer = setTimeout(() => {
+      setIsComplete(true);
+    }, 600);
+
     return () => {
-      active = false;
+      cancelAnimationFrame(frame);
+      clearTimeout(timer);
     };
   }, [lastPathname]);
 

@@ -4,11 +4,13 @@ import FeedbackWidget from "@/components/hero/desktop-feedback-widget";
 import AvailabilityBadge from "@/components/hero/availability-badge";
 import MobileVisualViewport from "@/components/hero/mobile-visual-viewport";
 import HeroGradient from "@/components/background/desktop-hero-gradient";
-import LogoListSection from "@/components/sections/logo-list-section";
 import heroStyles from "./home-hero.module.css";
 import { getRecentArticles, getTestimonials } from "@/sanity/lib/data";
 import { sanityArticleToNoteCard } from "@/components/sections/notes-section";
 
+const LogoListSection = dynamic(
+  () => import("@/components/sections/logo-list-section")
+);
 const SelectedWork = dynamic(
   () => import("@/components/sections/selected-work")
 );
