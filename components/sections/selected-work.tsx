@@ -149,27 +149,14 @@ function ProjectCard({
           }}
           whileHover={reduceMotion ? undefined : { scale: 1.2 }}
         >
-          <picture className="min-[768px]:max-[1200px]:hidden">
-            <source media="(max-width: 639px)" srcSet={project.mobileImage} />
-            <Image
-              alt=""
-              className={`${project.imageClassName} object-fill max-[640px]:inset-0 max-[640px]:h-full max-[640px]:w-full max-[640px]:object-cover`}
-              height={project.desktopImageHeight}
-              loading="lazy"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 716px"
-              src={project.desktopImage}
-              width={project.desktopImageWidth}
-              quality={100}
-              unoptimized={true}
-            />
-          </picture>
           <Image
             alt=""
-            className="hidden object-cover min-[768px]:max-[1200px]:block"
-            fill
-            loading={project.index === "01" ? "eager" : "lazy"}
-            sizes="(min-width: 768px) and (max-width: 1199px) 50vw, 350px"
+            className={`${project.imageClassName} object-fill max-[640px]:inset-0 max-[640px]:h-full max-[640px]:w-full max-[640px]:object-cover`}
+            height={project.desktopImageHeight}
+            loading="lazy"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 716px"
             src={project.desktopImage}
+            width={project.desktopImageWidth}
             quality={100}
             unoptimized={true}
           />

@@ -1,21 +1,41 @@
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import FeedbackWidget from "@/components/hero/desktop-feedback-widget";
 import AvailabilityBadge from "@/components/hero/availability-badge";
 import MobileVisualViewport from "@/components/hero/mobile-visual-viewport";
 import HeroGradient from "@/components/background/desktop-hero-gradient";
-import CalloutNotesSection from "@/components/sections/callout-notes-section";
-import ContactFooterSection from "@/components/sections/contact-footer-section";
 import LogoListSection from "@/components/sections/logo-list-section";
-import NotesSection from "@/components/sections/notes-section";
-import RecognitionSection from "@/components/sections/recognition-section";
-import SelectedWork from "@/components/sections/selected-work";
-import ProjectGallerySection from "@/components/sections/project-gallery-section";
-import ServicesSection from "@/components/sections/services-section";
-import WhyMeCardsSection from "@/components/sections/why-me-cards-section";
-import WorkProcessFolderRefinedSection from "@/components/sections/work-process-folder-refined-section";
 import heroStyles from "./home-hero.module.css";
 import { getRecentArticles, getTestimonials } from "@/sanity/lib/data";
 import { sanityArticleToNoteCard } from "@/components/sections/notes-section";
+
+const SelectedWork = dynamic(
+  () => import("@/components/sections/selected-work")
+);
+const WhyMeCardsSection = dynamic(
+  () => import("@/components/sections/why-me-cards-section")
+);
+const ProjectGallerySection = dynamic(
+  () => import("@/components/sections/project-gallery-section")
+);
+const CalloutNotesSection = dynamic(
+  () => import("@/components/sections/callout-notes-section")
+);
+const ServicesSection = dynamic(
+  () => import("@/components/sections/services-section")
+);
+const WorkProcessFolderRefinedSection = dynamic(
+  () => import("@/components/sections/work-process-folder-refined-section")
+);
+const RecognitionSection = dynamic(
+  () => import("@/components/sections/recognition-section")
+);
+const NotesSection = dynamic(
+  () => import("@/components/sections/notes-section")
+);
+const ContactFooterSection = dynamic(
+  () => import("@/components/sections/contact-footer-section")
+);
 
 const frameWidth =
   "w-[1400px] max-[1439px]:w-[calc(100%_-_48px)] max-[640px]:w-[calc(100%_-_40px)]";
@@ -205,13 +225,14 @@ function HeroSection() {
 
       <div
         aria-hidden="true"
-        className={`pointer-events-none absolute right-[max(calc((100vw-1400px)/2),24px)] bottom-[48px] z-[130] h-[939px] w-[697px] overflow-hidden min-[768px]:z-[253] min-[641px]:max-[1200px]:right-[-140px] max-[1200px]:opacity-55 max-[640px]:right-[-220px] max-[640px]:bottom-auto max-[640px]:left-auto max-[640px]:z-[130] max-[640px]:h-[621px] max-[640px]:w-[460px] ${heroStyles.portrait}`}
+        className={`pointer-events-none absolute right-[max(calc((100vw-1400px)/2),24px)] bottom-[48px] z-[130] h-[939px] w-[697px] overflow-hidden min-[768px]:z-[253] min-[641px]:max-[1200px]:right-[-140px] max-[1200px]:opacity-55 max-[640px]:right-0 max-[640px]:top-[-40px] max-[640px]:bottom-auto max-[640px]:left-auto max-[640px]:z-[130] max-[640px]:h-[360px] max-[640px]:w-[240px] ${heroStyles.portrait}`}
         data-hero-portrait
       >
         <Image
           alt=""
-          className={`absolute right-0 bottom-0 h-[939px] w-[697px] max-[640px]:h-[621px] max-[640px]:w-[460px] select-none object-cover ${heroStyles.portraitImage}`}
-          priority
+          className={`absolute right-0 bottom-0 h-[939px] w-[697px] max-[640px]:h-[360px] max-[640px]:w-[240px] select-none object-cover ${heroStyles.portraitImage}`}
+          loading="eager"
+          fetchPriority="high"
           height={939}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 697px"
           src="/images/hero-portrait-highres.webp"

@@ -248,6 +248,11 @@ const portableTextComponents: PortableTextComponents = {
         <span>{children}</span>
       </li>
     ),
+    number: ({ children }) => (
+      <li className="relative flex items-start gap-3 pl-1 font-sans text-[19px] leading-[1.6] tracking-[-0.25px] text-white/90 max-[640px]:text-base">
+        <span>{children}</span>
+      </li>
+    ),
   },
   marks: {
     link: ({ children, value }) => {

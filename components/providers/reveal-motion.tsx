@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect } from "react";
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 type RevealVariant = "fade" | "left" | "right" | "rise" | "soft";
@@ -27,7 +27,7 @@ function isRendered(element: HTMLElement) {
 export default function RevealMotion() {
   const pathname = usePathname();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const root = document.documentElement;
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",

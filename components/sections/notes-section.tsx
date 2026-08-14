@@ -100,7 +100,6 @@ export function NoteCard({
       className={`min-w-0 flex-1 ${mobileFeed ? "max-[640px]:w-full max-[640px]:flex-none max-[640px]:border-b max-[640px]:border-white/12 max-[640px]:pb-8 max-[640px]:last:border-b-0 max-[640px]:last:pb-0" : ""}`}
     >
       <Link
-        aria-label={`Read ${note.title}`}
         className={`group flex min-w-0 flex-col items-start gap-6 text-white no-underline outline-none max-[640px]:gap-0 ${tabletFeed ? "min-[640px]:max-[1200px]:gap-5" : ""}`}
         href={note.href}
       >
@@ -162,7 +161,6 @@ export function MobileFeaturedNote({ note }: { note: Note }) {
   return (
     <article className="border-b border-white/12">
       <Link
-        aria-label={`Read ${note.title}`}
         className="group block text-white no-underline outline-none"
         href={note.href}
       >
@@ -222,7 +220,6 @@ export function MobileCompactNote({ note }: { note: Note }) {
   return (
     <article className="w-[82%] shrink-0 snap-start border border-white/12 bg-black/25 max-[359px]:w-[88%]">
       <Link
-        aria-label={`Read ${note.title}`}
         className="group block text-white no-underline outline-none"
         href={note.href}
       >

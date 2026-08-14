@@ -1,9 +1,8 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   motion,
-  useMotionValueEvent,
   useScroll,
   useSpring,
   useTransform,
@@ -73,12 +72,13 @@ export default function ProjectGallerySection() {
   const [scaleMultiplier, setScaleMultiplier] = useState(1);
   const [windowWidth, setWindowWidth] = useState(1920);
   const [isHovered, setIsHovered] = useState(false);
-  const [isButtonRevealed, setIsButtonRevealed] = useState(false);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const buttonOuterRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
     if (!buttonOuterRef.current) return;
+
+    let resizeTimer: ReturnType<typeof setTimeout> | undefined;
     const updateDimensions = () => {
       if (buttonOuterRef.current) {
         setDimensions({
@@ -87,17 +87,29 @@ export default function ProjectGallerySection() {
         });
       }
     };
+
+    const scheduleDimensionsUpdate = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(updateDimensions, 150);
+    };
+
     updateDimensions();
-    const observer = new ResizeObserver(updateDimensions);
+    const observer = new ResizeObserver(scheduleDimensionsUpdate);
     observer.observe(buttonOuterRef.current);
-    return () => observer.disconnect();
+    return () => {
+      clearTimeout(resizeTimer);
+      observer.disconnect();
+    };
   }, []);
 
   // Responsive scale handler to adapt base dimensions on smaller viewports
   useEffect(() => {
-    const handleResize = () => {
+    let resizeTimer: ReturnType<typeof setTimeout> | undefined;
+
+    const updateViewport = () => {
       const width = document.documentElement.clientWidth;
       setWindowWidth(width);
+
       if (width < 640) {
         setScaleMultiplier(0.28); // Mobile
       } else if (width < 1024) {
@@ -105,12 +117,21 @@ export default function ProjectGallerySection() {
       } else if (width < 1440) {
         setScaleMultiplier(0.72); // Small Laptop
       } else {
-        setScaleMultiplier(1.0);   // Large Screen
+        setScaleMultiplier(1); // Large Screen
       }
     };
-    handleResize();
+
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(updateViewport, 150);
+    };
+
+    resizeTimer = setTimeout(updateViewport, 0);
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      clearTimeout(resizeTimer);
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
   
   // Track scroll progress of the entire section height
@@ -121,17 +142,17 @@ export default function ProjectGallerySection() {
 
   // Smooth scroll progress using a spring for physics, damping, and inertia (creates heavy scroll resistance feel)
   const smoothProgress = useSpring(scrollYProgress, {
-    damping: 30,
-    stiffness: 80,
-    mass: 1.0,
+    damping: 26,
+    stiffness: 48,
+    mass: 1.15,
   });
 
   // 1. Dynamic card sizes (zooms out while preserving the 4:3 Figma thumbnail ratio)
   const finalCardWidth = (windowWidth - 60) / 4;
   const finalCardHeight = finalCardWidth * 0.75;
 
-  const cardWidth = useTransform(smoothProgress, [0, 0.45], [750 * 1.55 * scaleMultiplier, finalCardWidth]);
-  const cardHeight = useTransform(smoothProgress, [0, 0.45], [562.5 * 1.55 * scaleMultiplier, finalCardHeight]);
+  const cardWidth = useTransform(smoothProgress, [0, 0.62], [750 * 1.55 * scaleMultiplier, finalCardWidth]);
+  const cardHeight = useTransform(smoothProgress, [0, 0.62], [562.5 * 1.55 * scaleMultiplier, finalCardHeight]);
 
   // 2. Entire grid translation Y (set to 0 so the grid zooms out in the middle of the screen)
   const gridY = 0;
@@ -139,16 +160,25 @@ export default function ProjectGallerySection() {
 
 
   // 4. The shaped cover still follows the gallery's scroll choreography.
-  const orangeCoverOpacity = useTransform(smoothProgress, [0.3, 0.52], [0, 1]);
+  const orangeCoverOpacity = useTransform(smoothProgress, [0.32, 0.58], [0, 1]);
 
-  // 5. Once reveal begins, finish it on a timeline instead of tying it to more scrolling.
-  useMotionValueEvent(smoothProgress, "change", (latest) => {
-    if (latest >= 0.48) {
-      setIsButtonRevealed(true);
-    } else if (latest <= 0.38) {
-      setIsButtonRevealed(false);
-    }
-  });
+  // The CTA follows scroll progress directly, so forward and reverse motion are identical.
+  const buttonOpacity = useTransform(scrollYProgress, [0.39, 0.54], [0, 1]);
+  const buttonScale = useTransform(scrollYProgress, [0.39, 0.54], [0.82, 1]);
+  const buttonY = useTransform(scrollYProgress, [0.39, 0.54], [32, 0]);
+  const buttonBlur = useTransform(scrollYProgress, [0.39, 0.54], [16, 0]);
+  const buttonFilter = useTransform(buttonBlur, (blur) => `blur(${blur}px)`);
+  const buttonPointerEvents = useTransform(
+    scrollYProgress,
+    [0, 0.49, 0.4901],
+    ["none", "none", "auto"],
+  );
+
+  const buttonOutlinePath = useMemo(() => {
+    const width = dimensions.width || 500;
+    const height = dimensions.height || 180;
+    return `M 0 0 L ${width - 56} 0 L ${width} 56 L ${width} ${height} L 56 ${height} L 0 ${height - 56} Z`;
+  }, [dimensions.height, dimensions.width]);
 
   // Split cards into 4 columns (matches 4x4 layout: 4 horizontal rows of 4 cards each)
   const col1Cards = [galleryCards[0], galleryCards[4], galleryCards[8], galleryCards[12]];
@@ -245,7 +275,7 @@ export default function ProjectGallerySection() {
       <section
         ref={containerRef}
         aria-label="More Selected Projects"
-        className="relative z-[100] mt-[calc(1217px-100vh)] hidden h-[380vh] w-full overflow-visible bg-black min-[1200px]:block"
+        className="relative z-[100] mt-[calc(1217px-100vh)] hidden h-[320vh] w-full overflow-visible bg-black min-[1200px]:block"
       >
       {/* Sticky wrapper aligned to the bottom of the hovering header (top-[86px]) with height adjusted and overflow-hidden to prevent grid from going under navbar */}
       <div className="sticky top-[86px] max-[768px]:top-[70px] h-[calc(100vh-86px)] max-[768px]:h-[calc(100vh-70px)] w-full overflow-hidden flex items-start justify-center bg-transparent z-[20]">
@@ -400,28 +430,17 @@ export default function ProjectGallerySection() {
           />
         </motion.svg>
         <motion.div
-          animate={
-            isButtonRevealed
-              ? { filter: "blur(0px)", opacity: 1, scale: 1, y: 0 }
-              : { filter: "blur(16px)", opacity: 0, scale: 0.82, y: 32 }
-          }
           className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center"
-          initial={false}
-          transition={
-            isButtonRevealed
-              ? {
-                  duration: 1.1,
-                  ease: [0.16, 1, 0.3, 1],
-                  opacity: { duration: 0.72, ease: "easeOut" },
-                }
-              : { duration: 0.42, ease: [0.4, 0, 1, 1] }
-          }
+          style={{
+            filter: buttonFilter,
+            opacity: buttonOpacity,
+            scale: buttonScale,
+            y: buttonY,
+          }}
         >
           {/* The Framer shadow stack sits outside the two clipped surfaces. */}
-          <div
-            className={`relative ${
-              isButtonRevealed ? "pointer-events-auto" : "pointer-events-none"
-            }`}
+          <motion.div
+            className="relative"
             style={{
               filter: isHovered
                 ? `
@@ -438,6 +457,7 @@ export default function ProjectGallerySection() {
                 `,
               transform: "none",
               transition: "filter 300ms cubic-bezier(0.16, 1, 0.3, 1)",
+              pointerEvents: buttonPointerEvents,
             }}
           >
             <a
@@ -468,30 +488,23 @@ export default function ProjectGallerySection() {
               />
 
               {/* A vector outline keeps the border clean along both diagonal cuts. */}
-              {(() => {
-                const w = dimensions.width || 500;
-                const h = dimensions.height || 180;
-                const pathD = `M 0 0 L ${w - 56} 0 L ${w} 56 L ${w} ${h} L 56 ${h} L 0 ${h - 56} Z`;
-                return (
-                  <svg
-                    className="absolute inset-0 h-full w-full overflow-visible pointer-events-none"
-                    style={{
-                      transform: isHovered ? "scale(1.042, 1.12)" : "scale(1)",
-                      transformOrigin: "center",
-                      transition: "transform 380ms cubic-bezier(0.16, 1, 0.3, 1)",
-                      zIndex: 1,
-                    }}
-                  >
-                    <path
-                      d={pathD}
-                      fill="none"
-                      stroke="rgba(255, 255, 255, 0.17)"
-                      strokeWidth="1"
-                      vectorEffect="non-scaling-stroke"
-                    />
-                  </svg>
-                );
-              })()}
+              <svg
+                className="absolute inset-0 h-full w-full overflow-visible pointer-events-none"
+                style={{
+                  transform: isHovered ? "scale(1.042, 1.12)" : "scale(1)",
+                  transformOrigin: "center",
+                  transition: "transform 380ms cubic-bezier(0.16, 1, 0.3, 1)",
+                  zIndex: 1,
+                }}
+              >
+                <path
+                  d={buttonOutlinePath}
+                  fill="none"
+                  stroke="rgba(255, 255, 255, 0.17)"
+                  strokeWidth="1"
+                  vectorEffect="non-scaling-stroke"
+                />
+              </svg>
 
               <span
                 className="relative flex items-center justify-center px-12 py-8 md:px-20 md:py-12 select-none cursor-pointer"
@@ -518,7 +531,7 @@ export default function ProjectGallerySection() {
                 </span>
               </span>
             </a>
-          </div>
+          </motion.div>
         </motion.div>
 
       </div>

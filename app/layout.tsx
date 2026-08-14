@@ -11,6 +11,7 @@ const playfair = Playfair_Display({
   subsets: ["latin"],
   style: "italic",
   weight: "400",
+  display: "swap",
 });
 
 const bigShoulders = Big_Shoulders({
@@ -23,6 +24,7 @@ const bigShoulders = Big_Shoulders({
 });
 
 const switzer = localFont({
+  display: "swap",
   src: [
     {
       path: "../public/fonts/switzer/Switzer_Complete/Fonts/WEB/fonts/Switzer-Variable.woff2",
@@ -65,15 +67,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className={`${playfair.variable} ${bigShoulders.variable} ${switzer.variable} overflow-x-clip bg-background [font-synthesis-weight:none] [scrollbar-width:none]`}>
-      <head>
-        <link
-          rel="preload"
-          href="/images/hero-portrait-highres.webp"
-          as="image"
-          fetchPriority="high"
-          type="image/webp"
-        />
-      </head>
       <body suppressHydrationWarning className="m-0 overflow-x-clip bg-background font-sans text-foreground antialiased">
         {children}
       </body>

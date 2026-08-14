@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect } from "react";
+import { useEffect } from "react";
 
 const viewportProperty = "--mobile-visual-height";
 const gapProperty = "--mobile-hero-gap";
@@ -9,7 +9,7 @@ const bottomProperty = "--mobile-hero-bottom";
 const topProperty = "--mobile-hero-top";
 
 export default function MobileVisualViewport() {
-  useLayoutEffect(() => {
+  useEffect(() => {
     const root = document.documentElement;
     const readViewportWidth = () =>
       Math.round(window.visualViewport?.width ?? window.innerWidth);
