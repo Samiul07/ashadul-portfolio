@@ -198,7 +198,7 @@ function HeroSection() {
 
       <div
         aria-hidden="true"
-        className={`pointer-events-none absolute right-[max(calc((100vw-1400px)/2),24px)] bottom-[48px] z-[130] h-[939px] w-[697px] overflow-hidden min-[768px]:z-[253] min-[641px]:max-[1200px]:right-[-140px] max-[1200px]:opacity-55 max-[640px]:right-[-220px] max-[640px]:bottom-auto max-[640px]:left-auto max-[640px]:z-[130] max-[640px]:h-[621px] max-[640px]:w-[460px] ${heroStyles.portrait}`}
+        className={`pointer-events-none absolute right-[max(calc((100vw-1400px)/2),24px)] bottom-[48px] z-[130] h-[939px] w-[697px] overflow-hidden min-[768px]:z-[253] min-[641px]:max-[1200px]:right-[-140px] max-[1200px]:opacity-55 max-[640px]:right-[-220px] max-[640px]:bottom-auto max-[640px]:left-auto max-[640px]:z-[130] max-[640px]:h-[621px] max-[640px]:w-[460px] max-md:!opacity-100 max-md:!transform-none ${heroStyles.portrait}`}
         data-hero-portrait
       >
         <Image

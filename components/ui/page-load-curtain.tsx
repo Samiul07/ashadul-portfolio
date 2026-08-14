@@ -56,7 +56,7 @@ export default function PageLoadCurtain() {
 
   return (
     <div
-      className={`page-load-curtain ${isReady ? "is-animating" : ""}`}
+      className={`page-load-curtain hidden md:flex ${isReady ? "is-animating" : ""}`}
       aria-hidden="true"
     >
       {panels.map((panelClassName, index) => (
