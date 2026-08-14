@@ -51,13 +51,48 @@ export default function DeferredBelowFoldSections({
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // If the page was loaded with a direct hash anchor to one of the deferred sections, activate immediately
-    const hash = window.location.hash;
+    if (!isActivated || !window.location.hash) return;
+
+    let frameId: number | undefined;
+    const scrollToHashTarget = () => {
+      const targetId = decodeURIComponent(window.location.hash.slice(1));
+      const target = document.getElementById(targetId);
+      if (!target) return false;
+
+      frameId = window.requestAnimationFrame(() => {
+        target.scrollIntoView({ block: "start" });
+      });
+      return true;
+    };
+
+    if (scrollToHashTarget()) {
+      return () => {
+        if (frameId !== undefined) window.cancelAnimationFrame(frameId);
+      };
+    }
+
+    // Dynamic section chunks can resolve after this component commits. Watch
+    // briefly for the requested anchor, then perform the native anchor jump.
+    const observer = new MutationObserver(() => {
+      if (scrollToHashTarget()) observer.disconnect();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    const timeoutId = window.setTimeout(() => observer.disconnect(), 5000);
+
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(timeoutId);
+      if (frameId !== undefined) window.cancelAnimationFrame(frameId);
+    };
+  }, [isActivated]);
+
+  useEffect(() => {
     const deferredHashes = [
       "#gallery",
       "#testimonials",
       "#collab-notes",
       "#why-me",
+      "#about",
       "#about-me",
       "#expertise",
       "#services",
@@ -67,15 +102,26 @@ export default function DeferredBelowFoldSections({
       "#articles",
       "#contact",
     ];
-    if (hash && deferredHashes.some((h) => hash.startsWith(h))) {
-      setIsActivated(true);
-      return;
+    const matchesDeferredHash = () => {
+      const hash = window.location.hash;
+      return Boolean(
+        hash && deferredHashes.some((deferredHash) => hash.startsWith(deferredHash)),
+      );
+    };
+
+    // A direct anchor load needs the target mounted before the browser can reach it.
+    if (matchesDeferredHash()) {
+      const frameId = window.requestAnimationFrame(() => {
+        setIsActivated(true);
+      });
+      return () => window.cancelAnimationFrame(frameId);
     }
 
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
 
-    // IntersectionObserver with generous 800px margin so sections activate before entering viewport
+    // Load the deep page only when the reader is actually approaching it. Keeping
+    // this observer-driven avoids competing with the hero during the LCP window.
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some((entry) => entry.isIntersecting)) {
@@ -83,38 +129,23 @@ export default function DeferredBelowFoldSections({
           observer.disconnect();
         }
       },
-      { rootMargin: "800px 0px" }
+      { rootMargin: "600px 0px" }
     );
 
     observer.observe(sentinel);
 
-    // Fallback: activate when browser is idle or after LCP critical window settles
-    let idleId: number | undefined;
-    let timerId: ReturnType<typeof setTimeout> | undefined;
-
-    if ("requestIdleCallback" in window) {
-      idleId = (
-        window as Window & {
-          requestIdleCallback: (
-            cb: () => void,
-            opts?: { timeout: number }
-          ) => number;
-        }
-      ).requestIdleCallback(() => setIsActivated(true), { timeout: 3500 });
-    } else {
-      timerId = setTimeout(() => setIsActivated(true), 2500);
-    }
+    // Navbar links update only the hash on the homepage. Activate immediately so
+    // those links keep working even though the target section is still unloaded.
+    const activateFromHash = () => {
+      if (!matchesDeferredHash()) return;
+      observer.disconnect();
+      setIsActivated(true);
+    };
+    window.addEventListener("hashchange", activateFromHash);
 
     return () => {
       observer.disconnect();
-      if (idleId && "cancelIdleCallback" in window) {
-        (
-          window as Window & {
-            cancelIdleCallback: (id: number) => void;
-          }
-        ).cancelIdleCallback(idleId);
-      }
-      if (timerId) clearTimeout(timerId);
+      window.removeEventListener("hashchange", activateFromHash);
     };
   }, []);
 

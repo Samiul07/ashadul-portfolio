@@ -1,6 +1,5 @@
 "use client";
 
-import { motion, useMotionValueEvent, useScroll, useSpring } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -62,16 +61,10 @@ export default function Navbar() {
   const mobileMenuDisclosureRef = useRef<HTMLDetailsElement>(null);
   const mobileMenuSummaryRef = useRef<HTMLElement>(null);
   const mobileMenuPanelRef = useRef<HTMLDivElement>(null);
-
-  const { scrollY, scrollYProgress } = useScroll();
-
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    const scrolled = latest > 0;
-    if (scrolledRef.current !== scrolled) {
-      scrolledRef.current = scrolled;
-      setIsScrolled(scrolled);
-    }
-  });
+  const scrollProgressRef = useRef<HTMLDivElement>(null);
+  const scrollFrameRef = useRef<number | null>(null);
+  const desktopNavRef = useRef<HTMLDivElement>(null);
+  const activeIndicatorRef = useRef<HTMLSpanElement>(null);
 
   const links =
     pathname === "/portfolio"
@@ -116,21 +109,57 @@ export default function Navbar() {
       ? homeSectionLabels[activeHomeSection]
       : null);
 
-  const progressScale = useSpring(scrollYProgress, {
-    damping: 34,
-    mass: 0.35,
-    stiffness: 280,
-  });
-
   const syncScrollState = useCallback(() => {
     const scrollTop = getScrollTop();
     const scrolled = scrollTop > 0;
+    const scrollRange = Math.max(
+      document.documentElement.scrollHeight - window.innerHeight,
+      1,
+    );
 
     if (scrolledRef.current !== scrolled) {
       scrolledRef.current = scrolled;
       setIsScrolled(scrolled);
     }
+
+    if (scrollProgressRef.current) {
+      const progress = Math.min(Math.max(scrollTop / scrollRange, 0), 1);
+      scrollProgressRef.current.style.transform = `scaleX(${progress})`;
+    }
   }, []);
+
+  const scheduleScrollSync = useCallback(() => {
+    if (scrollFrameRef.current !== null) return;
+
+    scrollFrameRef.current = window.requestAnimationFrame(() => {
+      scrollFrameRef.current = null;
+      syncScrollState();
+    });
+  }, [syncScrollState]);
+
+  const syncActiveIndicator = useCallback(() => {
+    const nav = desktopNavRef.current;
+    const indicator = activeIndicatorRef.current;
+    if (!nav || !indicator || !activeNavLabel) {
+      if (indicator) indicator.style.opacity = "0";
+      return;
+    }
+
+    const activeLink = Array.from(
+      nav.querySelectorAll<HTMLElement>("[data-nav-label]"),
+    ).find((link) => link.dataset.navLabel === activeNavLabel);
+
+    if (!activeLink) {
+      indicator.style.opacity = "0";
+      return;
+    }
+
+    const navRect = nav.getBoundingClientRect();
+    const linkRect = activeLink.getBoundingClientRect();
+    const center = linkRect.left - navRect.left + linkRect.width / 2;
+    indicator.style.transform = `translate3d(${center - 10}px, 0, 0)`;
+    indicator.style.opacity = "1";
+  }, [activeNavLabel]);
 
   useEffect(() => {
     const visualViewport = window.visualViewport;
@@ -138,48 +167,64 @@ export default function Navbar() {
     const lenis = portfolioWindow.__portfolioLenis;
     const sentinel = sentinelRef.current;
     const observer = sentinel
-      ? new IntersectionObserver(syncScrollState, { threshold: [0, 1] })
+      ? new IntersectionObserver(scheduleScrollSync, { threshold: [0, 1] })
       : null;
 
     syncScrollState();
     observer?.observe(sentinel as HTMLElement);
-    lenis?.on?.("scroll", syncScrollState);
-    window.addEventListener("scroll", syncScrollState, { passive: true });
-    document.addEventListener("scroll", syncScrollState, {
+    lenis?.on?.("scroll", scheduleScrollSync);
+    window.addEventListener("scroll", scheduleScrollSync, { passive: true });
+    document.addEventListener("scroll", scheduleScrollSync, {
       capture: true,
       passive: true,
     });
-    window.addEventListener("resize", syncScrollState, { passive: true });
-    window.addEventListener("orientationchange", syncScrollState, {
+    window.addEventListener("resize", scheduleScrollSync, { passive: true });
+    window.addEventListener("orientationchange", scheduleScrollSync, {
       passive: true,
     });
-    window.addEventListener("pageshow", syncScrollState);
-    document.addEventListener("visibilitychange", syncScrollState);
-    visualViewport?.addEventListener("scroll", syncScrollState, {
+    window.addEventListener("pageshow", scheduleScrollSync);
+    document.addEventListener("visibilitychange", scheduleScrollSync);
+    visualViewport?.addEventListener("scroll", scheduleScrollSync, {
       passive: true,
     });
-    visualViewport?.addEventListener("resize", syncScrollState, {
+    visualViewport?.addEventListener("resize", scheduleScrollSync, {
       passive: true,
     });
 
     return () => {
       observer?.disconnect();
-      lenis?.off?.("scroll", syncScrollState);
-      window.removeEventListener("scroll", syncScrollState);
-      document.removeEventListener("scroll", syncScrollState, true);
-      window.removeEventListener("resize", syncScrollState);
-      window.removeEventListener("orientationchange", syncScrollState);
-      window.removeEventListener("pageshow", syncScrollState);
-      document.removeEventListener("visibilitychange", syncScrollState);
-      visualViewport?.removeEventListener("scroll", syncScrollState);
-      visualViewport?.removeEventListener("resize", syncScrollState);
+      lenis?.off?.("scroll", scheduleScrollSync);
+      window.removeEventListener("scroll", scheduleScrollSync);
+      document.removeEventListener("scroll", scheduleScrollSync, true);
+      window.removeEventListener("resize", scheduleScrollSync);
+      window.removeEventListener("orientationchange", scheduleScrollSync);
+      window.removeEventListener("pageshow", scheduleScrollSync);
+      document.removeEventListener("visibilitychange", scheduleScrollSync);
+      visualViewport?.removeEventListener("scroll", scheduleScrollSync);
+      visualViewport?.removeEventListener("resize", scheduleScrollSync);
+      if (scrollFrameRef.current !== null) {
+        window.cancelAnimationFrame(scrollFrameRef.current);
+        scrollFrameRef.current = null;
+      }
     };
-  }, [syncScrollState]);
+  }, [scheduleScrollSync, syncScrollState]);
+
+  useEffect(() => {
+    syncActiveIndicator();
+    const nav = desktopNavRef.current;
+    if (!nav) return;
+
+    const observer = new ResizeObserver(syncActiveIndicator);
+    observer.observe(nav);
+    return () => observer.disconnect();
+  }, [syncActiveIndicator]);
 
   useEffect(() => {
     if (pathname !== "/") {
-      setActiveHomeSection(null);
-      return;
+      const frameId = window.requestAnimationFrame(() => {
+        setActiveHomeSection(null);
+      });
+      return () => window.cancelAnimationFrame(frameId);
     }
 
     const sectionIds = Object.keys(homeSectionLabels) as HomeSectionId[];
@@ -387,7 +432,10 @@ export default function Navbar() {
             </Link>
           </div>
 
-          <div className="relative flex h-11 items-center justify-center gap-7 max-[1200px]:hidden">
+          <div
+            ref={desktopNavRef}
+            className="relative flex h-11 items-center justify-center gap-7 max-[1200px]:hidden"
+          >
             {links.map((link) => {
               const isActive = activeNavLabel === link.label;
 
@@ -405,6 +453,7 @@ export default function Navbar() {
                       ? "font-medium text-primary"
                       : "font-light text-white/68 hover:text-white"
                   }`}
+                  data-nav-label={link.label}
                   href={link.href}
                   key={link.label}
                   onClick={() => {
@@ -417,22 +466,20 @@ export default function Navbar() {
                   }}
                 >
                   <span className="relative z-1">{link.label}</span>
-                  {isActive ? (
-                    <motion.span
-                      aria-hidden="true"
-                      className="pointer-events-none absolute bottom-[2px] left-1/2 z-2 h-[2px] w-5 -translate-x-1/2 bg-primary"
-                      layoutId="desktop-active-navigation"
-                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                    />
-                  ) : (
+                  {!isActive ? (
                     <span
                       aria-hidden="true"
                       className="absolute bottom-[2px] left-1/2 z-2 h-px w-0 -translate-x-1/2 bg-white/55 opacity-0 transition-[width,opacity] duration-300 group-hover:w-3 group-hover:opacity-100"
                     />
-                  )}
+                  ) : null}
                 </Link>
               );
             })}
+            <span
+              ref={activeIndicatorRef}
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-[2px] left-0 z-2 h-[2px] w-5 bg-primary opacity-0 transition-[transform,opacity] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform"
+            />
           </div>
 
           <div className="flex items-center justify-end gap-2">
@@ -590,10 +637,10 @@ export default function Navbar() {
         data-scroll-progress
         style={{ transform: "translate3d(0,0,0)", willChange: "transform" }}
       >
-        <motion.div
+        <div
+          ref={scrollProgressRef}
           aria-hidden="true"
-          className="absolute inset-x-0 top-0 h-[2px] origin-left bg-primary"
-          style={{ scaleX: progressScale }}
+          className="absolute inset-x-0 top-0 h-[2px] origin-left scale-x-0 bg-primary transition-transform duration-100 ease-out will-change-transform"
         />
       </div>
 

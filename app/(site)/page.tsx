@@ -207,7 +207,8 @@ function HeroSection() {
           priority={true}
           fetchPriority="high"
           height={939}
-          sizes="(max-width: 768px) 100vw, 50vw"
+          quality={60}
+          sizes="(max-width: 640px) 65vw, (max-width: 1200px) 70vw, 697px"
           src="/images/hero-portrait-highres.webp"
           width={697}
         />
