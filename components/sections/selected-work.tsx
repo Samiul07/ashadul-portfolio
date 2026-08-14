@@ -43,9 +43,9 @@ const projects: Project[] = [
   {
     description:
       "A comprehensive UX overhaul of an enterprise localization platform, streamlining the translation pipeline to improve client onboarding and task completion rates.",
-    desktopImage: "/images/day-translations.png",
-    desktopImageHeight: 649,
-    desktopImageWidth: 1024,
+    desktopImage: "/images/day-translations.webp",
+    desktopImageHeight: 454,
+    desktopImageWidth: 716,
     imageClassName: "absolute inset-0 h-full w-full max-w-none",
     index: "01",
     meta: [
@@ -54,15 +54,15 @@ const projects: Project[] = [
       { label: "Focus", value: "2023" },
       { label: "Deliverable", value: "Web & Design System" },
     ],
-    mobileImage: "/images/day-translations.png",
+    mobileImage: "/images/day-translations.webp",
     title: "Day Translations — Linguist SaaS",
   },
   {
     description:
       "An end-to-end healthcare platform connecting patients' wearable fitness data with a diagnostic web dashboard, enabling doctors to monitor remote health metrics.",
-    desktopImage: "/images/metabolix.png",
-    desktopImageHeight: 649,
-    desktopImageWidth: 1024,
+    desktopImage: "/images/metabolix.webp",
+    desktopImageHeight: 454,
+    desktopImageWidth: 716,
     imageClassName: "absolute inset-0 h-full w-full max-w-none",
     index: "02",
     meta: [
@@ -71,15 +71,15 @@ const projects: Project[] = [
       { label: "Focus", value: "2025" },
       { label: "Deliverable", value: "Web & Mobile App" },
     ],
-    mobileImage: "/images/metabolix.png",
+    mobileImage: "/images/metabolix.webp",
     title: "Metabolix — Telehealth Ecosystem",
   },
   {
     description:
       "An AI-powered journaling application designed for the global market, utilizing calming interfaces and habit-loop mechanics to support daily mental well-being.",
-    desktopImage: "/images/betr.png",
-    desktopImageHeight: 649,
-    desktopImageWidth: 1024,
+    desktopImage: "/images/betr.webp",
+    desktopImageHeight: 454,
+    desktopImageWidth: 716,
     imageClassName: "absolute inset-0 h-full w-full max-w-none",
     index: "03",
     meta: [
@@ -88,15 +88,15 @@ const projects: Project[] = [
       { label: "Focus", value: "2026" },
       { label: "Deliverable", value: "Mobile App" },
     ],
-    mobileImage: "/images/betr.png",
+    mobileImage: "/images/betr.webp",
     title: "Betr — AI Wellness Journal App",
   },
   {
     description:
       "A consumer-facing solar energy marketplace. Designed a high-converting e-commerce interface that simplifies the purchasing process for sustainable home power solutions.",
-    desktopImage: "/images/solence.png",
-    desktopImageHeight: 649,
-    desktopImageWidth: 1024,
+    desktopImage: "/images/solence.webp",
+    desktopImageHeight: 454,
+    desktopImageWidth: 716,
     imageClassName: "absolute inset-0 h-full w-full max-w-none",
     index: "04",
     meta: [
@@ -105,7 +105,7 @@ const projects: Project[] = [
       { label: "Focus", value: "2026" },
       { label: "Deliverable", value: "Web Platform" },
     ],
-    mobileImage: "/images/solence.png",
+    mobileImage: "/images/solence.webp",
     title: "Solence — Solar E-commerce",
   },
 ];
@@ -154,7 +154,8 @@ function ProjectCard({
             className={`${project.imageClassName} object-fill max-[640px]:inset-0 max-[640px]:h-full max-[640px]:w-full max-[640px]:object-cover`}
             height={project.desktopImageHeight}
             loading="lazy"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            quality={100}
+            unoptimized={true}
             src={project.desktopImage}
             width={project.desktopImageWidth}
           />

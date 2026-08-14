@@ -198,20 +198,30 @@ function HeroSection() {
 
       <div
         aria-hidden="true"
-        className={`pointer-events-none absolute right-[max(calc((100vw-1400px)/2),24px)] bottom-[48px] z-[130] h-[939px] w-[697px] overflow-hidden min-[768px]:z-[253] min-[641px]:max-[1200px]:right-[-140px] max-[1200px]:opacity-55 max-[640px]:right-[-220px] max-[640px]:bottom-auto max-[640px]:left-auto max-[640px]:z-[130] max-[640px]:h-[621px] max-[640px]:w-[460px] max-md:!opacity-100 max-md:!transform-none ${heroStyles.portrait}`}
+        className={`pointer-events-none absolute right-[max(calc((100vw-1400px)/2),24px)] bottom-0 z-[130] h-[939px] w-[697px] overflow-hidden min-[768px]:z-[253] min-[641px]:max-[1200px]:right-[-140px] max-[1200px]:opacity-55 max-[640px]:right-[-220px] max-[640px]:bottom-auto max-[640px]:left-auto max-[640px]:z-[130] max-[640px]:h-[621px] max-[640px]:w-[460px] ${heroStyles.portrait}`}
         data-hero-portrait
       >
-        <Image
-          alt=""
-          className={`absolute right-0 bottom-0 h-[939px] w-[697px] max-[640px]:h-[621px] max-[640px]:w-[460px] select-none object-cover ${heroStyles.portraitImage}`}
-          priority={true}
-          fetchPriority="high"
-          height={939}
-          quality={100}
-          unoptimized={true}
-          src="/images/hero-portrait-highres.png"
-          width={697}
-        />
+        <picture>
+          <source
+            media="(max-width: 639px)"
+            srcSet="/images/hero-portrait-mobile.webp"
+            type="image/webp"
+          />
+          <source
+            media="(min-width: 640px)"
+            srcSet="/images/hero-portrait-highres.png"
+            type="image/png"
+          />
+          <img
+            alt=""
+            className={`absolute right-0 bottom-0 h-[939px] w-[697px] max-[640px]:h-[621px] max-[640px]:w-[460px] select-none object-cover ${heroStyles.portraitImage}`}
+            decoding="sync"
+            fetchPriority="high"
+            height={939}
+            src="/images/hero-portrait-highres.png"
+            width={697}
+          />
+        </picture>
       </div>
       <div aria-hidden="true" className={heroStyles.mobileAtmosphere}>
         <span

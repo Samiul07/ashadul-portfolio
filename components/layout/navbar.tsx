@@ -111,7 +111,7 @@ export default function Navbar() {
 
   const syncScrollState = useCallback(() => {
     const scrollTop = getScrollTop();
-    const scrolled = scrollTop > 0;
+    const scrolled = scrollTop > 40;
     const scrollRange = Math.max(
       document.documentElement.scrollHeight - window.innerHeight,
       1,
