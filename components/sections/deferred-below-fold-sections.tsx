@@ -38,6 +38,54 @@ const ContactFooterSection = dynamic(
   { ssr: false }
 );
 
+interface DeferredStageProps {
+  children: React.ReactNode;
+  forceActivate?: boolean;
+  rootMargin?: string;
+}
+
+function DeferredStage({
+  children,
+  forceActivate = false,
+  rootMargin = "800px 0px",
+}: DeferredStageProps) {
+  const [isActive, setIsActive] = useState(forceActivate);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isActive || forceActivate) {
+      setIsActive(true);
+      return;
+    }
+
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setIsActive(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin }
+    );
+
+    observer.observe(sentinel);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [forceActivate, isActive, rootMargin]);
+
+  return (
+    <>
+      <div ref={sentinelRef} aria-hidden="true" className="h-0 w-full" />
+      {isActive ? children : null}
+    </>
+  );
+}
+
 interface DeferredBelowFoldSectionsProps {
   testimonials: SanityTestimonial[];
   notes: Note[];
@@ -47,67 +95,83 @@ export default function DeferredBelowFoldSections({
   testimonials,
   notes,
 }: DeferredBelowFoldSectionsProps) {
-  const [isActivated, setIsActivated] = useState(false);
-  const sentinelRef = useRef<HTMLDivElement>(null);
+  const [targetHash, setTargetHash] = useState<string>("");
 
   useEffect(() => {
-    // If the page was loaded with a direct hash anchor to one of the deferred sections, activate immediately
-    const hash = window.location.hash;
-    const deferredHashes = [
-      "#gallery",
-      "#testimonials",
-      "#collab-notes",
-      "#why-me",
-      "#about-me",
-      "#expertise",
-      "#services",
-      "#process",
-      "#recognition",
-      "#notes",
-      "#articles",
-      "#contact",
-    ];
-    if (hash && deferredHashes.some((h) => hash.startsWith(h))) {
-      setIsActivated(true);
-      return;
+    if (typeof window !== "undefined") {
+      setTargetHash(window.location.hash);
     }
-
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-
-    // IntersectionObserver with generous 800px margin so sections activate before entering viewport
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setIsActivated(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "800px 0px" }
-    );
-
-    observer.observe(sentinel);
-
-    return () => {
-      observer.disconnect();
-    };
   }, []);
+
+  const hasHash = (hashes: string[]) =>
+    Boolean(targetHash && hashes.some((h) => targetHash.startsWith(h)));
+
+  const forceStage1 = hasHash([
+    "#gallery",
+    "#testimonials",
+    "#collab-notes",
+    "#why-me",
+    "#about-me",
+    "#expertise",
+    "#services",
+    "#process",
+    "#recognition",
+    "#notes",
+    "#articles",
+    "#contact",
+  ]);
+
+  const forceStage2 = hasHash([
+    "#why-me",
+    "#about-me",
+    "#expertise",
+    "#services",
+    "#process",
+    "#recognition",
+    "#notes",
+    "#articles",
+    "#contact",
+  ]);
+
+  const forceStage3 = hasHash([
+    "#process",
+    "#recognition",
+    "#notes",
+    "#articles",
+    "#contact",
+  ]);
+
+  const forceStage4 = hasHash([
+    "#notes",
+    "#articles",
+    "#contact",
+  ]);
 
   return (
     <>
-      <div ref={sentinelRef} aria-hidden="true" className="h-0 w-full" />
-      {isActivated && (
-        <>
-          <ProjectGallerySection />
-          <CalloutNotesSection testimonials={testimonials} />
-          <WhyMeCardsSection />
-          <ServicesSection />
-          <WorkProcessFolderRefinedSection />
-          <RecognitionSection />
-          <NotesSection notes={notes} />
-          <ContactFooterSection />
-        </>
-      )}
+      {/* Stage 1: Gallery & Testimonials */}
+      <DeferredStage forceActivate={forceStage1} rootMargin="800px 0px">
+        <ProjectGallerySection />
+        <CalloutNotesSection testimonials={testimonials} />
+      </DeferredStage>
+
+      {/* Stage 2: Why Me & Services */}
+      <DeferredStage forceActivate={forceStage2} rootMargin="800px 0px">
+        <WhyMeCardsSection />
+        <ServicesSection />
+      </DeferredStage>
+
+      {/* Stage 3: Work Process & Recognition */}
+      <DeferredStage forceActivate={forceStage3} rootMargin="800px 0px">
+        <WorkProcessFolderRefinedSection />
+        <RecognitionSection />
+      </DeferredStage>
+
+      {/* Stage 4: Notes & Contact Footer */}
+      <DeferredStage forceActivate={forceStage4} rootMargin="800px 0px">
+        <NotesSection notes={notes} />
+        <ContactFooterSection />
+      </DeferredStage>
     </>
   );
 }
