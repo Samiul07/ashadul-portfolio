@@ -1,43 +1,14 @@
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import FeedbackWidget from "@/components/hero/desktop-feedback-widget";
 import AvailabilityBadge from "@/components/hero/availability-badge";
 import MobileVisualViewport from "@/components/hero/mobile-visual-viewport";
 import HeroGradient from "@/components/background/desktop-hero-gradient";
+import LogoListSection from "@/components/sections/logo-list-section";
+import SelectedWork from "@/components/sections/selected-work";
+import DeferredBelowFoldSections from "@/components/sections/deferred-below-fold-sections";
 import heroStyles from "./home-hero.module.css";
 import { getRecentArticles, getTestimonials } from "@/sanity/lib/data";
 import { sanityArticleToNoteCard } from "@/components/sections/notes-section";
-
-const LogoListSection = dynamic(
-  () => import("@/components/sections/logo-list-section")
-);
-const SelectedWork = dynamic(
-  () => import("@/components/sections/selected-work")
-);
-const WhyMeCardsSection = dynamic(
-  () => import("@/components/sections/why-me-cards-section")
-);
-const ProjectGallerySection = dynamic(
-  () => import("@/components/sections/project-gallery-section")
-);
-const CalloutNotesSection = dynamic(
-  () => import("@/components/sections/callout-notes-section")
-);
-const ServicesSection = dynamic(
-  () => import("@/components/sections/services-section")
-);
-const WorkProcessFolderRefinedSection = dynamic(
-  () => import("@/components/sections/work-process-folder-refined-section")
-);
-const RecognitionSection = dynamic(
-  () => import("@/components/sections/recognition-section")
-);
-const NotesSection = dynamic(
-  () => import("@/components/sections/notes-section")
-);
-const ContactFooterSection = dynamic(
-  () => import("@/components/sections/contact-footer-section")
-);
 
 const frameWidth =
   "w-[1400px] max-[1439px]:w-[calc(100%_-_48px)] max-[640px]:w-[calc(100%_-_40px)]";
@@ -418,14 +389,7 @@ export default async function Home() {
       <StatsSection />
       <LogoListSection />
       <SelectedWork />
-      <ProjectGallerySection />
-      <CalloutNotesSection testimonials={testimonials} />
-      <WhyMeCardsSection />
-      <ServicesSection />
-      <WorkProcessFolderRefinedSection />
-      <RecognitionSection />
-      <NotesSection notes={notes} />
-      <ContactFooterSection />
+      <DeferredBelowFoldSections notes={notes} testimonials={testimonials} />
     </>
   );
 }
