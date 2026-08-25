@@ -14,9 +14,11 @@ const navLinks = [
 ];
 
 const homeSectionLabels = {
+  work: "My Work",
   about: "About Me",
   expertise: "Expertise",
   process: "Process",
+  notes: "Product Notes",
 } as const;
 
 type HomeSectionId = keyof typeof homeSectionLabels;
@@ -65,6 +67,10 @@ export default function Navbar() {
   const scrollFrameRef = useRef<number | null>(null);
   const desktopNavRef = useRef<HTMLDivElement>(null);
   const activeIndicatorRef = useRef<HTMLSpanElement>(null);
+  const pendingHomeSectionRef = useRef<{
+    sectionId: HomeSectionId;
+    expiresAt: number;
+  } | null>(null);
 
   const links =
     pathname === "/portfolio"
@@ -108,6 +114,14 @@ export default function Navbar() {
     (pathname === "/" && activeHomeSection
       ? homeSectionLabels[activeHomeSection]
       : null);
+
+  const selectHomeSection = useCallback((sectionId: HomeSectionId) => {
+    pendingHomeSectionRef.current = {
+      sectionId,
+      expiresAt: performance.now() + 4000,
+    };
+    setActiveHomeSection(sectionId);
+  }, []);
 
   const syncScrollState = useCallback(() => {
     const scrollTop = getScrollTop();
@@ -221,6 +235,7 @@ export default function Navbar() {
 
   useEffect(() => {
     if (pathname !== "/") {
+      pendingHomeSectionRef.current = null;
       const frameId = window.requestAnimationFrame(() => {
         setActiveHomeSection(null);
       });
@@ -233,6 +248,29 @@ export default function Navbar() {
     const updateActiveSection = () => {
       // Offset from top of viewport where section is considered active (below navbar)
       const headerOffset = Math.min(window.innerHeight * 0.35, 180);
+      const pendingSelection = pendingHomeSectionRef.current;
+
+      // Keep a clicked destination selected while smooth scrolling is in flight.
+      // Without this guard, intermediate sections overwrite the user's selection.
+      if (pendingSelection) {
+        const target = document.getElementById(pendingSelection.sectionId);
+        const targetRect = target?.getBoundingClientRect();
+        const reachedTarget = Boolean(
+          targetRect &&
+            targetRect.top <= headerOffset + 8 &&
+            targetRect.bottom > headerOffset,
+        );
+
+        if (reachedTarget) {
+          pendingHomeSectionRef.current = null;
+        } else if (performance.now() < pendingSelection.expiresAt) {
+          setActiveHomeSection(pendingSelection.sectionId);
+          return;
+        } else {
+          pendingHomeSectionRef.current = null;
+        }
+      }
+
       let currentActive: HomeSectionId | null = null;
 
       for (const sectionId of sectionIds) {
@@ -240,11 +278,21 @@ export default function Navbar() {
         if (!element) continue;
 
         const rect = element.getBoundingClientRect();
-        // Section is active ONLY if it currently spans across the active trigger point
-        if (rect.top <= headerOffset && rect.bottom > headerOffset) {
+        // The most recently crossed navigation section stays active until the
+        // next navigation section reaches the trigger point. This also covers
+        // the project gallery between Work and About without adding fake links.
+        if (rect.top <= headerOffset) {
           currentActive = sectionId;
+        } else {
           break;
         }
+      }
+
+      // Contact is outside the primary navigation, so clear Product Notes once
+      // the visitor reaches that final page region.
+      const contact = document.getElementById("contact");
+      if (contact && contact.getBoundingClientRect().top <= headerOffset) {
+        currentActive = null;
       }
 
       setActiveHomeSection(currentActive);
@@ -272,10 +320,17 @@ export default function Navbar() {
     const onScroll = () => {
       updateActiveSection();
     };
+    const cancelPendingSelection = () => {
+      if (!pendingHomeSectionRef.current) return;
+      pendingHomeSectionRef.current = null;
+      window.requestAnimationFrame(updateActiveSection);
+    };
 
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll, { passive: true });
     window.addEventListener("hashchange", onScroll);
+    window.addEventListener("wheel", cancelPendingSelection, { passive: true });
+    window.addEventListener("touchstart", cancelPendingSelection, { passive: true });
     portfolioWindow.__portfolioLenis?.on?.("scroll", onScroll);
 
     return () => {
@@ -283,6 +338,8 @@ export default function Navbar() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       window.removeEventListener("hashchange", onScroll);
+      window.removeEventListener("wheel", cancelPendingSelection);
+      window.removeEventListener("touchstart", cancelPendingSelection);
       portfolioWindow.__portfolioLenis?.off?.("scroll", onScroll);
     };
   }, [pathname]);
@@ -443,9 +500,9 @@ export default function Navbar() {
                 <Link
                   aria-current={
                     isActive
-                      ? link.href.startsWith("#")
-                        ? "location"
-                        : "page"
+                      ? routeActiveLabel === link.label
+                        ? "page"
+                        : "location"
                       : undefined
                   }
                   className={`group relative isolate z-2 px-3 py-2 font-sans text-[15px] leading-[1.4] tracking-[-0.5px] uppercase no-underline transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/80 ${
@@ -460,7 +517,7 @@ export default function Navbar() {
                     if (pathname === "/" && link.href.startsWith("#")) {
                       const sectionId = link.href.slice(1) as HomeSectionId;
                       if (sectionId in homeSectionLabels) {
-                        setActiveHomeSection(sectionId);
+                        selectHomeSection(sectionId);
                       }
                     }
                   }}
@@ -555,9 +612,9 @@ export default function Navbar() {
                         <Link
                           aria-current={
                             isActive
-                              ? link.href.startsWith("#")
-                                ? "location"
-                                : "page"
+                              ? routeActiveLabel === link.label
+                                ? "page"
+                                : "location"
                               : undefined
                           }
                           className="group/mobile-link relative flex min-h-[66px] items-center gap-4 border-b border-white/12 px-5 py-3 no-underline first:border-t hover:bg-white/[0.04] focus-visible:bg-white/[0.04] focus-visible:outline-none"
@@ -567,7 +624,7 @@ export default function Navbar() {
                             if (pathname === "/" && link.href.startsWith("#")) {
                               const sectionId = link.href.slice(1) as HomeSectionId;
                               if (sectionId in homeSectionLabels) {
-                                setActiveHomeSection(sectionId);
+                                selectHomeSection(sectionId);
                               }
                             }
                             closeMobileMenu();
