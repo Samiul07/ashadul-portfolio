@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, useScroll, useSpring } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -7,7 +8,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 
 const navLinks = [
   { label: "My Work", href: "/portfolio" },
-  { label: "About Me", href: "#about" },
   { label: "Expertise", href: "#expertise" },
   { label: "Process", href: "#process" },
   { label: "Product Notes", href: "/blog" },
@@ -63,7 +63,6 @@ export default function Navbar() {
   const mobileMenuDisclosureRef = useRef<HTMLDetailsElement>(null);
   const mobileMenuSummaryRef = useRef<HTMLElement>(null);
   const mobileMenuPanelRef = useRef<HTMLDivElement>(null);
-  const scrollProgressRef = useRef<HTMLDivElement>(null);
   const scrollFrameRef = useRef<number | null>(null);
   const desktopNavRef = useRef<HTMLDivElement>(null);
   const activeIndicatorRef = useRef<HTMLSpanElement>(null);
@@ -115,6 +114,13 @@ export default function Navbar() {
       ? homeSectionLabels[activeHomeSection]
       : null);
 
+  const isSingleBlogPage = pathname.startsWith("/blog/") && pathname !== "/blog";
+  const { scrollYProgress } = useScroll();
+  const progressScale = useSpring(scrollYProgress, {
+    damping: 34,
+    mass: 0.35,
+    stiffness: 280,
+  });
   const selectHomeSection = useCallback((sectionId: HomeSectionId) => {
     pendingHomeSectionRef.current = {
       sectionId,
@@ -126,19 +132,10 @@ export default function Navbar() {
   const syncScrollState = useCallback(() => {
     const scrollTop = getScrollTop();
     const scrolled = scrollTop > 40;
-    const scrollRange = Math.max(
-      document.documentElement.scrollHeight - window.innerHeight,
-      1,
-    );
 
     if (scrolledRef.current !== scrolled) {
       scrolledRef.current = scrolled;
       setIsScrolled(scrolled);
-    }
-
-    if (scrollProgressRef.current) {
-      const progress = Math.min(Math.max(scrollTop / scrollRange, 0), 1);
-      scrollProgressRef.current.style.transform = `scaleX(${progress})`;
     }
   }, []);
 
@@ -685,21 +682,24 @@ export default function Navbar() {
         />
       </header>
 
-      {/* Scroll Progress Bar — rides with the fixed header. top-[84px] + 2px
-          height pins the bar's bottom edge to the header's bottom (86px),
-          overlaying the 1px white divider line. z above the header (1100) so
-          the red line is never hidden behind the header surface. */}
-      <div
-        className={`pointer-events-none fixed inset-x-0 top-[84px] h-[2px] min-[641px]:max-[1200px]:top-[68px] max-[640px]:hidden z-[1101]`}
-        data-scroll-progress
-        style={{ transform: "translate3d(0,0,0)", willChange: "transform" }}
-      >
+      {/* Scroll Progress Bar — rides with the fixed header.
+          top-[84px] on desktop (86px header) and top-[68px] on mobile/tablet (70px header)
+          pins the 2px bar's bottom edge flush to the header's bottom seam, overlaying the 1px white divider line.
+          z-[1101] keeps the red line above the header surface.
+          Excluded on single blog posts (/blog/[slug]) where the dedicated article reading progress bar is active. */}
+      {!isSingleBlogPage && (
         <div
-          ref={scrollProgressRef}
-          aria-hidden="true"
-          className="absolute inset-x-0 top-0 h-[2px] origin-left scale-x-0 bg-primary transition-transform duration-100 ease-out will-change-transform"
-        />
-      </div>
+          className="pointer-events-none fixed inset-x-0 top-[84px] z-[1101] h-[2px] max-[1200px]:top-[68px]"
+          data-scroll-progress
+          style={{ transform: "translate3d(0,0,0)", willChange: "transform" }}
+        >
+          <motion.div
+            aria-hidden="true"
+            className="absolute inset-x-0 top-0 h-[2px] origin-left bg-primary will-change-transform"
+            style={{ scaleX: progressScale }}
+          />
+        </div>
+      )}
 
     </>
   );
