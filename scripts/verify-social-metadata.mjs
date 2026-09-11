@@ -12,7 +12,7 @@ function attribute(tag, name) {
 }
 
 function meta(html, property) {
-  const tags = html.match(/<meta\\b[^>]*>/gi) ?? [];
+  const tags = html.match(/<meta\b[^>]*>/gi) ?? [];
   const tag = tags.find(
     (candidate) =>
       attribute(candidate, "property") === property ||
@@ -22,7 +22,7 @@ function meta(html, property) {
 }
 
 function canonical(html) {
-  const tags = html.match(/<link\\b[^>]*>/gi) ?? [];
+  const tags = html.match(/<link\b[^>]*>/gi) ?? [];
   const tag = tags.find((candidate) => attribute(candidate, "rel") === "canonical");
   return tag ? attribute(tag, "href") : null;
 }

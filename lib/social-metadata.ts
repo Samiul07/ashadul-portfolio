@@ -26,7 +26,7 @@ export function sharedSocialMetadata(path: string): Metadata {
 
   return {
     alternates: {
-      canonical: url,
+      canonical: path === "/" ? SITE_ORIGIN : url,
     },
     openGraph: {
       title: SOCIAL_TITLE,
