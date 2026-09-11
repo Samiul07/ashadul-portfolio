@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
 import { getProjects, getArticleSlugs } from "@/sanity/lib/data";
+import { SITE_ORIGIN } from "@/lib/social-metadata";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://ashadul.design";
+  const baseUrl = SITE_ORIGIN;
 
   // Static routes
   const staticPaths = ["", "/work", "/about", "/expertise", "/process", "/blog", "/contact"];

@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "lint": "eslint",
+    "verify:social": "node scripts/verify-social-metadata.mjs",
     "deploy": "echo 'Run FTP script to upload /out folder'"
   },
   "dependencies": {

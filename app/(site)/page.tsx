@@ -1,4 +1,4 @@
-import Image from "next/image";
+import type { Metadata } from "next";
 import FeedbackWidget from "@/components/hero/desktop-feedback-widget";
 import AvailabilityBadge from "@/components/hero/availability-badge";
 import MobileVisualViewport from "@/components/hero/mobile-visual-viewport";
@@ -10,6 +10,9 @@ import DeferredBelowFoldSections from "@/components/sections/deferred-below-fold
 import heroStyles from "./home-hero.module.css";
 import { getRecentArticles, getTestimonials } from "@/sanity/lib/data";
 import { sanityArticleToNoteCard } from "@/components/sections/notes-section";
+import { sharedSocialMetadata } from "@/lib/social-metadata";
+
+export const metadata: Metadata = sharedSocialMetadata("/");
 
 const frameWidth =
   "w-[1400px] max-[1439px]:w-[calc(100%_-_48px)] max-[640px]:w-[calc(100%_-_40px)]";

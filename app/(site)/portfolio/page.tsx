@@ -8,11 +8,13 @@ import HeroGradient from "@/components/background/desktop-hero-gradient";
 import MobileVisualViewport from "@/components/hero/mobile-visual-viewport";
 import styles from "./portfolio-hero.module.css";
 import { getProjects } from "@/sanity/lib/data";
+import { sharedSocialMetadata } from "@/lib/social-metadata";
 
 export const metadata: Metadata = {
   title: "Selected Product Work | Ashadul Islam",
   description:
     "Selected SaaS, product design, mobile application, design system, and enterprise UX case studies by Ashadul Islam.",
+  ...sharedSocialMetadata("/portfolio"),
 };
 
 function categoryId(value: string) {

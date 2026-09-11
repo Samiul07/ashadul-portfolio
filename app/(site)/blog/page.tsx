@@ -4,11 +4,13 @@ import BlogPostsSection from "@/components/blog/blog-posts-section";
 import ContactFooterSection from "@/components/sections/contact-footer-section";
 import { sanityArticleToNoteCard } from "@/components/sections/notes-section";
 import { getArticles } from "@/sanity/lib/data";
+import { sharedSocialMetadata } from "@/lib/social-metadata";
 
 export const metadata: Metadata = {
   title: "Digital Thinking | Ashadul Islam",
   description:
     "Field notes on product design, conversion thinking, AI-assisted workflows, collaboration, and digital craft by Ashadul Islam.",
+  ...sharedSocialMetadata("/blog"),
 };
 
 export default async function BlogPage() {

@@ -5,6 +5,11 @@ import {
   Playfair_Display,
 } from "next/font/google";
 import localFont from "next/font/local";
+import {
+  SITE_URL,
+  SOCIAL_DESCRIPTION,
+  sharedSocialMetadata,
+} from "@/lib/social-metadata";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -40,24 +45,22 @@ const switzer = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ashadul.design"),
+  metadataBase: SITE_URL,
   title: {
     default: "Ashadul | Design, Vibe Code & Deploy Products 🔥",
     template: "%s | Ashadul",
   },
-  description:
-    "Looking for your next senior product builder? I bring 12+ years of UI/UX experience to design, vibe code, and successfully deploy your next big idea.",
-  openGraph: {
-    title: "Ashadul | Design, Vibe Code & Deploy Products 🔥",
-    description:
-      "Looking for your next senior product builder? I bring 12+ years of UI/UX experience to design, vibe code, and successfully deploy your next big idea.",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Ashadul | Design, Vibe Code & Deploy Products 🔥",
-    description:
-      "Looking for your next senior product builder? I bring 12+ years of UI/UX experience to design, vibe code, and successfully deploy your next big idea.",
+  description: SOCIAL_DESCRIPTION,
+  ...sharedSocialMetadata("/"),
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
