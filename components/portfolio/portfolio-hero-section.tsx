@@ -57,7 +57,7 @@ const proofItems = [
     labelLines: ["Products", "Shipped"] as const,
   },
   {
-    value: "2",
+    value: "3",
     mark: "x" as const,
     markWidthClass: "w-[11px] max-[640px]:w-[8.5px]",
     labelLines: ["Conversion", "Lift"] as const,
