@@ -63,7 +63,7 @@ function ProjectCard({ project }: { project: Project }) {
     <a
       className="group flex min-w-0 flex-col border border-white/18 bg-transparent p-2 text-white no-underline outline-none transition-transform duration-300 active:scale-[0.98] focus-visible:border-white focus-visible:ring-2 focus-visible:ring-white max-[640px]:border-white/14 max-[640px]:p-0"
       href={project.figmaUrl || "#contact"}
-      rel={isExternal ? "noreferrer" : undefined}
+      rel={isExternal ? "noopener noreferrer" : undefined}
       target={isExternal ? "_blank" : undefined}
     >
       {/* Image Thumbnail with Hover Button Overlay — locked 4/3 aspect ratio */}
