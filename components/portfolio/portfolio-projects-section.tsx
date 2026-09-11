@@ -25,6 +25,14 @@ export type PortfolioProject = {
 
 type Project = PortfolioProject;
 
+const preferredCategories = [
+  { id: "website", label: "Websites" },
+  { id: "web-app-saas", label: "Web Apps & SaaS" },
+  { id: "mobile-app", label: "Mobile Apps" },
+  { id: "e-commerce", label: "E-commerce" },
+  { id: "brand-identity", label: "Brand Identity" },
+] as const;
+
 /** Count how many projects belong to a given category */
 function countForCategory(
   projectList: Project[],
@@ -134,10 +142,18 @@ export default function PortfolioProjectsSection({
       });
     });
 
-    return [
-      { id: "all", label: "All Projects" },
-      ...Array.from(uniqueCategories, ([id, label]) => ({ id, label })),
-    ];
+    const preferred = preferredCategories.filter((category) =>
+      uniqueCategories.has(category.id),
+    );
+    const preferredIds = new Set<string>(
+      preferred.map((category) => category.id),
+    );
+    const remaining = Array.from(uniqueCategories, ([id, label]) => ({
+      id,
+      label,
+    })).filter((category) => !preferredIds.has(category.id));
+
+    return [{ id: "all", label: "All Projects" }, ...preferred, ...remaining];
   }, [projects]);
 
   const visibleProjects = useMemo(

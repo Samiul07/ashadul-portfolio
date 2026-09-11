@@ -22,6 +22,16 @@ export const projectType = defineType({
       name: 'category',
       title: 'Category',
       type: 'string',
+      options: {
+        list: [
+          { title: 'Website', value: 'Website' },
+          { title: 'Web App & SaaS', value: 'Web App & SaaS' },
+          { title: 'Mobile App', value: 'Mobile App' },
+          { title: 'E-commerce', value: 'E-commerce' },
+          { title: 'Brand Identity', value: 'Brand Identity' },
+        ],
+        layout: 'dropdown',
+      },
       validation: (rule) => rule.required(),
     }),
     defineField({
