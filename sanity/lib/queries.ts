@@ -6,7 +6,7 @@ const thumbnailProjection = `{
 }`;
 
 export const projectsQuery = defineQuery(`
-  *[_type == "project"] | order(_createdAt desc) {
+  *[_type == "project"] | order(orderRank asc) {
     title,
     "slug": slug.current,
     category,
