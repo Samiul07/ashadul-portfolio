@@ -64,6 +64,29 @@ export const metadata: Metadata = {
   },
 };
 
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://www.ashadul.design/#website",
+      name: "Ashadul",
+      url: "https://www.ashadul.design",
+      publisher: {
+        "@id": "https://www.ashadul.design/#person",
+      },
+    },
+    {
+      "@type": "Person",
+      "@id": "https://www.ashadul.design/#person",
+      name: "Ashadul Islam",
+      alternateName: "Ashadul",
+      jobTitle: "UI/UX Product Designer",
+      url: "https://www.ashadul.design",
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -72,6 +95,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={`${playfair.variable} ${bigShoulders.variable} ${switzer.variable} overflow-x-clip bg-background [font-synthesis-weight:none] [scrollbar-width:none]`}>
       <body suppressHydrationWarning className="m-0 overflow-x-clip bg-background font-sans text-foreground antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
+          }}
+        />
         {children}
         <SpeedInsights />
       </body>
