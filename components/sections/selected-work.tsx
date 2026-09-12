@@ -3,7 +3,6 @@
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import type { MotionValue } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 import { useRef } from "react";
 
 const frameWidth =
@@ -32,6 +31,7 @@ type Project = {
   desktopImage: string;
   desktopImageHeight: number;
   desktopImageWidth: number;
+  figmaUrl: string;
   imageClassName: string;
   index: string;
   meta: ProjectMeta[];
@@ -46,6 +46,8 @@ const projects: Project[] = [
     desktopImage: "/images/day-translations.webp",
     desktopImageHeight: 454,
     desktopImageWidth: 716,
+    figmaUrl:
+      "https://www.figma.com/design/w32A6g6NaDCATLDKugwCJt/Day-Translations-%E2%80%94-www.Ashadul.Design?m=auto&t=Wk4L8DZ9UlR7fV0y-6",
     imageClassName: "absolute inset-0 h-full w-full max-w-none",
     index: "01",
     meta: [
@@ -63,6 +65,8 @@ const projects: Project[] = [
     desktopImage: "/images/metabolix.webp",
     desktopImageHeight: 454,
     desktopImageWidth: 716,
+    figmaUrl:
+      "https://www.figma.com/design/bTKKbbkZktOVzqU7zyYqvV/MetaBolix-HealthCare-%E2%80%94-www.Ashadul.Design?m=auto&t=Wk4L8DZ9UlR7fV0y-6",
     imageClassName: "absolute inset-0 h-full w-full max-w-none",
     index: "02",
     meta: [
@@ -80,6 +84,8 @@ const projects: Project[] = [
     desktopImage: "/images/betr.webp",
     desktopImageHeight: 454,
     desktopImageWidth: 716,
+    figmaUrl:
+      "https://www.figma.com/design/wL3RS8Vo9lChxkKmHYpNMz/BETR-Journal-%E2%80%94-www.Ashadul.Design?m=auto&t=Wk4L8DZ9UlR7fV0y-6",
     imageClassName: "absolute inset-0 h-full w-full max-w-none",
     index: "03",
     meta: [
@@ -98,6 +104,8 @@ const projects: Project[] = [
     desktopImageHeight: 454,
     desktopImageWidth: 716,
     imageClassName: "absolute inset-0 h-full w-full max-w-none",
+    figmaUrl:
+      "https://www.figma.com/design/SAygB3HTZwgCouqj1ueUJ5/Solence-Solar-%E2%80%94-www.Ashadul.Design?m=auto&t=Wk4L8DZ9UlR7fV0y-6",
     index: "04",
     meta: [
       { label: "Industry", value: "CleanTech" },
@@ -200,9 +208,11 @@ function ProjectCard({
               ))}
             </div>
 
-            <Link
+            <a
               className={`group/work-action ${buttonBase} w-[184px] border-0 bg-white text-black hover:bg-primary hover:text-white min-[768px]:max-[1200px]:w-full max-[479px]:w-full`}
-              href="/portfolio"
+              href={project.figmaUrl}
+              rel="noopener noreferrer"
+              target="_blank"
             >
               Explore Project
               <span className="inline-flex h-[22px] w-[22px] items-center justify-center">
@@ -214,7 +224,7 @@ function ProjectCard({
                   width={22}
                 />
               </span>
-            </Link>
+            </a>
           </div>
         </div>
       </div>
