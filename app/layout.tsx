@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import {
   Big_Shoulders,
@@ -102,6 +103,7 @@ export default function RootLayout({
           }}
         />
         {children}
+        <Analytics />
         <SpeedInsights />
       </body>
     </html>
