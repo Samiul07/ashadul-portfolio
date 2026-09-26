@@ -246,27 +246,24 @@ function HeroSection() {
           <div className={`flex flex-col items-start gap-[23px] max-[640px]:w-full ${heroStyles.copyGroup}`}>
             <div className="flex flex-col items-start gap-4 max-[640px]:w-full max-[640px]:gap-3">
               <p className={`m-0 w-[720px] origin-top-left translate-y-px scale-x-[0.939] scale-y-[1.025] font-playfair text-[40px] leading-none font-normal tracking-[-0.5px] text-white italic max-[1279px]:w-[min(720px,100%)] max-[1279px]:text-[clamp(32px,3.1vw,40px)] ${heroStyles.eyebrow}`}>
-                For 12+ years, I&rsquo;ve designed
+                For 12+ years, I&rsquo;ve built
               </p>
               <h1
                 id="hero-title"
-                className={`m-0 w-[720px] font-display text-[200px] leading-[0.9] font-black tracking-[-8px] whitespace-nowrap text-white uppercase [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] max-[1279px]:w-[min(720px,100%)] max-[1279px]:text-[clamp(154px,15vw,176px)] max-[1279px]:tracking-[-0.03em] max-[1024px]:text-[clamp(88px,17vw,154px)] max-[640px]:leading-[0.86] ${heroStyles.title}`}
+                className={`m-0 w-[720px] -translate-x-[0.03em] font-display text-[200px] leading-[0.9] font-black tracking-[-8px] whitespace-nowrap text-white uppercase [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] max-[1279px]:w-[min(720px,100%)] max-[1279px]:text-[clamp(154px,15vw,176px)] max-[1279px]:tracking-[-0.03em] max-[1024px]:text-[clamp(88px,17vw,154px)] max-[640px]:leading-[0.86] ${heroStyles.title}`}
               >
-                <span className="block w-max origin-left translate-x-[3px] -translate-y-0.5 scale-x-[0.888] scale-y-[0.964]">
+                <span className="block w-max origin-left -translate-y-0.5 scale-x-[0.888] scale-y-[0.964]">
                   PRODUCTS
                 </span>
-                <span className="block w-max origin-left translate-x-[3px] -translate-y-0.5 scale-x-[0.898] scale-y-[0.964]">
-                  THAT SHIP
-                  <span className="relative top-0 left-0.5 ml-[-4px] inline-block origin-bottom-left scale-x-[1.09] scale-y-[0.75] text-primary">
-                    .
-                  </span>
+                <span className="block w-max origin-left -translate-y-0.5 scale-x-[0.898] scale-y-[0.964] text-[0.9em]">
+                  END <span className="text-primary">TO</span> END
                 </span>
               </h1>
             </div>
 
             <p className={`m-0 w-[720px] origin-top-left translate-x-px -translate-y-px scale-x-[0.978] scale-y-[1.05] font-sans text-2xl leading-[1.2] font-light tracking-[-0.5px] text-white max-[1279px]:w-[min(720px,100%)] max-[640px]:relative max-[640px]:z-[170] max-[640px]:max-w-none ${heroStyles.description}`}>
-              I turn SaaS, AI, and ecommerce ideas into clear flows, polished
-              interfaces, and ready systems.
+              I lead product strategy, UX, and interface design, then carry the
+              work through development, deployment, and launch.
             </p>
           </div>
 
@@ -358,7 +355,7 @@ function StatsSection() {
                       className={`block shrink-0 overflow-visible ${stat.numberClassName} max-[640px]:w-auto`}
                     >
                       <span
-                        className={`block origin-left-bottom font-display text-[200px] leading-[0.9] font-black tracking-[-8px] whitespace-nowrap text-white uppercase [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] max-[640px]:text-[clamp(80px,24vw,96px)] max-[640px]:tracking-[-3px] ${stat.numberScaleClassName}`}
+                        className={`block origin-left-bottom -translate-x-[0.065em] font-display text-[200px] leading-[0.9] font-black tracking-[-8px] whitespace-nowrap text-white uppercase [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] max-[640px]:text-[clamp(80px,24vw,96px)] max-[640px]:tracking-[-3px] ${stat.numberScaleClassName}`}
                       >
                         {stat.value}
                       </span>
