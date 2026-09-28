@@ -245,8 +245,8 @@ function HeroSection() {
         <div data-mobile-hero-lead className={`flex flex-col items-start min-[640px]:gap-14 max-[640px]:gap-8 max-[640px]:w-full ${heroStyles.leadGroup}`}>
           <div className={`flex flex-col items-start gap-[23px] max-[640px]:w-full ${heroStyles.copyGroup}`}>
             <div className="flex flex-col items-start gap-4 max-[640px]:w-full max-[640px]:gap-3">
-              <p className={`m-0 w-[720px] origin-top-left translate-y-px scale-x-[0.939] scale-y-[1.025] font-playfair text-[40px] leading-none font-normal tracking-[-0.5px] text-white italic max-[1279px]:w-[min(720px,100%)] max-[1279px]:text-[clamp(32px,3.1vw,40px)] ${heroStyles.eyebrow}`}>
-                For 12+ years, I&rsquo;ve built
+              <p className={`m-0 w-[720px] origin-top-left translate-y-px scale-x-[0.939] scale-y-[1.025] font-playfair text-[36px] leading-none font-normal tracking-[-0.5px] text-white italic max-[1279px]:w-[min(720px,100%)] max-[1279px]:text-[clamp(28px,2.8vw,36px)] ${heroStyles.eyebrow}`}>
+                With 12+ years in product design, I now build
               </p>
               <h1
                 id="hero-title"

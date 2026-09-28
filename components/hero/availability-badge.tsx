@@ -16,7 +16,7 @@ export default function AvailabilityBadge() {
   return (
     <div
       data-mobile-hero-availability
-      className="absolute bottom-8 left-8 z-[105] flex w-[448px] origin-left scale-x-[0.995] items-center gap-2.5 font-sans text-base leading-[1.4] font-light tracking-[-0.5px] text-white uppercase max-[640px]:bottom-4 max-[640px]:left-5 max-[640px]:z-[175] max-[640px]:w-auto max-[640px]:right-5 max-[640px]:origin-center max-[640px]:scale-x-100 max-[640px]:items-center max-[640px]:gap-2.5 max-[640px]:text-base max-[640px]:leading-[1.2] max-[640px]:tracking-[-0.55px]"
+      className="absolute bottom-8 left-8 z-[105] flex w-[448px] origin-left scale-x-[0.995] items-center gap-2.5 font-sans text-lg leading-[1.4] font-light tracking-[-0.5px] text-white max-[640px]:bottom-4 max-[640px]:left-5 max-[640px]:z-[175] max-[640px]:w-auto max-[640px]:right-5 max-[640px]:origin-center max-[640px]:scale-x-100 max-[640px]:items-center max-[640px]:gap-2.5 max-[640px]:leading-[1.2] max-[640px]:tracking-[-0.55px]"
     >
       <span className="relative inline-flex h-6 w-6 shrink-0 items-center justify-center text-white animate-envelope-bounce">
         {/* White pulsing overlay in the shape of the envelope */}
